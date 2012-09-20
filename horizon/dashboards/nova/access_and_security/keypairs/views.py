@@ -44,8 +44,11 @@ class CreateView(forms.ModalFormView):
     success_url = 'horizon:nova:access_and_security:keypairs:download'
 
     def get_success_url(self):
+	#append on the cloud name to to go through the nova api 
+	#and be switched by the middleware
+	cloud_and_name = self.request.POST['cloud'] + '-' + self.request.POST['name']  
         return reverse(self.success_url,
-                       kwargs={"keypair_name": self.request.POST['name']})
+                       kwargs={"keypair_name": cloud_and_name})
 
 
 class ImportView(forms.ModalFormView):
@@ -54,7 +57,9 @@ class ImportView(forms.ModalFormView):
     success_url = reverse_lazy('horizon:nova:access_and_security:index')
 
     def get_object_id(self, keypair):
-        return keypair.name
+        #append on the cloud name to to go through the nova api
+        #and be switched by the middleware
+        return self.request.POST['cloud'] + '-' + keypair.name
 
 
 class DownloadView(TemplateView):

@@ -30,7 +30,11 @@ def osdc_console_nav(context):
     """ Generates sub-navigation entries for the current dashboard. """
     if 'request' not in context:
         return {}
+
     dashboard = context['request'].horizon['dashboard']
+    if dashboard is None:
+        return {}
+
     panel_groups = dashboard.get_panel_groups()
     non_empty_groups = []
 

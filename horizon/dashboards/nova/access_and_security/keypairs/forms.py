@@ -29,8 +29,25 @@ from horizon import exceptions
 from horizon import forms
 from horizon import messages
 
+from tukey.cloud_attribute import cloud_names, cloud_details, has_function
+
 
 NEW_LINES = re.compile(r"\r|\n")
+
+
+# mgreenway hacking the view to provide cloud where needed
+CREATE_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in cloud_details().items() 
+	    if has_function('create_keypair', key))
+IMPORT_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in cloud_details().items()
+            if has_function('import_keypair', key))
+#CLOUD_CHOICES=(ADLER,SULLIVAN)
+
+CREATE_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Cloud"),required=True,
+                                choices=CREATE_KEYPAIR_CLOUD_CHOICES)
+
+IMPORT_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Cloud"),required=True,
+                                choices=IMPORT_KEYPAIR_CLOUD_CHOICES)
+
 
 
 class CreateKeypair(forms.SelfHandlingForm):
@@ -41,6 +58,8 @@ class CreateKeypair(forms.SelfHandlingForm):
                                 'only contain letters, numbers, underscores '
                                 'and hyphens.')})
 
+    cloud = CREATE_KEYPAIR_CLOUD
+
     def handle(self, request, data):
         return True  # We just redirect to the download view.
 
@@ -50,12 +69,14 @@ class ImportKeypair(forms.SelfHandlingForm):
                  validators=[validators.RegexValidator('\w+')])
     public_key = forms.CharField(label=_("Public Key"), widget=forms.Textarea)
 
+    cloud = IMPORT_KEYPAIR_CLOUD
+
     def handle(self, request, data):
         try:
             # Remove any new lines in the public key
             data['public_key'] = NEW_LINES.sub("", data['public_key'])
             keypair = api.keypair_import(request,
-                                         data['name'],
+                                         data['cloud'] + '-' + data['name'],
                                          data['public_key'])
             messages.success(request, _('Successfully imported public key: %s')
                                        % data['name'])

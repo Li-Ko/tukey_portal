@@ -24,7 +24,6 @@ class BasePanels(horizon.PanelGroup):
     name = _("Manage Compute")
     panels = ('overview',
               'instances',
-              'volumes',
               'images_and_snapshots',
               'access_and_security')
 
@@ -40,7 +39,7 @@ class Nova(horizon.Dashboard):
     slug = "nova"
     panels = (BasePanels, ObjectStorePanels)
     default_panel = 'overview'
-    supports_tenants = True
+    supports_tenants = False
 
 
 horizon.register(Nova)

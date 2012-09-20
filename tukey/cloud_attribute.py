@@ -21,3 +21,23 @@ def get_cloud(cloud_object):
         cloud = cloud_object._apiresource.cloud
         return cloud
     return 'Not available'
+
+# will require some sort of context for querying an api or reading
+# a config file to see what the names are of the clouds
+# For now it is a stub 
+def cloud_names():
+    return ["adler", "sullivan"]
+
+def cloud_details():
+    return {
+	'adler': 'Adler, a Eucalyptus based utility cloud.',
+	'sullivan': 'Sullivan, an OpenStack based utility cloud.'
+    }
+
+def has_function(function, cloud):
+    functions = {
+	"import_keypair": "sullivan"
+    }
+    if function in functions:
+        return cloud in functions[function]
+    return True

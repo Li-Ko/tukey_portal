@@ -6,32 +6,47 @@
     <title>{% block title %}{% endblock %} - {% site_branding %}</title>
     {% include "horizon/_conf.html" %}
     {% block css %}
-      {% include "_stylesheets.html" %}
+    {% include "_stylesheets.html" %}
     {% endblock %}
     {% include "horizon/client_side/_script_loader.html" %}
+     <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-34483848-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </head>
   <body id="{% block body_id %}{% endblock %}">
+    {% include "osdc/_osdc_nav.html" %}
     {% block content %}
-      <div id="container">
-        {% block sidebar %}
-          {% include 'horizon/common/_sidebar.html' %}
-        {% endblock %}
-        <div id='main_content'>
-          <div class='topbar'>
-          {% include "_header.html" %}
+    {% include "osdc/_osdc_console_menu.html" %}
+    <div class='container'>
+      <div class='row row-header'>
+      <div class='span12'>
           {% block page_header %}{% endblock %}
-          </div>
-          {% include "horizon/_messages.html" %}
-          {% block main %}{% endblock %}
         </div>
       </div>
+      <div class='row'>
+      <div class='span12'>
+        {% include "horizon/_messages.html" %}
+        {% block main %}{% endblock %}
+      </div>
+      </div>
+    </div>
     {% endblock %}
+
     <div id="footer">
       {% block footer %}{% endblock %}
     </div>
+
     {% block js %}
-      {% include "horizon/_scripts.html" %}
+    {% include "horizon/_scripts.html" %}
     {% endblock %}
-    <div id="modal_wrapper" />
+    <div id="modal_wrapper"></div>
   </body>
 </html>

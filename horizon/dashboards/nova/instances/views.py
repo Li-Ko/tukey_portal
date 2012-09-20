@@ -40,12 +40,17 @@ from .tabs import InstanceDetailTabs
 from .tables import InstancesTable
 from .workflows import LaunchInstance
 
+from tukey.cloud_attribute import get_cloud
+
 
 LOG = logging.getLogger(__name__)
 
 
 class IndexView(tables.DataTableView):
+
+
     table_class = InstancesTable
+
     template_name = 'nova/instances/index.html'
 
     def get_data(self):
@@ -69,6 +74,8 @@ class IndexView(tables.DataTableView):
             # Loop through instances to get flavor info.
             for instance in instances:
                 try:
+		    # +CLODU
+		    #instance.id = get_cloud(instance).lower() + '-' + instance.id
                     flavor_id = instance.flavor["id"]
                     if flavor_id in full_flavors:
                         instance.full_flavor = full_flavors[flavor_id]
@@ -164,10 +171,11 @@ class DetailView(tabs.TabView):
             try:
                 instance_id = self.kwargs['instance_id']
                 instance = api.server_get(self.request, instance_id)
-                instance.volumes = api.volume_instance_list(self.request,
-                                                            instance_id)
+                #instance.volumes = api.volume_instance_list(self.request,
+                #                                            instance_id)
                 # Sort by device name
-                instance.volumes.sort(key=lambda vol: vol.device)
+                #instance.volumes.sort(key=lambda vol: vol.device)
+		instance.volumes = {}
                 instance.full_flavor = api.flavor_get(self.request,
                                                       instance.flavor["id"])
                 instance.security_groups = api.server_security_groups(

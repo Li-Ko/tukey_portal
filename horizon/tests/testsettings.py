@@ -26,7 +26,8 @@ from django.utils.translation import ugettext_lazy as _
 socket.setdefaulttimeout(1)
 
 LOGIN_URL = '/auth/login/'
-LOGOUT_URL = '/auth/logout/'
+#LOGOUT_URL = '/auth/logout/'
+LOGOUT_URL = '/auth/logout/?next=http%3A//console.opensciencedatacloud.org/Shibboleth.sso/Logout%3Freturn%3Dhttp%3A%2F%2Fconsole.opensciencedatacloud.org%2F2%2F%3Fshib%3Dtrue'
 LOGIN_REDIRECT_URL = '/'
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))

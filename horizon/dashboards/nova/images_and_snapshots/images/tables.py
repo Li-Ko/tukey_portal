@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from horizon import api
 from horizon import tables
-
+from tukey.cloud_attribute import get_cloud
 
 LOG = logging.getLogger(__name__)
 
@@ -37,6 +37,7 @@ class LaunchImage(tables.LinkAction):
     def get_link_url(self, datum):
         base_url = reverse(self.url)
         params = urlencode({"source_type": "image_id",
+			    "cloud": get_cloud(datum),
                             "source_id": self.table.get_object_id(datum)})
         return "?".join([base_url, params])
 
@@ -110,6 +111,12 @@ class ImagesTable(tables.DataTable):
                          link=("horizon:nova:images_and_snapshots:"
                                "images:detail"),
                          verbose_name=_("Image Name"))
+    # Thie should be somewhere else but I just don't know where
+    # mgreenway
+    from tukey.cloud_attribute import get_cloud
+    cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
+    #end modified section mgreenway
+
     image_type = tables.Column(get_image_type,
                                verbose_name=_("Type"),
                                filters=(filters.title,))

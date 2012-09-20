@@ -31,6 +31,9 @@ from horizon.dashboards.nova.access_and_security \
         .floating_ips.workflows import IPAssociationWorkflow
 from .tabs import InstanceDetailTabs, LogTab, VNCTab
 
+from tukey.cloud_attribute import get_cloud
+
+
 
 LOG = logging.getLogger(__name__)
 
@@ -146,8 +149,11 @@ class ToggleSuspend(tables.BatchAction):
 class LaunchLink(tables.LinkAction):
     name = "launch"
     verbose_name = _("Launch Instance")
-    url = "horizon:nova:instances:launch"
-    classes = ("btn-launch", "ajax-modal")
+    #url = "horizon:nova:images_and_snapshots"
+    #TODO: REMOVE makeit right
+    url = "/nova/images_and_snapshots/"
+    #url = "/nova/images_and_snapshots"
+    #classes = ("btn-launch", "ajax-modal")
 
 
 class EditInstance(tables.LinkAction):
@@ -203,6 +209,11 @@ class AssociateIP(tables.LinkAction):
     url = "horizon:nova:access_and_security:floating_ips:associate"
     classes = ("ajax-modal", "btn-associate")
 
+    def allowed(self, request, instance=None):
+	# mgreenway
+        from tukey.cloud_attribute import get_cloud
+        return get_cloud(instance) != 'Adler'
+
     def get_link_url(self, datum):
         base_url = urlresolvers.reverse(self.url)
         next = urlresolvers.reverse("horizon:nova:instances:index")
@@ -218,6 +229,8 @@ class UpdateRow(tables.Row):
     def get_data(self, request, instance_id):
         instance = api.server_get(request, instance_id)
         instance.full_flavor = api.flavor_get(request, instance.flavor["id"])
+	# +CLOUD
+	#instance.id = get_cloud(instance).lower() + '-' + instance.id
         return instance
 
 
@@ -267,6 +280,12 @@ class InstancesTable(tables.DataTable):
     name = tables.Column("name",
                          link=("horizon:nova:instances:detail"),
                          verbose_name=_("Instance Name"))
+
+    # Thie should be somewhere else but I just don't know where
+    # mgreenway
+    cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
+    #end modified section mgreenway
+
     ip = tables.Column(get_ips, verbose_name=_("IP Address"))
     size = tables.Column(get_size,
                          verbose_name=_("Size"),

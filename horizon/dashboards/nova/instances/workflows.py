@@ -27,6 +27,8 @@ from horizon import forms
 from horizon import workflows
 from horizon.openstack.common import jsonutils
 
+from tukey.cloud_attribute import get_cloud
+
 
 class SelectProjectUserAction(workflows.Action):
     project_id = forms.ChoiceField(label=_("Project"))
@@ -43,6 +45,7 @@ class SelectProjectUserAction(workflows.Action):
         users = [(request.user.id, request.user.username)]
         self.fields['user_id'].choices = users
 
+
     class Meta:
         name = _("Project & User")
         permissions = ("openstack.roles.admin",)
@@ -54,107 +57,6 @@ class SelectProjectUser(workflows.Step):
     action_class = SelectProjectUserAction
     contributes = ("project_id", "user_id")
 
-
-class VolumeOptionsAction(workflows.Action):
-    VOLUME_CHOICES = (
-        ('', _("Don't boot from a volume.")),
-        ("volume_id", _("Boot from volume.")),
-        ("volume_snapshot_id", _("Boot from volume snapshot "
-                                 "(creates a new volume).")),
-    )
-    # Boot from volume options
-    volume_type = forms.ChoiceField(label=_("Volume Options"),
-                                    choices=VOLUME_CHOICES,
-                                    required=False)
-    volume_id = forms.ChoiceField(label=_("Volume"), required=False)
-    volume_snapshot_id = forms.ChoiceField(label=_("Volume Snapshot"),
-                                           required=False)
-    device_name = forms.CharField(label=_("Device Name"),
-                                  required=False,
-                                  initial="vda",
-                                  help_text=_("Volume mount point (e.g. 'vda' "
-                                              "mounts at '/dev/vda')."))
-    delete_on_terminate = forms.BooleanField(label=_("Delete on Terminate"),
-                                             initial=False,
-                                             required=False,
-                                             help_text=_("Delete volume on "
-                                                         "instance terminate"))
-
-    class Meta:
-        name = _("Volume Options")
-        permissions = ('openstack.services.volume',)
-        help_text_template = ("nova/instances/"
-                              "_launch_volumes_help.html")
-
-    def clean(self):
-        cleaned_data = super(VolumeOptionsAction, self).clean()
-        volume_opt = cleaned_data.get('volume_type', None)
-
-        if volume_opt and not cleaned_data[volume_opt]:
-            raise forms.ValidationError('Please choose a volume, or select '
-                                        '%s.' % self.VOLUME_CHOICES[0][1])
-        return cleaned_data
-
-    def _get_volume_display_name(self, volume):
-        if hasattr(volume, "volume_id"):
-            vol_type = "snap"
-            visible_label = _("Snapshot")
-        else:
-            vol_type = "vol"
-            visible_label = _("Volume")
-        return (("%s:%s" % (volume.id, vol_type)),
-                ("%s - %s GB (%s)" % (volume.display_name,
-                                     volume.size,
-                                     visible_label)))
-
-    def populate_volume_id_choices(self, request, context):
-        volume_options = [("", _("Select Volume"))]
-        try:
-            volumes = [v for v in api.nova.volume_list(self.request)
-                       if v.status == api.VOLUME_STATE_AVAILABLE]
-            volume_options.extend([self._get_volume_display_name(vol)
-                                   for vol in volumes])
-        except:
-            exceptions.handle(self.request,
-                              _('Unable to retrieve list of volumes.'))
-        return volume_options
-
-    def populate_volume_snapshot_id_choices(self, request, context):
-        volume_options = [("", _("Select Volume Snapshot"))]
-        try:
-            snapshots = api.nova.volume_snapshot_list(self.request)
-            snapshots = [s for s in snapshots
-                         if s.status == api.VOLUME_STATE_AVAILABLE]
-            volume_options.extend([self._get_volume_display_name(snap)
-                                   for snap in snapshots])
-        except:
-            exceptions.handle(self.request,
-                              _('Unable to retrieve list of volume '
-                                'snapshots.'))
-
-        return volume_options
-
-
-class VolumeOptions(workflows.Step):
-    action_class = VolumeOptionsAction
-    depends_on = ("project_id", "user_id")
-    contributes = ("volume_type",
-                   "volume_id",
-                   "device_name",  # Can be None for an image.
-                   "delete_on_terminate")
-
-    def contribute(self, data, context):
-        context = super(VolumeOptions, self).contribute(data, context)
-        # Translate form input to context for volume values.
-        if "volume_type" in data and data["volume_type"]:
-            context['volume_id'] = data.get(data['volume_type'], None)
-
-        if not context.get("volume_type", ""):
-            context['volume_type'] = self.action.VOLUME_CHOICES[0][0]
-            context['volume_id'] = None
-            context['device_name'] = None
-            context['delete_on_terminate'] = None
-        return context
 
 
 class SetInstanceDetailsAction(workflows.Action):
@@ -174,6 +76,8 @@ class SetInstanceDetailsAction(workflows.Action):
                                min_value=1,
                                initial=1,
                                help_text=_("Number of instances to launch."))
+    cloud = forms.CharField(max_length=80, label=_("Cloud Name"))
+    cloud.widget.attrs['readonly'] = True
 
     class Meta:
         name = _("Details")
@@ -252,7 +156,15 @@ class SetInstanceDetailsAction(workflows.Action):
 
     def populate_image_id_choices(self, request, context):
         images = self._get_available_images(request, context)
-        choices = [(image.id, image.name)
+
+	if 'cloud' in request.GET:
+	    cloud = request.GET['cloud']
+            choices = [(image.id, image.name)
+                   for image in images
+                   if image.properties.get("image_type", '') != "snapshot"
+		    and (get_cloud(image) == cloud)]
+	else:
+            choices = [(image.id, image.name)
                    for image in images
                    if image.properties.get("image_type", '') != "snapshot"]
         if choices:
@@ -275,7 +187,14 @@ class SetInstanceDetailsAction(workflows.Action):
     def populate_flavor_choices(self, request, context):
         try:
             flavors = api.nova.flavor_list(request)
-            flavor_list = [(flavor.id, "%s" % flavor.name)
+
+            if 'cloud' in request.GET:
+                cloud = request.GET['cloud']
+                flavor_list = [(flavor.id, "%s" % flavor.name)
+                           for flavor in flavors
+			   if get_cloud(flavor) == cloud]
+	    else:
+                flavor_list = [(flavor.id, "%s" % flavor.name)
                            for flavor in flavors]
         except:
             flavor_list = []
@@ -297,9 +216,12 @@ class SetInstanceDetailsAction(workflows.Action):
         return super(SetInstanceDetailsAction, self).get_help_text(extra)
 
 
+
+
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
-    contributes = ("source_type", "source_id", "name", "count", "flavor")
+    contributes = ("source_type", "source_id", "name", "count", "flavor", 
+		    "cloud")
 
     def prepare_action_context(self, request, context):
         if 'source_type' in context and 'source_id' in context:
@@ -313,10 +235,10 @@ class SetInstanceDetails(workflows.Step):
                 and context["source_type"] not in context):
             context[context["source_type"]] = context["source_id"]
 
-        # Translate form input to context for source values.
+        # Translate form input to context for source values
+
         if "source_type" in data:
             context["source_id"] = data.get(data['source_type'], None)
-
         return context
 
 
@@ -325,7 +247,7 @@ KEYPAIR_IMPORT_URL = "horizon:nova:access_and_security:keypairs:import"
 
 class SetAccessControlsAction(workflows.Action):
     keypair = forms.DynamicChoiceField(label=_("Keypair"),
-                                       required=False,
+                                       required=True,
                                        help_text=_("Which keypair to use for "
                                                    "authentication."),
                                        add_item_link=KEYPAIR_IMPORT_URL)
@@ -344,7 +266,14 @@ class SetAccessControlsAction(workflows.Action):
     def populate_keypair_choices(self, request, context):
         try:
             keypairs = api.nova.keypair_list(request)
-            keypair_list = [(kp.name, kp.name) for kp in keypairs]
+            if 'cloud' in request.GET:
+	        context['cloud'] = request.GET['cloud']
+	    if 'cloud' in context:
+		cloud = context['cloud']
+		keypair_list = [(kp.name, kp.name) for kp in keypairs
+				if get_cloud(kp) == cloud]
+	    else:
+                keypair_list = [(kp.name, kp.name) for kp in keypairs]
         except:
             keypair_list = []
             exceptions.handle(request,
@@ -358,6 +287,11 @@ class SetAccessControlsAction(workflows.Action):
     def populate_groups_choices(self, request, context):
         try:
             groups = api.nova.security_group_list(request)
+#            if 'cloud' in request.GET:
+#                cloud = request.GET['cloud']
+#		security_group_list = [(sg.name, sg.name) for sg in groups
+#				if get_cloud(sg) == cloud]
+#            else:
             security_group_list = [(sg.name, sg.name) for sg in groups]
         except:
             exceptions.handle(request,
@@ -368,7 +302,7 @@ class SetAccessControlsAction(workflows.Action):
 
 class SetAccessControls(workflows.Step):
     action_class = SetAccessControlsAction
-    depends_on = ("project_id", "user_id")
+    depends_on = ("project_id", "user_id", "cloud")
     contributes = ("keypair_id", "security_group_ids")
 
     def contribute(self, data, context):
@@ -410,7 +344,7 @@ class LaunchInstance(workflows.Workflow):
     default_steps = (SelectProjectUser,
                      SetInstanceDetails,
                      SetAccessControls,
-                     VolumeOptions,
+                     #VolumeOptions,
                      PostCreationStep)
 
     def format_status_message(self, message):
@@ -439,7 +373,7 @@ class LaunchInstance(workflows.Workflow):
 
         try:
             api.nova.server_create(request,
-                                   context['name'],
+                                   context['cloud'].lower() + '-' + context['name'],
                                    context['source_id'],
                                    context['flavor'],
                                    context['keypair_id'],
