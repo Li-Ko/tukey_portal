@@ -70,8 +70,8 @@ class Collection2(models.Model):
 
 class Collection2Collection(models.Model):
     id = models.AutoField(primary_key=True)
-    collection2_ref = models.ForeignKey(Collection2)
-    collection_ref = models.ForeignKey(Collection)
+    collection2_ref = models.ForeignKey(Collection2, db_column='collection2_ref')
+    collection_ref = models.ForeignKey(Collection, db_column='collection_ref')
     owner = models.ForeignKey(FilesystemUser)
     class Meta:
         db_table = u'collection2_collection'

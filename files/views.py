@@ -89,13 +89,16 @@ class PaginatedMultiView(tables.MultiTableView):
 
 
 
-class FileView(PaginatedView):
-    table_class = FilesTable
+class FileView(PaginatedMultiView):
+    table_classes = FilesTable, CollectionFilesTable
 
     template_name = 'osdc/files/file.html'
 
-    def get_data(self):
-        return self.get_paginated_data(File)
+    def get_files_data(self):
+        return self.get_paginated_data(File, FilesTable)
+
+    def get_collection_files_data(self):
+        return self.get_paginated_data(CollectionFile, CollectionFilesTable, subclass=False)
 
 
 class GroupView(PaginatedMultiView):
@@ -194,7 +197,7 @@ class CreateCollectionFileView(forms.ModalFormView):
     form_class = CreateCollectionFileForm
     template_name = 'osdc/files/create_collection_file.html'
     context_object_name = 'collection_file'
-    success_url = reverse_lazy("files:collection_file")
+    success_url = reverse_lazy("files:file")
 
     
 class CreateFileView(forms.ModalFormView):
@@ -291,7 +294,7 @@ class CreateCollectionFileView(forms.ModalFormView):
     form_class = CreateCollectionFileForm
     template_name = 'osdc/files/create_collection_file.html'
     context_object_name = 'collection_file'
-    success_url = reverse_lazy("files:collection_file")
+    success_url = reverse_lazy("files:file")
 
 
 #class EditCollection2CollectionView(forms.ModalFormView):

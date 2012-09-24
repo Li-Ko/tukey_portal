@@ -73,6 +73,7 @@ class NewCollection2(NewLink):
 class NewPermissionFileUser(NewLink):
     verbose_name = _("Share File with User")
     url = "files:create_permission_file_user"
+    name = "new_permission_file_user"
 
 
 class NewPermissionFileGroup(MultiLink):
@@ -117,6 +118,7 @@ class NewGroupUser(NewLink):
 class NewCollectionFile(NewLink):
     verbose_name = _("Add File to Collection")
     url = "files:create_collection_file"
+    name = "new_collection_file"
 
 
 class NewCollection2Collection(NewLink):
@@ -177,8 +179,8 @@ class RemoveCollectionFile(RemoveAction):
     data_type_singular = _("File from Collection")
     data_type_plural = _("Files from Collections")
 
-    def handle(self, table, request, obj_ids):
-        self.delete_model(request.user, obj_ids, CollectionFile)
+    def delete(self, request, obj_ids):
+        self.delete_model(request.user, [obj_ids], CollectionFile)
 
 class RemoveCollection2Collection(RemoveAction):
     data_type_singular = _("Collection from Collection")
@@ -251,13 +253,16 @@ def get_ref_group(item):
 def get_ref_collection(item):
     return item.collection_ref.name
 
+def get_ref_collection2(item):
+    return item.collection2_ref.name
+
 
 def get_ref_user(item):
     return item.filesystem_user_ref.name
 
 
 def get_ref_file(item):
-    return item.file_ref.name
+    return item.file_ref.real_location
 
 def get_user_ref(item):
     return item.user.name
@@ -296,8 +301,8 @@ def get_group_type(item):
     
 class FilesTable(tables.DataTable):
 
-    name = tables.Column(get_name,
-        verbose_name = _("Name"))
+    #name = tables.Column(get_name,
+    #    verbose_name = _("Name"))
 
     location = tables.Column(file_get_ref_al_location,
         verbose_name = _("Location"))
@@ -309,8 +314,11 @@ class FilesTable(tables.DataTable):
     class Meta:
         name = "files"
         verbose_name = _("Files")
-        row_actions = (DeleteFile, )#EditFile)
-	table_actions = (NewFile, DeleteFile)
+
+	# Add file to collection share file with user/group
+	#row_actions = (NewCollectionFile, NewPermissionFileUser, NewPermissionFileGroup)
+        #row_actions = (DeleteFile, )#EditFile)
+	#table_actions = (
 	pagination_param = 'file_marker'
 
 
@@ -385,10 +393,10 @@ class PermissionsTable(tables.DataTable):
         verbose_name = _("Resource Name"))
 
     group_type = tables.Column(get_group_type,
-	verbose_name = _("Group Type"))
+	verbose_name = _("Account Type"))
 
     user_name = tables.Column(get_user_name,
-	verbose_name = _("Group Name"))
+	verbose_name = _("Account Name"))
 
     def get_object_id(self, datum):
 	return unicode(datum.id)
@@ -435,6 +443,12 @@ class CollectionFilesTable(tables.DataTable):
     file_name = tables.Column(get_ref_file,
         verbose_name = _("File"))
 
+    def get_object_id(self, datum):
+        return unicode(datum.id)
+
+    def get_object_display(self, datum):
+        return "%s from %s" % (get_ref_file(datum),get_ref_collection(datum))
+
     class Meta:
         name = "collection_files"
         verbose_name = _("Files in Collections")
@@ -445,7 +459,7 @@ class CollectionFilesTable(tables.DataTable):
 
 class Collection2CollectionsTable(tables.DataTable):
 
-    collection2_name = tables.Column(get_ref_collection,
+    collection2_name = tables.Column(get_ref_collection2,
         verbose_name = _("Collection of Collections"))
         
     collection_name = tables.Column(get_ref_collection,

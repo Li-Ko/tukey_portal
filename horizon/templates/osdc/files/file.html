@@ -8,5 +8,10 @@
 {% endblock page_header %}
 
 {% block main %}
-  {{ table.render }}
+  <div class="files">
+    {{ files_table.render }}
+  </div>
+  <div class="collection_files">
+    {{ collection_files_table.render }}
+  </div>
 {% endblock %}
