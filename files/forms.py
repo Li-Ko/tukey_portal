@@ -398,7 +398,7 @@ class CreatePermissionCollection2GroupForm(CreatePermissionForm):
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['inode'].choices = [
-            (f.parent.id, f.name) for f in  Collection.objects.using('files').filter(owner__name=request.user).all()]
+            (f.parent.id, f.name) for f in  Collection2.objects.using('files').filter(owner__name=request.user).all()]
         self.base_fields['user'].choices = [
             (g.parent.id, g.name) for g in Group.objects.using('files')]
         super(CreatePermissionCollection2GroupForm, self).__init__(request, *args, **kwargs)
@@ -411,7 +411,7 @@ class CreatePermissionCollection2UserForm(CreatePermissionForm):
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['inode'].choices = [
-            (f.parent.id, f.name) for f in  Collection.objects.using('files').filter(owner__name=request.user).all()]
+            (f.parent.id, f.name) for f in  Collection2.objects.using('files').filter(owner__name=request.user).all()]
         self.base_fields['user'].choices = [
             (g.parent.id, g.name) for g in FilesystemUser.objects.using('files')]
         super(CreatePermissionCollection2UserForm, self).__init__(request, *args, **kwargs)
