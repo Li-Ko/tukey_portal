@@ -63,7 +63,7 @@ class CreateGroupUserForm(forms.SelfHandlingForm):
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['user_name'].choices = [
-            (f.id, f.name) for f in  FilesystemUser.objects.using('files').all()]
+            (f.id, f.name) for f in  FilesystemUser.objects.using('files').exclude(name=request.user)]
         self.base_fields['group_name'].choices = [
             (g.id, g.name) for g in Group.objects.using('files').filter(owner__name=request.user).all()]
         super(CreateGroupUserForm, self).__init__(request, *args, **kwargs)
@@ -112,94 +112,6 @@ class CreateCollectionFileForm(forms.SelfHandlingForm):
         except:
             exceptions.handle(request, _('Unable to add file to collection.'))
 
-#class EditGroupForm(forms.SelfHandlingForm):
-#    name = forms.CharField(max_length="255", label=_("Name"), required=True)
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('Your group %s has been editd.' %
-#                    data['name']))
-#            return group
-#        except:
-#            exceptions.handle(request, _('Unable to edit new group.'))
-#
-#
-#class EditFileForm(forms.SelfHandlingForm):
-#    name = forms.CharField(max_length="255", label=_("Filename"), required=True)
-#    
-#    location = forms.CharField(max_length="255", label=_("Location"), required=True)
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('Your file %s has been registered.' %
-#                    data['name']))
-#            return group
-#        except:
-#            exceptions.handle(request, _('Unable to register file.'))
-#
-#
-##class EditGroupUserForm(forms.SelfHandlingForm):
-#
-#    user_name = forms.ChoiceField(label=_('User'), required=True)
-#
-#    group_name = forms.ChoiceField(label=_('Group'), required=True)
-#
-#    def __init__(self, request, *args, **kwargs):
-#        self.base_fields['user_name'].choices = [
-#            (f.id, f.name) for f in  FilesystemUser.objects.using('files').all()]
-#        self.base_fields['group_name'].choices = [
-#            (g.id, g.name) for g in Group.objects.using('files').filter(owner__name=request.user).all()]
-#        super(EditGroupUserForm, self).__init__(request, *args, **kwargs)
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('User %s has been added to group %s.' %
-#                    data['user_name'], data['group_name']))
-#            return group_user
-#        except:
-#            exceptions.handle(request, _('Unable to add user to group.'))
-#
-#
-#class EditCollectionFileForm(forms.SelfHandlingForm):
-#
-#    group_name = forms.ChoiceField(label=_('Group'), required=True)
-#
-#    file_name = forms.ChoiceField(label=_('File'), required=True)
-#
-#    def __init__(self, request, *args, **kwargs):
-#        self.base_fields['file_name'].choices = [
-#            (f.id, f.name) for f in  File.objects.using('files').filter(owner__name=request.user).all()]
-#        self.base_fields['group_name'].choices = [
-#            (g.id, g.name) for g in Group.objects.using('files').filter(owner__name=request.user).all()]
-#        super(EditCollectionFileForm, self).__init__(request, *args, **kwargs)
-#
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('File %s has been added to group %s.' %
-#                    data['file_name'], data['group_name']))
-#            return group_group
-#        except:
-#            exceptions.handle(request, _('Unable to add file to group.'))
-#             
-#                                                             
-#class EditCollectionForm(forms.SelfHandlingForm):
-#    name = forms.CharField(max_length="255", label=_("Name"), required=True)
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('Your collection %s has been editd.' %
-#                    data['name']))
-#            return collection
-#        except:
-#            exceptions.handle(request, _('Unable to edit new collection.'))
-#
-#
 class CreateCollectionForm(forms.SelfHandlingForm):
     name = forms.CharField(max_length="255", label=_("Collection Name"), required=True)
     
@@ -296,30 +208,17 @@ class CreateCollection2CollectionForm(forms.SelfHandlingForm):
             exceptions.handle(request, _('Unable to add collection to collection.'))
 
 
-#class EditPermissionForm(forms.SelfHandlingForm):
-#    name = forms.ChoiceField(label=_("Name"), required=True)
-#
-#    def handle(self, request, data):
-#        try:
-#            messages.success(request,
-#                _('Your collection2_collection %s has been editd.' %
-#                    data['name']))
-#            return collection2_collection
-#        except:
-#            exceptions.handle(request, _('Unable to edit new collection2_collection.'))
-#
-
 class CreatePermissionForm(forms.SelfHandlingForm):
-   # inode = forms.ChoiceField(label=_("File or Collection"), required=True)
 
-   # user = forms.ChoiceField(label=_("User or Group"), required=True)
+    user = forms.ChoiceField(label=_("User/Group"), required=True)
 
-#    def __init__(self, request, *args, **kwargs):
-#        self.base_fields[inode_model_name].choices = [
-#            (f.id, f.name) for f in  File.objects.using('files').filter(owner__name=request.user).all()]
-#        self.base_fields[user_model_name].choices = [
-#            (u.id, u.name) for g in FilesystemUser.objects.using('files')]
-#        super(CreatePermissionForm, self).__init__(request, *args, **kwargs)
+    permissions = forms.ChoiceField(label=_("Write Permission"), required=True)
+
+
+    def __init__(self, request, *args, **kwargs):
+	self.base_fields['permissions'].choices = (('r', "Read Only"),('w', "Read/Write"))
+        self.base_fields['user'].choices = get_user_choices(request.user)
+        super(CreatePermissionForm, self).__init__(request, *args, **kwargs)
 
 
     def handle(self, request, data):
@@ -328,7 +227,7 @@ class CreatePermissionForm(forms.SelfHandlingForm):
 	    inode = Inode.objects.using('files').filter(id=data['inode'])[0]
 	    abstract_user = AbstractUser.objects.using('files').filter(id=data['user'])[0]
 
-            permission = Permission(inode_ref=inode, user_ref=abstract_user, owner=user)
+            permission = Permission(inode_ref=inode, user_ref=abstract_user, owner=user, permissions=data['permissions'])
             permission.save(using='files')
 
             messages.success(request,
@@ -340,79 +239,48 @@ class CreatePermissionForm(forms.SelfHandlingForm):
 
 
 class CreatePermissionFileUserForm(CreatePermissionForm):
+
     inode = forms.ChoiceField(label=_("File"), required=True)
 
-    user = forms.ChoiceField(label=_("User"), required=True)
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['inode'].choices = [
             (f.parent.id, f.real_location) for f in  File.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in FilesystemUser.objects.using('files')]
         super(CreatePermissionFileUserForm, self).__init__(request, *args, **kwargs)
 
-
-class CreatePermissionFileGroupForm(CreatePermissionForm):
-    inode = forms.ChoiceField(label=_("File"), required=True)
-
-    user = forms.ChoiceField(label=_("Group"), required=True)
-
-    def __init__(self, request, *args, **kwargs):
-        self.base_fields['inode'].choices = [
-            (f.parent.id, f.real_location) for f in  File.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in Group.objects.using('files')]
-        super(CreatePermissionFileGroupForm, self).__init__(request, *args, **kwargs)
-
-
-class CreatePermissionCollectionGroupForm(CreatePermissionForm):
-    inode = forms.ChoiceField(label=_("Collection"), required=True)
-
-    user = forms.ChoiceField(label=_("Group"), required=True)
-
-    def __init__(self, request, *args, **kwargs):
-        self.base_fields['inode'].choices = [
-            (f.parent.id, f.name) for f in  Collection.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in Group.objects.using('files')]
-        super(CreatePermissionCollectionGroupForm, self).__init__(request, *args, **kwargs)
-
-
 class CreatePermissionCollectionUserForm(CreatePermissionForm):
+
     inode = forms.ChoiceField(label=_("Collection"), required=True)
 
-    user = forms.ChoiceField(label=_("User"), required=True)
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['inode'].choices = [
             (f.parent.id, f.name) for f in  Collection.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in FilesystemUser.objects.using('files')]
         super(CreatePermissionCollectionUserForm, self).__init__(request, *args, **kwargs)
 
 
-class CreatePermissionCollection2GroupForm(CreatePermissionForm):
-    inode = forms.ChoiceField(label=_("Collection of Collections"), required=True)
-
-    user = forms.ChoiceField(label=_("Group"), required=True)
-
-    def __init__(self, request, *args, **kwargs):
-        self.base_fields['inode'].choices = [
-            (f.parent.id, f.name) for f in  Collection2.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in Group.objects.using('files')]
-        super(CreatePermissionCollection2GroupForm, self).__init__(request, *args, **kwargs)
-
-
 class CreatePermissionCollection2UserForm(CreatePermissionForm):
-    inode = forms.ChoiceField(label=_("Collection of Collections"), required=True)
 
-    user = forms.ChoiceField(label=_("User"), required=True)
+    inode = forms.ChoiceField(label=_("Collection of Collections"), required=True)
 
     def __init__(self, request, *args, **kwargs):
         self.base_fields['inode'].choices = [
-            (f.parent.id, f.name) for f in  Collection2.objects.using('files').filter(owner__name=request.user).all()]
-        self.base_fields['user'].choices = [
-            (g.parent.id, g.name) for g in FilesystemUser.objects.using('files')]
+            (f.parent.id, f.name) for f in  Collection2.objects.using('files').filter(owner__name=request.user)]
         super(CreatePermissionCollection2UserForm, self).__init__(request, *args, **kwargs)
+
+
+def get_user_choices(user):
+    users = [(g.parent.id, 'User: %s' % g.name) for g in FilesystemUser.objects.using('files').exclude(name=user)]
+
+    groups = [(g.parent.id, 'Group: %s' % g.name) for g in Group.objects.using('files').filter(owner__name=user)]
+
+    project_groups = [(g.parent.id, 'Project Group: %s' % g.name) for g in Group.objects.using('files').filter(
+        id__in = [ g.filesystem_group_ref.id for g in
+            GroupUser.objects.using('files').filter(
+                filesystem_user_ref__name=user).exclude(owner_id__in=FilesystemUser.objects.using('files').all())
+        ]
+    )]
+
+    return users + groups + project_groups
+
 

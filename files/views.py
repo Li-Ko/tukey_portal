@@ -7,13 +7,15 @@ from horizon import tabs
 from horizon import tables
 from horizon import workflows
 
+from horizon.decorators import require_auth
+
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 
 from files.models import AbstractUser, FilesystemUser, File, Group, Collection, Collection2, Collection2Collection, CollectionFile, GroupUser, Permission
-from files.tables import FilesTable, FilesystemUsersTable, GroupsTable, GroupUsersTable, CollectionFilesTable, CollectionsTable, Collection2sTable, PermissionsTable, Collection2CollectionsTable
-from files.forms import CreateGroupForm, CreateGroupUserForm, CreateFileForm, CreateCollectionFileForm, CreateCollectionForm, CreateCollection2Form, CreateCollection2CollectionForm, CreatePermissionFileUserForm, CreatePermissionFileGroupForm, CreatePermissionCollectionGroupForm, CreatePermissionCollectionUserForm, CreatePermissionCollection2GroupForm, CreatePermissionCollection2UserForm
+from files.tables import FilesTable, FilesystemUsersTable, GroupsTable, GroupUsersTable, CollectionFilesTable, CollectionsTable, Collection2sTable, PermissionsTable, Collection2CollectionsTable, ProjectGroupsTable
+from files.forms import CreateGroupForm, CreateGroupUserForm, CreateFileForm, CreateCollectionFileForm, CreateCollectionForm, CreateCollection2Form, CreateCollection2CollectionForm, CreatePermissionFileUserForm, CreatePermissionCollectionUserForm, CreatePermissionCollection2UserForm
 #from files.forms import EditGroupForm, EditGroupUserForm, EditFileForm, EditCollectionFileForm, EditCollectionForm, EditCollection2Form, EditCollection2CollectionForm, EditPermissionForm
 
 
@@ -49,6 +51,15 @@ class PaginatedView(tables.DataTableView):
         data = [entry for entry in entry_set.all()[:PaginatedView.entries_per_page]]
 
         return data
+
+
+#    @require_auth
+    def get(self, request, *args, **kwargs):
+	return require_auth(super(PaginatedView, self).get)(request, *args, **kwargs)
+
+#    @require_auth
+    def post(self, request, *args, **kwargs):
+        return require_auth(super(PaginatedView, self).post)(request, *args, **kwargs)
 
 
 # Figrue out how to handle this without duplicating the class some 
@@ -87,6 +98,14 @@ class PaginatedMultiView(tables.MultiTableView):
 
         return data
 
+#    @require_auth
+    def get(self, request, *args, **kwargs):
+        return require_auth(super(PaginatedMultiView, self).get)(request, *args, **kwargs)
+
+#    @require_auth
+    def post(self, request, *args, **kwargs):
+        return require_auth(super(PaginatedMultiView, self).post)(request, *args, **kwargs)
+
 
 
 class FileView(PaginatedMultiView):
@@ -102,7 +121,7 @@ class FileView(PaginatedMultiView):
 
 
 class GroupView(PaginatedMultiView):
-    table_classes = GroupsTable, GroupUsersTable
+    table_classes = ProjectGroupsTable, GroupsTable, GroupUsersTable
 
     template_name = 'osdc/files/group.html'
 
@@ -111,6 +130,24 @@ class GroupView(PaginatedMultiView):
 
     def get_group_users_data(self):
         return self.get_paginated_data(GroupUser, GroupUsersTable, subclass=False)
+
+    def get_project_groups_data(self):
+        marker = self.get_marker(ProjectGroupsTable)
+
+	entry_set =  Group.objects.using('files').filter(
+	    id__in = [ g.filesystem_group_ref.id for g in 
+		GroupUser.objects.using('files').filter(
+		    filesystem_user_ref__name=self.request.user, filesystem_group_ref__gt=int(marker)
+		).exclude(owner_id__in=FilesystemUser.objects.using('files').all())
+	    ]
+	)
+
+        table_name = ProjectGroupsTable._meta.name
+        setattr(self, "_more_%s" % table_name, entry_set.count() > PaginatedMultiView.entries_per_page)
+        data = [entry for entry in entry_set.all()[:PaginatedMultiView.entries_per_page]]
+
+        return data
+
 
 
 class CollectionView(PaginatedMultiView):
@@ -326,14 +363,14 @@ class CreatePermissionFileUserView(CreatePermissionView):
     form_class = CreatePermissionFileUserForm
     template_name = 'osdc/files/create_permission_file_user.html'
 
-class CreatePermissionFileGroupView(CreatePermissionView):
-    form_class = CreatePermissionFileGroupForm
-    template_name = 'osdc/files/create_permission_file_group.html'
-
-class CreatePermissionCollectionGroupView(CreatePermissionView):
-    form_class = CreatePermissionCollectionGroupForm
-    template_name = 'osdc/files/create_permission_collection_group.html'
-
+#class CreatePermissionFileGroupView(CreatePermissionView):
+#    form_class = CreatePermissionFileGroupForm
+#    template_name = 'osdc/files/create_permission_file_group.html'
+#
+#class CreatePermissionCollectionGroupView(CreatePermissionView):
+#    form_class = CreatePermissionCollectionGroupForm
+#    template_name = 'osdc/files/create_permission_collection_group.html'
+#
 
 class CreatePermissionCollectionUserView(CreatePermissionView):
     form_class = CreatePermissionCollectionUserForm
@@ -343,7 +380,7 @@ class CreatePermissionCollection2UserView(CreatePermissionView):
     form_class = CreatePermissionCollection2UserForm
     template_name = 'osdc/files/create_permission_collection2_user.html'
 
-class CreatePermissionCollection2GroupView(CreatePermissionView):
-    form_class = CreatePermissionCollection2GroupForm
-    template_name = 'osdc/files/create_permission_collection2_group.html'
-
+#class CreatePermissionCollection2GroupView(CreatePermissionView):
+#    form_class = CreatePermissionCollection2GroupForm
+#    template_name = 'osdc/files/create_permission_collection2_group.html'
+#

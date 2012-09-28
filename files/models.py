@@ -52,6 +52,21 @@ class File(models.Model):
     class Meta:
         db_table = u'file'
 
+
+class Missing(models.Model):
+    id = models.AutoField(primary_key=True)
+    file_ref = models.ForeignKey(File, db_column='file_ref')
+    class Meta:
+	db_table = u'missing'
+
+
+class IsDirectory(models.Model):
+    id = models.AutoField(primary_key=True)
+    file_ref = models.ForeignKey(File, db_column='file_ref')
+    class Meta:
+        db_table = u'is_directory'
+
+
 class Collection(models.Model):
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(Inode)
@@ -91,6 +106,7 @@ class Permission(models.Model):
     inode_ref = models.ForeignKey(Inode, db_column='inode_ref')
     user_ref = models.ForeignKey(AbstractUser, db_column='user_ref')
     owner = models.ForeignKey(FilesystemUser, db_column='owner')
+    permissions = models.CharField(max_length=512)
     class Meta:
         db_table = u'permission'
         unique_together = (("inode_ref", "user_ref"),)

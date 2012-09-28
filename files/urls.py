@@ -5,7 +5,10 @@
 #)
 from django.conf.urls.defaults import patterns, url
 
-from .views import FileView, GroupView, CollectionFileView, CreateGroupView, CreateGroupUserView, CreateFileView, CreateCollectionFileView, CollectionView, PermissionView, CreateCollectionView, CreateCollection2CollectionView, CreateCollection2View, CreatePermissionFileUserView, CreatePermissionFileGroupView, CreatePermissionCollectionUserView, CreatePermissionCollectionGroupView, CreatePermissionCollection2UserView, CreatePermissionCollection2GroupView
+from horizon.decorators import require_auth
+
+
+from .views import FileView, GroupView, CollectionFileView, CreateGroupView, CreateGroupUserView, CreateFileView, CreateCollectionFileView, CollectionView, PermissionView, CreateCollectionView, CreateCollection2CollectionView, CreateCollection2View, CreatePermissionFileUserView, CreatePermissionCollectionUserView, CreatePermissionCollection2UserView
 
 
 urlpatterns = patterns('files.views',
@@ -25,11 +28,11 @@ urlpatterns = patterns('files.views',
     url(r'^create_collection/$', CreateCollectionView.as_view(), name='create_collection'),
     url(r'^create_collection2/$', CreateCollection2View.as_view(), name='create_collection2'),
     url(r'^create_permission_file_user/$', CreatePermissionFileUserView.as_view(), name='create_permission_file_user'),
-    url(r'^create_permission_file_group/$', CreatePermissionFileGroupView.as_view(), name='create_permission_file_group'),
+ #   url(r'^create_permission_file_group/$', CreatePermissionFileGroupView.as_view(), name='create_permission_file_group'),
     url(r'^create_permission_collection_user/$', CreatePermissionCollectionUserView.as_view(), name='create_permission_collection_user'),
-    url(r'^create_permission_collection_group/$', CreatePermissionCollectionGroupView.as_view(), name='create_permission_collection_group'),
+ #   url(r'^create_permission_collection_group/$', CreatePermissionCollectionGroupView.as_view(), name='create_permission_collection_group'),
     url(r'^create_permission_collection2_user/$', CreatePermissionCollection2UserView.as_view(), name='create_permission_collection2_user'),
-    url(r'^create_permission_collection2_group/$', CreatePermissionCollection2GroupView.as_view(), name='create_permission_collection2_group'),
+#    url(r'^create_permission_collection2_group/$', CreatePermissionCollection2GroupView.as_view(), name='create_permission_collection2_group'),
     url(r'^create_collection2_collection/$', CreateCollection2CollectionView.as_view(), name='create_collection2_collection'),
 #    url(r'^(?P<id>[^/]+)/edit_collection2_collection/$', EditCollection2CollectionView.as_view(), name='edit_collection2_collection'),
 #    url(r'^(?P<id>[^/]+)/edit_group/$', EditGroupView.as_view(), name='edit_group'),

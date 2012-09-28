@@ -12,7 +12,7 @@ from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
 #from files.models import File, Group, FilesystemUser, GroupUser, CollectionFile
-from files.models import File, Group, FilesystemUser, GroupUser, CollectionFile, AbstractUser, Inode, Permission, Collection, Collection2
+from files.models import File, Group, FilesystemUser, GroupUser, CollectionFile, AbstractUser, Inode, Permission, Collection, Collection2, IsDirectory, Missing
 
 
 LOG = logging.getLogger(__name__)
@@ -71,39 +71,39 @@ class NewCollection2(NewLink):
     url = "files:create_collection2"
 
 class NewPermissionFileUser(NewLink):
-    verbose_name = _("Share File with User")
+    verbose_name = _("Share File with User or Group")
     url = "files:create_permission_file_user"
     name = "new_permission_file_user"
 
 
-class NewPermissionFileGroup(MultiLink):
-    name = "new_file_group"
-    verbose_name = _("Share File with Group")
-    url = "files:create_permission_file_group"
-
+#class NewPermissionFileGroup(MultiLink):
+#    name = "new_file_group"
+#    verbose_name = _("Share File with Group")
+#    url = "files:create_permission_file_group"
+#
 
 class NewPermissionCollectionUser(MultiLink):
     name = "new_collection_user"
-    verbose_name = _("Share Collection with User")
+    verbose_name = _("Share Collection with User or Group")
     url = "files:create_permission_collection_user"
 
 
-class NewPermissionCollectionGroup(MultiLink):
-    name = "new_collection_group"
-    verbose_name = _("Share Collection with Group")
-    url = "files:create_permission_collection_group"
+#class NewPermissionCollectionGroup(MultiLink):
+#    name = "new_collection_group"
+#    verbose_name = _("Share Collection with Group")
+#    url = "files:create_permission_collection_group"
 
 
 class NewPermissionCollection2User(MultiLink):
     name = "new_collection2_user"
-    verbose_name = _("Share Collection of Collections with User")
+    verbose_name = _("Share Collection of Collections with User or Group")
     url = "files:create_permission_collection2_user"
 
 
-class NewPermissionCollection2Group(MultiLink):
-    name = "new_collection2_group"
-    verbose_name = _("Share Collection of Collections with Group")
-    url = "files:create_permission_collection2_group"
+#class NewPermissionCollection2Group(MultiLink):
+#    name = "new_collection2_group"
+#    verbose_name = _("Share Collection of Collections with Group")
+#    url = "files:create_permission_collection2_group"
 
 
 class NewFile(NewLink):
@@ -132,6 +132,9 @@ class DeleteFile(DeleteAction):
 
     def delete(self, request, obj_id):
         self.delete_model(request.user, [obj_id], Inode)
+
+    def allowed(self, request, file):
+	return get_missing(file) == "not found"
 
 
 class DeleteGroup(DeleteAction):
@@ -190,51 +193,6 @@ class RemoveCollection2Collection(RemoveAction):
         self.delete_model(request.user, obj_ids, Collection2Collection)
 
 
-#class EditFile(EditAction):
-#    data_type_singular = _("File")
-#    data_type_plural = _("Files")
-#    url = 'files:edit_file'
-#
-#
-#class EditGroup(EditAction):
-#    data_type_singular = _("Group")
-#    data_type_plural = _("Groups")
-#    url = 'files:edit_group'
-#
-#
-#class EditCollection(EditAction):
-#    data_type_singular = _("Collection")
-#    data_type_plural = _("Collections")
-#    url = 'files:edit_collection'
-#
-#
-#class EditCollection2(EditAction):
-#    data_type_singular = _("Collection of Collections")
-#    data_type_plural = _("Collections of Collections")
-#    url = 'files:edit_collection2'
-#
-#
-#class EditPermission(EditAction):
-#    data_type_singular = _("Permission")
-#    data_type_plural = _("Permissions")
-#    url = 'files:edit_permission'
-#
-#
-#class EditGroupUser(EditAction):
-#    data_type_singular = _("User in Group")
-#    data_type_plural = _("Users in Groups")
-#    url = 'files:edit_group_user'
-#
-#class EditCollectionFile(EditAction):
-#    data_type_singular = _("File in Collection")
-#    data_type_plural = _("Files in Collections")
-#    url = 'files:edit_collection_file'
-#
-#class EditCollection2Collection(EditAction):
-#    data_type_singular = _("Collection in Collection")
-#    data_type_plural = _("Collections in Collections")
-#    url = 'files:edit_collection2_collection'
-
 def get_name(item):
     return item.name
 
@@ -282,6 +240,8 @@ def get_inode_name(item):
     for model, _ in file_models:
         file_objects = model.objects.using("files").filter(parent_id=item.inode_ref.id)
         if len(file_objects) > 0:
+	    if hasattr(file_objects[0], 'real_location'):
+		return file_objects[0].real_location
             return file_objects[0].name
 
 
@@ -298,6 +258,24 @@ def get_group_type(item):
         if len(user_objects) > 0:
             return name
 
+def get_file_type(item):
+    directories = IsDirectory.objects.using("files").filter(file_ref=item.id)
+    if len(directories) > 0:
+	return "directory"
+    return "file"
+
+def get_missing(item):
+    directories = Missing.objects.using("files").filter(file_ref=item.id)
+    if len(directories) > 0:
+        return "not found"
+    return "file exists"
+
+def get_permissions(item):
+    if 'w' in item.permissions:
+	return "Read/Write"
+    return "Read-only"
+
+
     
 class FilesTable(tables.DataTable):
 
@@ -306,6 +284,12 @@ class FilesTable(tables.DataTable):
 
     location = tables.Column(file_get_ref_al_location,
         verbose_name = _("Location"))
+
+    file_type = tables.Column(get_file_type,
+	verbose_name = _("File Type"))
+
+    missing = tables.Column(get_missing,
+	verbose_name = _("File Exists"))
 
 
     def get_object_id(self, datum):
@@ -317,8 +301,8 @@ class FilesTable(tables.DataTable):
 
 	# Add file to collection share file with user/group
 	#row_actions = (NewCollectionFile, NewPermissionFileUser, NewPermissionFileGroup)
-        #row_actions = (DeleteFile, )#EditFile)
-	#table_actions = (
+        row_actions = (DeleteFile, )#EditFile)
+	table_actions = (DeleteFile, )
 	pagination_param = 'file_marker'
 
 
@@ -346,10 +330,22 @@ class GroupsTable(tables.DataTable):
 
     class Meta:
         name = "groups"
-        verbose_name = _("Groups")
+        verbose_name = _("My Groups")
         row_actions = (DeleteGroup, )#EditGroup)
 	table_actions = (NewGroup, DeleteGroup)
 	pagination_param = 'group_marker'
+
+class ProjectGroupsTable(tables.DataTable):
+    name = tables.Column(get_name,
+        verbose_name = _("Name"))
+
+    def get_object_id(self, datum):
+        return unicode(datum.parent.id)
+
+    class Meta:
+        name = "project_groups"
+        verbose_name = _("Project Groups")
+        pagination_param = 'project_group_marker'
 
 
 class CollectionsTable(tables.DataTable):
@@ -398,6 +394,9 @@ class PermissionsTable(tables.DataTable):
     user_name = tables.Column(get_user_name,
 	verbose_name = _("Account Name"))
 
+    permissions = tables.Column(get_permissions,
+	verbose_name = _("Permissions"))
+
     def get_object_id(self, datum):
 	return unicode(datum.id)
 
@@ -409,7 +408,7 @@ class PermissionsTable(tables.DataTable):
         name = "permissions"
         verbose_name = _("Permissions")
         row_actions = (DeletePermission,)# EditPermission)
-	table_actions = (NewPermissionFileUser, NewPermissionFileGroup, NewPermissionCollectionUser, NewPermissionCollectionGroup, NewPermissionCollection2User, NewPermissionCollection2Group, DeletePermission)
+	table_actions = (NewPermissionFileUser, NewPermissionCollectionUser, NewPermissionCollection2User, DeletePermission)
 	pagination_param = 'permission_marker'
 
 
