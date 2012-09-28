@@ -1,0 +1,55 @@
+{% extends "base_web.html" %}
+
+{% block meta_title %}Contact Support{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h2>Contact OSDC Support</h2>
+<p>
+Questions? Problems? Contact our support team using the form below and we will gladly help you out.
+</p>
+
+</header>
+{% endblock %}
+
+
+{% block main %}
+
+
+<form action="/support/" method="post" class="form-horizontal">{% csrf_token %}
+  <fieldset>    
+    <div class="control-group {% if form.sender.errors %}error{% endif %}">  
+      <label class="control-label" for="id_sender">Your Email</label>
+      <div class="controls">
+	<input type="text" class="input-xlarge" id="id_sender" name="sender">
+	<span class="help-inline">{{form.sender.errors}}</span>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="id_subject">Subject</label>
+      <div class="controls">
+	<input type="text" class="input-xlarge" id="id_subject" name="subject">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="id_message">Message</label>
+      <div class="controls">
+	{{ form.message }}
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+      <button type="submit" class="btn btn-primary">Send Message</button>
+      </div>
+      </div>
+      
+  </fieldset>
+</form>
+{% endblock %}
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+$("#nav-support").attr('class', 'active')
+</script>
+{% endblock %}

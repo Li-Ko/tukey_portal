@@ -26,18 +26,22 @@ from django.conf.urls.defaults import patterns, url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+from django.views.generic.simple import direct_to_template
 import horizon
 
 
 urlpatterns = patterns('',
-    url(r'^$', 'horizon.views.splash', name='splash'),
-    url (r'^openid/', include('django_openid_auth.urls')),
+    url(r'^$', direct_to_template, {"template": "index.html"}, name="index"),
+    url(r'^console/', 'horizon.views.splash', name='splash'),
+    url(r'^openid/', include('django_openid_auth.urls')),
     url(r'^auth/', include('openstack_auth.urls')),
-    url('^files/', include('files.urls', namespace='files')),
-    url('^files_backup/', include('files_backup.urls', namespace='files_backup')),
-    url('^tukey_admin/', include('tukey_admin.urls', namespace='tukey_admin')),
-    url('^status/', include('status.urls', namespace='status')),                   
+    url(r'^files/', include('files.urls', namespace='files')),
+    url(r'^tukey_admin/', include('tukey_admin.urls', namespace='tukey_admin')),
+    url(r'^status/', include('status.urls', namespace='status')),
+    url(r'^sponsors/', direct_to_template, {"template": "sponsors.html"}, name="sponsors"),                   
+    url(r'^news/', direct_to_template, {"template": "news.html"}, name="news"),
+    url(r'^projects/', direct_to_template, {"template": "projects.html"}, name="projects"),
+    url(r'', include('webforms.urls')),                   
     url(r'', include(horizon.urls)))
 
 # Development static app and project media serving using the staticfiles app.

@@ -123,8 +123,8 @@ INSTALLED_APPS = (
     'django_openid_auth',
     'files',
     'tukey_admin',
-    'files_backup',
     'status',
+    'webforms',
 #    'horizon_billing',
 )
 
@@ -171,3 +171,7 @@ if DEBUG:
 
 
 OPENID_CREATE_USERS = True
+
+APPLICATION_EMAIL = 'aheath@uchicago.edu'
+APPLICATION_INVITE_EMAIL = 'aheath@uchicago.edu'
+SUPPORT_EMAIL = 'aheath@uchicago.edu'
