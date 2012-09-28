@@ -8,3 +8,10 @@
 {% block content %}
   {% include 'auth/_login.html' %}
 {% endblock %}
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+$("#nav-console").attr('class', 'active')
+</script>
+{% endblock %}

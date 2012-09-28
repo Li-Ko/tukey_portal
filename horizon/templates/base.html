@@ -46,6 +46,9 @@
 
     {% block js %}
     {% include "horizon/_scripts.html" %}
+    <script type="text/javascript">
+    $("#nav-console").attr('class', 'active')
+    </script>
     {% endblock %}
     <div id="modal_wrapper"></div>
   </body>
