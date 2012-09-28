@@ -132,17 +132,17 @@ class CreateCollectionForm(forms.SelfHandlingForm):
         except:
             exceptions.handle(request, _('Unable to register collection.'))
 
-class EditCollection2Form(forms.SelfHandlingForm):
-    name = forms.CharField(max_length="255", label=_("Name"), required=True)
-
-    def handle(self, request, data):
-        try:
-            messages.success(request,
-                _('Your collection2 %s has been editd.' %
-                    data['name']))
-            return collection2
-        except:
-            exceptions.handle(request, _('Unable to edit new collection2.'))
+#class EditCollection2Form(forms.SelfHandlingForm):
+#    name = forms.CharField(max_length="255", label=_("Name"), required=True)
+#
+#    def handle(self, request, data):
+#        try:
+#            messages.success(request,
+#                _('Your collection2 %s has been editd.' %
+#                    data['name']))
+#            return collection2
+#        except:
+#            exceptions.handle(request, _('Unable to edit new collection2.'))
 
 
 class CreateCollection2Form(forms.SelfHandlingForm):
@@ -165,18 +165,18 @@ class CreateCollection2Form(forms.SelfHandlingForm):
             exceptions.handle(request, _('Unable to register collection2.'))
 
 
-class EditCollection2CollectionForm(forms.SelfHandlingForm):
-    name = forms.CharField(max_length="255", label=_("Name"), required=True)
-
-    def handle(self, request, data):
-        try:
-            messages.success(request,
-                _('Your collection2_collection %s has been editd.' %
-                    data['name']))
-            return collection2_collection
-        except:
-            exceptions.handle(request, _('Unable to edit new collection2_collection.'))
-
+#class EditCollection2CollectionForm(forms.SelfHandlingForm):
+#    name = forms.CharField(max_length="255", label=_("Name"), required=True)
+#
+#    def handle(self, request, data):
+#        try:
+#            messages.success(request,
+#                _('Your collection2_collection %s has been editd.' %
+#                    data['name']))
+#            return collection2_collection
+#        except:
+#            exceptions.handle(request, _('Unable to edit new collection2_collection.'))
+#
 
 class CreateCollection2CollectionForm(forms.SelfHandlingForm):
     collection2 = forms.ChoiceField(label=_("Collection of Collections"), required=True)
