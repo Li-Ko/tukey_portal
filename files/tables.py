@@ -11,8 +11,11 @@ from horizon import tables
 from horizon.templatetags import sizeformat
 from horizon.utils.filters import replace_underscores
 
-#from files.models import File, Group, FilesystemUser, GroupUser, CollectionFile
-from files.models import File, Group, FilesystemUser, GroupUser, CollectionFile, AbstractUser, Inode, Permission, Collection, Collection2, IsDirectory, Missing
+from files.models import (
+    File, Group, FilesystemUser, GroupUser, CollectionFile,
+    AbstractUser, Inode, Permission, Collection, Collection2,
+    IsDirectory, Missing
+)
 
 
 LOG = logging.getLogger(__name__)

@@ -8,7 +8,11 @@ from horizon import exceptions
 from horizon import forms
 from horizon import messages
 
-from files.models import FilesystemUser, File, Group, CollectionFile, GroupUser, Inode, AbstractUser, Collection, Collection2, Collection2Collection, Permission
+from files.models import (
+    FilesystemUser, File, Group, CollectionFile, GroupUser, Inode, 
+    AbstractUser, Collection, Collection2, Collection2Collection,
+    Permission
+)
 
 LOG = logging.getLogger(__name__)
 

@@ -13,11 +13,22 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 
-from files.models import AbstractUser, FilesystemUser, File, Group, Collection, Collection2, Collection2Collection, CollectionFile, GroupUser, Permission
-from files.tables import FilesTable, FilesystemUsersTable, GroupsTable, GroupUsersTable, CollectionFilesTable, CollectionsTable, Collection2sTable, PermissionsTable, Collection2CollectionsTable, ProjectGroupsTable
-from files.forms import CreateGroupForm, CreateGroupUserForm, CreateFileForm, CreateCollectionFileForm, CreateCollectionForm, CreateCollection2Form, CreateCollection2CollectionForm, CreatePermissionFileUserForm, CreatePermissionCollectionUserForm, CreatePermissionCollection2UserForm
-#from files.forms import EditGroupForm, EditGroupUserForm, EditFileForm, EditCollectionFileForm, EditCollectionForm, EditCollection2Form, EditCollection2CollectionForm, EditPermissionForm
-
+from files.models import (
+    AbstractUser, FilesystemUser, File, Group, Collection, Collection2,
+    Collection2Collection, CollectionFile, GroupUser, Permission
+)
+from files.tables import (
+    FilesTable, FilesystemUsersTable, GroupsTable, GroupUsersTable, 
+    CollectionFilesTable, CollectionsTable, Collection2sTable,
+    PermissionsTable, Collection2CollectionsTable, ProjectGroupsTable
+)
+from files.forms import (
+    CreateGroupForm, CreateGroupUserForm, CreateFileForm, 
+    CreateCollectionFileForm, CreateCollectionForm,
+    CreateCollection2Form, CreateCollection2CollectionForm,
+    CreatePermissionFileUserForm, CreatePermissionCollectionUserForm,
+    CreatePermissionCollection2UserForm
+)
 
 
 def show(item):

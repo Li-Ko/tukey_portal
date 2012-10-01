@@ -8,7 +8,14 @@ from django.conf.urls.defaults import patterns, url
 from horizon.decorators import require_auth
 
 
-from .views import FileView, GroupView, CollectionFileView, CreateGroupView, CreateGroupUserView, CreateFileView, CreateCollectionFileView, CollectionView, PermissionView, CreateCollectionView, CreateCollection2CollectionView, CreateCollection2View, CreatePermissionFileUserView, CreatePermissionCollectionUserView, CreatePermissionCollection2UserView
+from .views import (
+    FileView, GroupView, CollectionFileView, CreateGroupView,
+    CreateGroupUserView, CreateFileView, CreateCollectionFileView,
+    CollectionView, PermissionView, CreateCollectionView, 
+    CreateCollection2CollectionView, CreateCollection2View, 
+    CreatePermissionFileUserView, CreatePermissionCollectionUserView,
+    CreatePermissionCollection2UserView
+)
 
 
 urlpatterns = patterns('files.views',
