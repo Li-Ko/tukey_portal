@@ -53,9 +53,17 @@ class IndexView(tables.MultiTableView):
             (all_images,
              self._more_images) = api.image_list_detailed(self.request,
                                                           marker=marker)
+
             images = [im for im in all_images
                       if im.container_format not in ['aki', 'ari'] and
                       im.properties.get("image_type", '') != "snapshot"]
+
+	    euca_ids = ('emi','eki','eri')
+
+	    if marker and marker.startswith(euca_ids):
+		images = [im for im in images
+                      if im.id.startswith(euca_ids)]
+
         except:
             images = []
             exceptions.handle(self.request, _("Unable to retrieve images."))

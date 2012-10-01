@@ -24,7 +24,7 @@
     <br />
 
     <div>
-      <a href="/openid/login?next=/nova/instances/">
+      <a href="{% url openid:openid-login %}?next={% url files:file %}">
          {% trans "Sign in with " %}
 	<img src="../../static/dashboard/img/openid.png" alt="OpenID"/>
       </a>

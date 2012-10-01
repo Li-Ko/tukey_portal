@@ -29,11 +29,14 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.simple import direct_to_template
 import horizon
 
+from tukey.shibboleth_auth import patch_openstack_middleware_get_user
+
+patch_openstack_middleware_get_user()
 
 urlpatterns = patterns('',
     url(r'^$', direct_to_template, {"template": "index.html"}, name="index"),
     url(r'^console/', 'horizon.views.splash', name='splash'),
-    url(r'^openid/', include('django_openid_auth.urls')),
+    url(r'^openid/', include('django_openid_auth.urls', namespace='openid')),
     url(r'^auth/', include('openstack_auth.urls')),
     url(r'^files/', include('files.urls', namespace='files')),
     url(r'^tukey_admin/', include('tukey_admin.urls', namespace='tukey_admin')),
