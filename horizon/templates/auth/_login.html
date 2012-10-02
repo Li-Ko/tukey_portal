@@ -24,7 +24,9 @@
     <br />
 
     <div>
-      <a href="{% url openid:openid-login %}?next={% url files:file %}">
+      {% if next %}<a href="{% url openid:openid-login %}?next={{ next }}">
+      {% else %}<a href="{% url openid:openid-login %}?next={% url horizon:nova:overview:index %}">
+      {% endif %}
          {% trans "Sign in with " %}
 	<img src="../../static/dashboard/img/openid.png" alt="OpenID"/>
       </a>
