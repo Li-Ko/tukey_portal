@@ -44,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^sponsors/', direct_to_template, {"template": "sponsors.html"}, name="sponsors"),                   
     url(r'^news/', direct_to_template, {"template": "news.html"}, name="news"),
     url(r'^projects/', direct_to_template, {"template": "projects.html"}, name="projects"),
+    url(r'^publicdata/', include('datasets.urls', namespace='datasets')),
     url(r'', include('webforms.urls')),                   
     url(r'', include(horizon.urls)))
 
