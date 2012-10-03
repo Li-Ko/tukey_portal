@@ -17,6 +17,16 @@ from django.contrib.auth.signals import user_logged_in
 
 from django import shortcuts
 
+#TODO double check these
+import functools
+
+from django.utils.decorators import available_attrs
+from django.utils.translation import ugettext as _
+
+from horizon.exceptions import NotAuthorized, NotAuthenticated
+# end double check
+
+from horizon import decorators
 
 LOG = logging.getLogger(__name__)
 
@@ -45,11 +55,12 @@ def get_user(request):
                     request=request)
                 return user
             except keystone_exceptions.Unauthorized:
-                msg = _('Invalid user name or password.')
+		pass
             except KeystoneAuthException:
 		pass
 		#return shortcuts.redirect("http://www.google.com")
         user = AnonymousUser()
+	msg = 'Invalid user name or password.'
     return user
 
 
@@ -77,6 +88,24 @@ def login(request, user):
     LOG.debug("made it to the end")
 
 
+def require_auth(view_func):
+    """ Performs user authentication check.
+
+    Similar to Django's `login_required` decorator, except that this throws
+    :exc:`~horizon.exceptions.NotAuthenticated` exception if the user is not
+    signed-in.
+    """
+
+    @functools.wraps(view_func, assigned=available_attrs(view_func))
+    def dec(request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return view_func(request, *args, **kwargs)
+	return None
+        raise NotAuthenticated(_("Please log in to continue."))
+    return dec
+
+
+
 def patch_openstack_middleware_get_user():
 
     LOG.debug(auth.login)
@@ -84,6 +113,13 @@ def patch_openstack_middleware_get_user():
     auth.login = login
 
     LOG.debug(auth.login)
+
+
+    from horizon import decorators as horizon_decorators
+    LOG.debug(horizon_decorators.require_auth)
+    horizon_decorators.require_auth = require_auth
+    LOG.debug(horizon_decorators.require_auth)
+
 
     utils.get_user = get_user
     
@@ -95,3 +131,7 @@ def patch_openstack_middleware_get_user():
     from django_openid_auth import views as openid_views
     from tukey.openid_auth import login_begin as new_login_begin
     openid_views.login_begin = new_login_begin
+
+    from tukey.openid_auth import login_complete as new_login_complete
+    openid_views.login_complete = new_login_complete
+

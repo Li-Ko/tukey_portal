@@ -53,6 +53,10 @@ def require_auth(view_func):
     def dec(request, *args, **kwargs):
         if request.user.is_authenticated():
             return view_func(request, *args, **kwargs)
+	#TODO this is absolutely horrible must fix this somehow
+	from django.http import HttpResponseRedirect
+	return HttpResponseRedirect("http://opensciencedatacloud.org/apply/")
+	#return HttpResponse('<h1>save the unregistered users credentials in the session then open their actions in this form etc also this is horrible</h1>')
         raise NotAuthenticated(_("Please log in to continue."))
     return dec
 

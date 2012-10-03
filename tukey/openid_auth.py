@@ -63,6 +63,52 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django_openid_auth.auth import OpenIDBackend
 
+# TODO
+# CHECK IF THESE ARE NEEDED
+
+import re
+import urllib
+from urlparse import urlsplit
+
+from django.conf import settings
+from django.contrib.auth import (
+    REDIRECT_FIELD_NAME, authenticate, login as auth_login)
+from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.loader import render_to_string
+try:
+    from django.views.decorators.csrf import csrf_exempt
+except ImportError:
+    from django.contrib.csrf.middleware import csrf_exempt
+
+from openid.consumer.consumer import (
+    Consumer, SUCCESS, CANCEL, FAILURE)
+from openid.consumer.discover import DiscoveryFailure
+from openid.extensions import sreg, ax, pape
+
+from django_openid_auth import teams
+from django_openid_auth.forms import OpenIDLoginForm
+from django_openid_auth.models import UserOpenID
+from django_openid_auth.signals import openid_login_complete
+from django_openid_auth.store import DjangoOpenIDStore
+from django_openid_auth.exceptions import (
+    RequiredAttributeNotReturned,
+    DjangoOpenIDException,
+)
+
+# END CHECK IF THESE ARE NEEDED
+
+from django_openid_auth.views import (
+    parse_openid_response,
+    sanitise_redirect_url,
+)
+
+
+
+
 LOG = logging.getLogger(__name__)
 
 
@@ -180,46 +226,48 @@ def login_begin(request, template_name='openid/login.html',
 # authenticated this will send them to the page 
 # where they can register
 
-#def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
-#                   render_failure=None):
-#    redirect_to = request.REQUEST.get(redirect_field_name, '')
-#    render_failure = render_failure or \
-#                     getattr(settings, 'OPENID_RENDER_FAILURE', None) or \
-#                     default_render_failure
-#
-#    openid_response = parse_openid_response(request)
-#    if not openid_response:
-#        return render_failure(
-#            request, 'This is an OpenID relying party endpoint.')
-#
-#    if openid_response.status == SUCCESS:
-#        try:
-#            user = authenticate(openid_response=openid_response)
-#        except DjangoOpenIDException, e:
-#            return render_failure(request, e.message, exception=e)
-#
-#        if user is not None:
-#            if user.is_active:
-#                auth_login(request, user)
-#                response = HttpResponseRedirect(sanitise_redirect_url(redirect_to))
-#
-#                # Notify any listeners that we successfully logged in.
-#                openid_login_complete.send(sender=UserOpenID, request=request,
-#		    user=user,
-#                    openid_response=openid_response)
-#
-#                return response
-#            else:
-#                return render_failure(request, 'Disabled account')
-#        else:
-#            return render_failure(request, 'Unknown user')
-#    elif openid_response.status == FAILURE:
-#        return render_failure(
-#            request, 'OpenID authentication failed: %s' %
-#            openid_response.message)
-#    elif openid_response.status == CANCEL:
-#        return render_failure(request, 'Authentication cancelled')
-#    else:
-#        assert False, (
-#            "Unknown OpenID response type: %r" % openid_response.status)
-#
+def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
+                   render_failure=None):
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+    render_failure = render_failure or \
+                     getattr(settings, 'OPENID_RENDER_FAILURE', None) or \
+                     default_render_failure
+
+    openid_response = parse_openid_response(request)
+    if not openid_response:
+        return render_failure(
+            request, 'This is an OpenID relying party endpoint.')
+
+    if openid_response.status == SUCCESS:
+        try:
+            user = authenticate(openid_response=openid_response)
+        except DjangoOpenIDException, e:
+            return render_failure(request, e.message, exception=e)
+
+        if user is not None:
+            if user.is_active:
+                auth_login(request, user)
+                response = HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+
+                # Notify any listeners that we successfully logged in.
+                openid_login_complete.send(sender=UserOpenID, request=request,
+		    user=user,
+                    openid_response=openid_response)
+
+                return response
+            else:
+                return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+
+                #return render_failure(request, 'Disabled account')
+        else:
+            return render_failure(request, 'Unknown user')
+    elif openid_response.status == FAILURE:
+        return render_failure(
+            request, 'OpenID authentication failed: %s' %
+            openid_response.message)
+    elif openid_response.status == CANCEL:
+        return render_failure(request, 'Authentication cancelled')
+    else:
+        assert False, (
+            "Unknown OpenID response type: %r" % openid_response.status)
+
