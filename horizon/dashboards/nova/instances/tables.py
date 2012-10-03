@@ -149,10 +149,7 @@ class ToggleSuspend(tables.BatchAction):
 class LaunchLink(tables.LinkAction):
     name = "launch"
     verbose_name = _("Launch Instance")
-    #url = "horizon:nova:images_and_snapshots"
-    #TODO: REMOVE makeit right
-    url = "/nova/images_and_snapshots/"
-    #url = "/nova/images_and_snapshots"
+    url = "horizon:nova:images_and_snapshots:index"
     #classes = ("btn-launch", "ajax-modal")
 
 
