@@ -1,7 +1,7 @@
 {% extends "base_web.html" %}
 {% block meta_title %}Status{% endblock %}
 
-{% load status_tags %}
+{% load util_tags %}
 {% block header %}
 <header class="jumbotron subhead">
   <h1>OSDC Status</h1>
@@ -22,14 +22,14 @@
 {% endif %}
 {% endif %}
 
-{% if update_times|getkey:name == "None" %}
+{% if update_times|getvalue:name == "None" %}
 <em>Status Unavailable</em>
 {% else %}
-<em>Status at {{ update_times|getkey:name }} (CST)</em>
+<em>Status at {{ update_times|getvalue:name }} (CST)</em>
 {% endif %}
 </div>
 
-{% for v in status_data|getkey:name %}
+{% for v in status_data|getvalue:name %}
 <div class="row status-row">
   <div class="span2 status-label">{{ v.0 }}</div>
   <div class="span8 status-bound" id="{{ v.1 }}-bound">
@@ -58,7 +58,7 @@ $(document).ready(function() {
 $("#nav-status").attr('class', 'active')
 
 {% for name in cloud_names %}
-{% for v in status_data|getkey:name %}
+{% for v in status_data|getvalue:name %}
 setstatuswidth("#{{ v.1 }}", "#{{ v.1 }}-bound", {{ v.4 }});
 {% endfor %}
 {% endfor %}
@@ -70,7 +70,7 @@ $(window).bind('resize', function() {
 $("#nav-status").attr('class', 'active')
 
 {% for name in cloud_names %}
-{% for v in status_data|getkey:name %}
+{% for v in status_data|getvalue:name %}
 setstatuswidth("#{{ v.1 }}", "#{{ v.1 }}-bound", {{ v.4 }});
 {% endfor %}
 {% endfor %}
