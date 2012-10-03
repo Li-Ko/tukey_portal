@@ -15,6 +15,8 @@ from openstack_auth.exceptions import KeystoneAuthException
 
 from django.contrib.auth.signals import user_logged_in
 
+from django import shortcuts
+
 
 LOG = logging.getLogger(__name__)
 
@@ -30,6 +32,7 @@ def get_user(request):
         user = backend.get_user(user_id) or AnonymousUser()
 	LOG.debug("user %s", user)
     except KeyError:
+	LOG.debug("'twas a KeyError")
         if 'HTTP_EPPN' in request.META and request.META.get('HTTP_EPPN'):
             LOG.debug("Shibboleth header is set")
             LOG.debug("username %s", request.META.get('HTTP_EPPN'))
@@ -44,13 +47,14 @@ def get_user(request):
             except keystone_exceptions.Unauthorized:
                 msg = _('Invalid user name or password.')
             except KeystoneAuthException:
-                pass
+		pass
+		#return shortcuts.redirect("http://www.google.com")
         user = AnonymousUser()
     return user
 
 
 def login(request, user):
-    LOG.debug("in login")
+    LOG.debug("in login!!!")
     if user is None:
         user = request.user
     # TODO: It would be nice to support different login methods, like signed cookies.
@@ -84,8 +88,9 @@ def patch_openstack_middleware_get_user():
     utils.get_user = get_user
     
     from django_openid_auth import auth as django_openid_auth
-    from tukey.openid_auth import OpenIDBackend as new_openid
-    django_openid_auth.OpenIDBackend = new_openid
+    from tukey.openid_auth import OpenIDKeystoneBackend
+    django_openid_auth.OpenIDBackend = OpenIDKeystoneBackend
+#    OpenIDKeystoneBackend.backendclass = django_openid_auth.OpenIDBackend
     
     from django_openid_auth import views as openid_views
     from tukey.openid_auth import login_begin as new_login_begin

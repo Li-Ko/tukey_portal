@@ -34,7 +34,7 @@ TEMPLATE_DEBUG = DEBUG
 SITE_BRANDING = 'OSDC Console'
 
 LOGIN_URL = '/auth/login/'
-LOGOUT_URL = '/auth/logout/?next=http%3A//console.opensciencedatacloud.org/Shibboleth.sso/Logout%3Freturn%3Dhttp%3A%2F%2Fconsole.opensciencedatacloud.org%2Fauth%2Flogin%2F%3Fshib%3Dtrue'
+LOGOUT_URL = '/auth/logout/'
 # LOGIN_REDIRECT_URL can be used as an alternative for
 # HORIZON_CONFIG.user_home, if user_home is not set.
 # Do not set it to '/home/', as this will cause circular redirect loop
@@ -171,6 +171,8 @@ if DEBUG:
 
 
 OPENID_CREATE_USERS = True
+#import tukey.openid_auth
+#OPENID_RENDER_FAILURE = tukey.openid_auth.render_failure
 
 APPLICATION_EMAIL = 'aheath@uchicago.edu'
 APPLICATION_INVITE_EMAIL = 'aheath@uchicago.edu'
