@@ -10,7 +10,7 @@
 from django.db import models
 
 class Login(models.Model):
-    id =  models.IntegerField(db_column='userid')
+    #id =  models.IntegerField(db_column='userid')
     userid = models.IntegerField(primary_key=True)
     username = models.CharField(max_length=255, unique=True, blank=True)
     password = models.CharField(max_length=255, blank=True)
@@ -23,14 +23,14 @@ class LoginEnabled(models.Model):
         db_table = u'login_enabled'
 
 class LoginOpenid(models.Model):
-    id =  models.IntegerField(db_column='openid')
+    #id =  models.IntegerField(db_column='openid')
     userid = models.ForeignKey(Login, null=True, db_column='userid', blank=True)
     openid = models.CharField(max_length=255, primary_key=True)
     class Meta:
         db_table = u'login_openid'
 
 class LoginShibboleth(models.Model):
-    id =  models.IntegerField(db_column='eppn')
+    #id =  models.IntegerField(db_column='eppn')
     userid = models.ForeignKey(Login, db_column='userid')
     eppn = models.CharField(max_length=30, primary_key=True)
     class Meta:
