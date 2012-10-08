@@ -3,7 +3,7 @@ from django.db import models
 class DataSet(models.Model):
 	#the ark_key should probably be automatically created based on prefix/num, possibly a trigger? for now, managed in the code.
     ark_key = models.CharField(max_length=500, primary_key=True)
-    prefix = models.TextField(max_length=10)
+    prefix = models.CharField(max_length=10)
     num = models.IntegerField()
 
 class Key(models.Model):

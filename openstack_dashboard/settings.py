@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'webforms',
     'datasets',
     'tukey_templatetags',
+    'keyservice'
 #    'horizon_billing',
 )
 
