@@ -168,7 +168,8 @@ class OpenIDKeystoneBackend(KeystoneBackend):
 		    request=kwargs.get('request'))
 
 	except KeystoneAuthException:
-	    return UnregisteredUser('openid', details['email'])
+	    LOG.debug("KeystoneAuth exception returning UnregisteredUser")
+	    return UnregisteredUser('OpenID', details['email'])
 
 	LOG.debug("USER: %s", user)
 	LOG.debug("user.id: %s", user.id)
@@ -235,14 +236,16 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
     openid_response = parse_openid_response(request)
     if not openid_response:
-        return render_failure(
-            request, 'This is an OpenID relying party endpoint.')
+        return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+#        return render_failure(
+#            request, 'This is an OpenID relying party endpoint.')
 
     if openid_response.status == SUCCESS:
         try:
             user = authenticate(openid_response=openid_response)
         except DjangoOpenIDException, e:
-            return render_failure(request, e.message, exception=e)
+	    return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+#            return render_failure(request, e.message, exception=e)
 
         if user is not None:
             if user.is_active:
@@ -256,18 +259,21 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
                 return response
             else:
-                return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+		from tukey.views import register_user
+	    	return register_user(request, user)
 
-                #return render_failure(request, 'Disabled account')
-        else:
-            return render_failure(request, 'Unknown user')
-    elif openid_response.status == FAILURE:
-        return render_failure(
-            request, 'OpenID authentication failed: %s' %
-            openid_response.message)
-    elif openid_response.status == CANCEL:
-        return render_failure(request, 'Authentication cancelled')
-    else:
-        assert False, (
-            "Unknown OpenID response type: %r" % openid_response.status)
-
+    return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+#
+#                #return render_failure(request, 'Disabled account')
+#        else:
+#            return render_failure(request, 'Unknown user')
+#    elif openid_response.status == FAILURE:
+#        return render_failure(
+#            request, 'OpenID authentication failed: %s' %
+#            openid_response.message)
+#    elif openid_response.status == CANCEL:
+#        return render_failure(request, 'Authentication cancelled')
+#    else:
+#        assert False, (
+#            "Unknown OpenID response type: %r" % openid_response.status)
+#

@@ -1,11 +1,37 @@
-Usage Report For Period:,{{ usage.start|date:"b. d Y" }},{{ usage.end|date:"b. d Y" }}
-Tenant ID:,{{ usage.tenant_id }}
+Usage Report For Period:,{{ usage.start|date:"b. d Y" }},{{ usage.end|date:"b. d Y" }} {% comment %}
 Total Active VCPUs:,{{ usage.summary.instances }}
 CPU-HRs Used:,{{ usage.summary.vcpu_hours }}
 Total Active Ram (MB):,{{ usage.summary.memory_mb }}
 Total Disk Size:,{{ usage.summary.local_gb }}
 Total Disk Usage:,{{ usage.summary.disk_gb_hours }}
 
+Username:, {{ usage.user }}
+{% endcomment %}
+Tenant ID:,{{ usage.tenant_id }}
+
+{% if usage.summary.adler_du != -1 %}Adler Glusterfs Disk (GB):, {{ usage.summary.adler_du }}{% endif %}
+{% if usage.summary.adler_cores != -1 %}Adler Cloud Virtual Cores:, {{ usage.summary.adler_cores }}{% endif %}
+{% if usage.summary.adler_ram != -1 %}Adler Cloud RAM:, {{ usage.summary.adler_ram }}{% endif %}
+
+{% if usage.summary.sullivan_du != -1 %}Sullivan Glusterfs Disk (GB):, {{ usage.summary.sullivan_du }}{% endif %}
+{% if usage.summary.sullivan_cores != -1 %}Sullivan Cloud Virtual Cores:, {{ usage.summary.sullivan_cores }}{% endif %}
+{% if usage.summary.sullivan_ram != -1 %}Sullivan Cloud RAM:, {{ usage.summary.sullivan_ram }}{% endif %}
+
+{% if usage.summary.cloud_cores_hours != -1 %}Cloud Cores Hours:, {{ usage.summary.cloud_cores_hours }}{% endif %}
+{% if usage.summary.cloud_disk_usage != -1 %}Cloud Disk Usage (GB):, {{ usage.summary.cloud_disk_usage }}{% endif %}
+
+
+{% if usage.summary.occ_y_hdfsdu != -1 %}OCC-Y Hadoop Disk (GB):, {{ usage.summary.occ_y_hdfsdu }}{% endif %}
+{% if usage.summary.occ_y_jobs != -1 %}OCC-Y Jobs:, {{ usage.summary.occ_y_jobs }}{% endif %}
+
+{% if usage.summary.occ_lvoc_hdfsdu != -1 %}OCC LVOC Hadoop Disk (GB):, {{ usage.summary.occ_lvoc_hdfsdu }}{% endif %}
+{% if usage.summary.occ_lvoc_jobs != -1 %}OCC LVOC Jobs:, {{ usage.summary.occ_lvoc_jobs }}{% endif %}
+
+{% if usage.summary.hadoop_jobs != -1 %}Hadoop Job Hours:, {{ usage.summary.hadoop_jobs }}{% endif %}
+{% if usage.summary.hdfsdu != -1 %}Hadoop Disk Usage:, {{ usage.summary.hdfsdu }}{% endif %}
+
+{% comment %}
 Name,VCPUs,RamMB,DiskGB,Usage(Hours),Uptime(Seconds),State
 {% for s in usage.get_instances %}{{ s.name|addslashes }},{{ s.vcpus|addslashes }},{{ s.memory_mb|addslashes }},{{ s.local_gb|addslashes }},{{ s.hours }},{{ s.uptime }},{{ s.state|capfirst|addslashes }}
 {% endfor %}
+{% endcomment %}

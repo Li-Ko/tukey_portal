@@ -28,6 +28,8 @@ from horizon.exceptions import NotAuthorized, NotAuthenticated
 
 from horizon import decorators
 
+from .models import UnregisteredUser
+
 LOG = logging.getLogger(__name__)
 
 def get_user(request):
@@ -54,13 +56,12 @@ def get_user(request):
                     auth_url=settings.OPENSTACK_KEYSTONE_URL,
                     request=request)
                 return user
-            except keystone_exceptions.Unauthorized:
-		pass
-            except KeystoneAuthException:
-		pass
-		#return shortcuts.redirect("http://www.google.com")
-        user = AnonymousUser()
-	msg = 'Invalid user name or password.'
+            except (keystone_exceptions.Unauthorized, KeystoneAuthException):
+		user = UnregisteredUser('Shibboleth', 
+		    request.META.get('HTTP_EPPN'))
+
+	else:
+            user = AnonymousUser()
     return user
 
 
@@ -88,21 +89,25 @@ def login(request, user):
     LOG.debug("made it to the end")
 
 
-def require_auth(view_func):
-    """ Performs user authentication check.
+# monkey-patching this does nothing probably because the 
+# decorators are applied before our monkey patch function
+# is called.  imperitave we find a way around this.
 
-    Similar to Django's `login_required` decorator, except that this throws
-    :exc:`~horizon.exceptions.NotAuthenticated` exception if the user is not
-    signed-in.
-    """
-
-    @functools.wraps(view_func, assigned=available_attrs(view_func))
-    def dec(request, *args, **kwargs):
-        if request.user.is_authenticated():
-            return view_func(request, *args, **kwargs)
-	return None
-        raise NotAuthenticated(_("Please log in to continue."))
-    return dec
+#def require_auth(view_func):
+#    """ Performs user authentication check.
+#
+#    Similar to Django's `login_required` decorator, except that this throws
+#    :exc:`~horizon.exceptions.NotAuthenticated` exception if the user is not
+#    signed-in.
+#    """
+#
+#    @functools.wraps(view_func, assigned=available_attrs(view_func))
+#    def dec(request, *args, **kwargs):
+#        if request.user.is_authenticated():
+#            return view_func(request, *args, **kwargs)
+#	return None
+#        raise NotAuthenticated(_("Please log in to continue."))
+#    return dec
 
 
 
@@ -115,10 +120,12 @@ def patch_openstack_middleware_get_user():
     LOG.debug(auth.login)
 
 
-    from horizon import decorators as horizon_decorators
-    LOG.debug(horizon_decorators.require_auth)
-    horizon_decorators.require_auth = require_auth
-    LOG.debug(horizon_decorators.require_auth)
+#TODO: make this actually work instead of altering the
+# horizon source.
+#    from horizon import decorators as horizon_decorators
+#    LOG.debug(horizon_decorators.require_auth)
+#    horizon_decorators.require_auth = require_auth
+#    LOG.debug(horizon_decorators.require_auth)
 
 
     utils.get_user = get_user
@@ -134,4 +141,16 @@ def patch_openstack_middleware_get_user():
 
     from tukey.openid_auth import login_complete as new_login_complete
     openid_views.login_complete = new_login_complete
+
+
+    from horizon.api import nova
+    from .usage import MultiResourceUsage
+    nova.Usage = MultiResourceUsage
+
+    from horizon.usage import base
+    base.GlobalUsage.show_terminated = True
+
+    base.TenantUsage.attrs = ('memory_mb', 'vcpus', 'uptime',
+             'hours', 'local_gb', 'adler_ram')
+   
 
