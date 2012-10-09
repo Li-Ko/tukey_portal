@@ -77,7 +77,7 @@ class PaginatedView(tables.DataTableView):
 # kind of decorator?
 class PaginatedMultiView(tables.MultiTableView):
 
-    entries_per_page = 6
+    entries_per_page = 7
 
     def has_more_data(self, table):
         return getattr(self, "_more_%s" % table.name, False)

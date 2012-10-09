@@ -9,6 +9,7 @@ import re
 #In a lot of ways this is a hack -- needs to play better with the datasets in general.
 
 def keyservice_invalid(request, key):
+    print('invalid response')
     return render_to_response('keyservice/invalid.html', {'key' : key}, context_instance=RequestContext(request))
 
 def keyservice(request):
@@ -48,7 +49,7 @@ def keyservice_lookup(request, key):
                     if prefix == 'bn':
                         url = r.url + key_id
                     else:
-                        k = Key.objects.get(pk=key_id, repository=prefix)
+                        k = Key.objects.get(local_key=subkey, repository=prefix)
                         url = r.url + k.local_key
 
                     return HttpResponseRedirect(url)

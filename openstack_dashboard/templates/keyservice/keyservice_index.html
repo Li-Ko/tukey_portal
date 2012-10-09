@@ -21,7 +21,7 @@ The location of this data can be found by using the OSDC key service. This is do
 <h3>Locate data from an OCC ARK Key (e.g. ark:/31807/opd2):</h3>
 </p>
 <p>
-<form action="/keyservice/" method="post" enctype="multipart/form-data" class="form-inline">{% csrf_token %}
+<form action="http://console.opensciencedatacloud.org/dev/keyservice/" method="post" enctype="multipart/form-data" class="form-inline">{% csrf_token %}
 <fieldset>
     <div class="control-group {% if form.ark_key.errors %}error{% endif %}">
 	{{ form.ark_key }}

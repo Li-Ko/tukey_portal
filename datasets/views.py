@@ -15,11 +15,12 @@ time_format='%Y-%m-%d %H:%M:%S'
 
 def add_dataset(prefix):
     dataset_list = DataSet.objects.all().order_by('-num')
-    if len(dataset_list) < 0:
-        return prefix + str(initial_key)
-
     #might want to cache last_key in the future -- won't have to do the db query
-    new_key = dataset_list[0].num + 1
+    if len(dataset_list) == 0:
+        new_key = initial_key
+    else:
+        new_key = dataset_list[0].num + 1
+        
     ark_key = prefix + str(new_key)
     d = DataSet(ark_key=ark_key, prefix=prefix, num=new_key)
     d.save()

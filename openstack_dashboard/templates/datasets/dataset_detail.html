@@ -15,9 +15,6 @@
 {% load tz %}
 
 {% block main %}
-<script type="text/javascript">
-$("#nav-publicdata").attr('class', 'active')
-</script> 
 
 <div class="span12 data-label"><strong>Source: </strong>
 {% if dataset.source_url %}
@@ -113,4 +110,11 @@ The public data sets are mounted on the namenode in <code>/mnt/pubdata</code>.
 <div class="span12">
 </div>
 
+{% endblock %}
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+$("#nav-publicdata").attr('class', 'active')
+</script> 
 {% endblock %}

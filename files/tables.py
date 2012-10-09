@@ -21,6 +21,7 @@ from files.models import (
 LOG = logging.getLogger(__name__)
 
 class DestroyAction(tables.DeleteAction):
+
     classes = ('btn-danger', 'btn-delete')
 
     def delete_model(self, user, ids, model):
@@ -28,6 +29,9 @@ class DestroyAction(tables.DeleteAction):
         for id in ids:
             g = model(id=id)#, owner=user)
             g.delete(using='files')
+
+    def _conjugate(self, ignored=None):
+	return self.__class__.name.title()
 
 
 class DeleteAction(DestroyAction):
@@ -78,6 +82,17 @@ class NewPermissionFileUser(NewLink):
     url = "files:create_permission_file_user"
     name = "new_permission_file_user"
 
+
+class ArkKey(NewLink):
+    verbose_name = _("Locate From ARK Key")
+    url = "files:create_permission_file_user"
+    name = 'ark_key'
+
+    classes = ("btn-create")
+
+    def get_link_url(self, datum):
+	return "http://console.opensciencedatacloud.org/dev/keyservice/ark:/31807/bn%s/" % datum.name
+    
 
 #class NewPermissionFileGroup(MultiLink):
 #    name = "new_file_group"
@@ -157,6 +172,7 @@ class DeleteCollection(DeleteAction):
 
 
 class DeleteCollection2(DeleteAction):
+    name="Delete"
     data_type_singular = _("Collection of Collections")
     data_type_plural = _("Collections of Collections")
 
@@ -198,6 +214,9 @@ class RemoveCollection2Collection(RemoveAction):
 
 def get_name(item):
     return item.name
+
+def get_ark(item):
+    return '"http://console.opensciencedatacloud.org/dev/keyservice/ark:/31807/bn%s/"' % item.name
 
 def file_get_ref_al_location(file):
     return file.real_location
@@ -304,7 +323,9 @@ class FilesTable(tables.DataTable):
 
 	# Add file to collection share file with user/group
 	#row_actions = (NewCollectionFile, NewPermissionFileUser, NewPermissionFileGroup)
-        row_actions = (DeleteFile, )#EditFile)
+
+	# return this in but not for our showin off
+        #row_actions = (DeleteFile, )#EditFile)
 	table_actions = (DeleteFile, )
 	pagination_param = 'file_marker'
 
@@ -362,7 +383,7 @@ class CollectionsTable(tables.DataTable):
     class Meta:
         name = "collections"
         verbose_name = _("Collections")
-        row_actions = (DeleteCollection,)# EditCollection)
+        row_actions = (ArkKey, DeleteCollection,)# EditCollection)
 	table_actions = (NewCollection, DeleteCollection)
 	pagination_param = 'collection_marker'
 
@@ -371,6 +392,7 @@ class Collection2sTable(tables.DataTable):
 
     name = tables.Column(get_name,
         verbose_name = _("Name"))
+
 
     def get_object_id(self, datum):
         return unicode(datum.parent.id)

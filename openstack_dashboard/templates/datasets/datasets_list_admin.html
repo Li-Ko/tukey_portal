@@ -24,3 +24,10 @@
     <p>No datasets are available.</p>
 {% endif %}
 {% endblock %}
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+$("#nav-publicdata").attr('class', 'active')
+</script> 
+{% endblock %}

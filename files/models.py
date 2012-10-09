@@ -102,7 +102,7 @@ class CollectionFile(models.Model):
         unique_together = (("collection_ref", "file_ref"),)
 
 class Permission(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     inode_ref = models.ForeignKey(Inode, db_column='inode_ref')
     user_ref = models.ForeignKey(AbstractUser, db_column='user_ref')
     owner = models.ForeignKey(FilesystemUser, db_column='owner')

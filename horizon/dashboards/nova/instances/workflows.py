@@ -77,6 +77,9 @@ class SetInstanceDetailsAction(workflows.Action):
                                initial=1,
                                help_text=_("Number of instances to launch."))
     cloud = forms.CharField(max_length=80, label=_("Cloud Name"))
+    
+    count.widget.attrs['readonly'] = True
+    
     cloud.widget.attrs['readonly'] = True
 
     class Meta:

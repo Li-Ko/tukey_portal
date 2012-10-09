@@ -19,9 +19,6 @@
 {% load tz %}
 
 {% block main %}
-<script type="text/javascript">
-$("#nav-publicdata").attr('class', 'active')
-</script> 
 
 {% if category_filter %}
 <h3>Viewing data sets in category: {{ category_filter }} (<a href="{% url datasets:datasets_list_index %}">View All</a>)</h3>
@@ -41,4 +38,11 @@ $("#nav-publicdata").attr('class', 'active')
 {% else %}
     <p>No datasets are available.</p>
 {% endif %}
+{% endblock %}
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+$("#nav-publicdata").attr('class', 'active')
+</script> 
 {% endblock %}
