@@ -15,12 +15,12 @@
     <span><strong>{% trans "Active Memory" %}:</strong> {{ usage.summary.memory_mb|mbformat|default:'-' }}</span>
     <br />
     {% endcomment %}
-    <span><strong>{% trans "This Month's VCPU-Hours" %}:</strong> {{ usage.summary.cloud_core_hours|floatformat:2|default:'-' }}</span>
-    <span><strong>{% trans "This Month's Cloud Disk Usage (GB)" %}:</strong> {{ usage.summary.cloud_disk_usage|floatformat:2|default:'-' }}</span>
+    <span><strong>{% trans "This Month's Cloud Core Hours" %}:</strong> {{ usage.summary.cloud_cores|floatformat:2|default:'-' }}</span>
+    <span><strong>{% trans "This Month's Cloud Disk Usage (GB)" %}:</strong> {{ usage.summary.cloud_du|floatformat:2|default:'-' }}</span>
     
     <br />
-    {% if usage.summary.hdfsdu != -1 %}
-    <span><strong>{% trans "This Month's Hadoop Disk Usage (GB)" %}:</strong> {{ usage.summary.hdfs_du|floatformat:2|default:'-' }}</span>
+    {% if usage.summary.hadoop_hdfsdu != -1 %}
+    <span><strong>{% trans "This Month's Hadoop Disk Usage (GB)" %}:</strong> {{ usage.summary.hadoop_hdfsdu|floatformat:2|default:'-' }}</span>
     {% endif %}
 
     {% if usage.summary.hadoop_jobs != -1 %}

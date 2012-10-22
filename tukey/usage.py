@@ -12,8 +12,8 @@ class MultiResourceUsage(nova.Usage):
 	     'occ_y_hdfsdu', 'adler_du', 'sullivan_du', 
 	     'sullivan_cores', 'sullivan_ram', 'adler_ram',
              'adler_cores', 'occ_lvoc_hdfsdu', 'occ_lvoc_jobs',
-	     'cloud_core_hours', 'cloud_disk_usage', 'hadoop_jobs',
-	     'hdfsdu']
+	     'cloud_cores', 'cloud_du', 'cloud_ram', 'hadoop_jobs',
+	     'hadoop_hdfsdu']
 
     def get_summary(self):
         return {'instances': self.total_active_instances,
@@ -22,9 +22,10 @@ class MultiResourceUsage(nova.Usage):
                 'vcpu_hours': self.vcpu_hours,
                 'local_gb': self.local_gb,
                 'disk_gb_hours': self.disk_gb_hours,
-		'cloud_core_hours': getattr(self, "cloud_core_hours", -1),
-		'cloud_disk_usage': getattr(self, "cloud_disk_usage", -1),
-	        'hdfsdu': getattr(self, "hdfsdu", -1),
+		'cloud_cores': getattr(self, "cloud_cores", -1),
+		'cloud_du': getattr(self, "cloud_du", -1),
+		'cloud_ram': getattr(self, "cloud_ram", -1),
+	        'hadoop_hdfsdu': getattr(self, "hadoop_hdfsdu", -1),
 	        'hadoop_jobs': getattr(self, "hadoop_jobs", -1),
 	        'occ_y_hdfsdu': getattr(self, "occ_y_hdfsdu", -1),
 	        'occ_y_jobs': getattr(self, "occ_y_jobs", -1),

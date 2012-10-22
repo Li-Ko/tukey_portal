@@ -8,7 +8,8 @@
 
 {% block main %}
   {% include "horizon/common/_usage_summary.html" %}
-  {% comment %}
+
+    Itemized details are only available for OpenStack instances.  You can still view a CSV cloud usage summary.
+
   {{ table.render }}
-  {% endcomment %}
 {% endblock %}

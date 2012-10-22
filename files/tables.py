@@ -30,7 +30,7 @@ class DestroyAction(tables.DeleteAction):
             g = model(id=id)#, owner=user)
             g.delete(using='files')
 
-    def _conjugate(self, ignored=None):
+    def _conjugate(self, ignored=None, past=None):
 	return self.__class__.name.title()
 
 
@@ -70,15 +70,15 @@ class NewGroup(NewLink):
     url = "files:create_group"
 
 class NewCollection(NewLink):
-    verbose_name = _("New Collection")
+    verbose_name = _("New Experimental Unit")
     url = "files:create_collection"
 
 class NewCollection2(NewLink):
-    verbose_name = _("New Collection of Collections")
+    verbose_name = _("New Project")
     url = "files:create_collection2"
 
 class NewPermissionFileUser(NewLink):
-    verbose_name = _("Share File with User or Group")
+    verbose_name = _("Share File")
     url = "files:create_permission_file_user"
     name = "new_permission_file_user"
 
@@ -102,25 +102,25 @@ class ArkKey(NewLink):
 
 class NewPermissionCollectionUser(MultiLink):
     name = "new_collection_user"
-    verbose_name = _("Share Collection with User or Group")
+    verbose_name = _("Share Experimental Unit")
     url = "files:create_permission_collection_user"
 
 
 #class NewPermissionCollectionGroup(MultiLink):
 #    name = "new_collection_group"
-#    verbose_name = _("Share Collection with Group")
+#    verbose_name = _("Share Experimental Unit with Group")
 #    url = "files:create_permission_collection_group"
 
 
 class NewPermissionCollection2User(MultiLink):
     name = "new_collection2_user"
-    verbose_name = _("Share Collection of Collections with User or Group")
+    verbose_name = _("Share Project")
     url = "files:create_permission_collection2_user"
 
 
 #class NewPermissionCollection2Group(MultiLink):
 #    name = "new_collection2_group"
-#    verbose_name = _("Share Collection of Collections with Group")
+#    verbose_name = _("Share Project with Group")
 #    url = "files:create_permission_collection2_group"
 
 
@@ -134,13 +134,13 @@ class NewGroupUser(NewLink):
 
 
 class NewCollectionFile(NewLink):
-    verbose_name = _("Add File to Collection")
+    verbose_name = _("Add File to Unit")
     url = "files:create_collection_file"
     name = "new_collection_file"
 
 
 class NewCollection2Collection(NewLink):
-    verbose_name = _("Add Collection to Collection")
+    verbose_name = _("Add Unit to Project")
     url = "files:create_collection2_collection"
 
 
@@ -164,8 +164,8 @@ class DeleteGroup(DeleteAction):
 
 
 class DeleteCollection(DeleteAction):
-    data_type_singular = _("Collection")
-    data_type_plural = _("Collections")
+    data_type_singular = _("Experimental Unit")
+    data_type_plural = _("Experimental Units")
 
     def delete(self, request, obj_id):
         self.delete_model(request.user, [obj_id], Inode)
@@ -173,8 +173,11 @@ class DeleteCollection(DeleteAction):
 
 class DeleteCollection2(DeleteAction):
     name="Delete"
-    data_type_singular = _("Collection of Collections")
-    data_type_plural = _("Collections of Collections")
+#    data_type_singular = _("Project")
+#    data_type_plural = _("Projects")
+
+    data_type_singular = _("Project")
+    data_type_plural = _("Projects")
 
     def delete(self, request, obj_id):
         self.delete_model(request.user, [obj_id], Inode)
@@ -247,7 +250,7 @@ def get_ref_file(item):
 def get_user_ref(item):
     return item.user.name
 
-file_models = [(File, "File"), (Collection, "Collection"), (Collection2, "Collection of Collections")]
+file_models = [(File, "File"), (Collection, "Experimental Unit"), (Collection2, "Project")]
 user_models = [(FilesystemUser, "User"), (Group, "Group")]
 
 def get_user_name(item):
@@ -382,7 +385,7 @@ class CollectionsTable(tables.DataTable):
 
     class Meta:
         name = "collections"
-        verbose_name = _("Collections")
+        verbose_name = _("Experimental Units")
         row_actions = (ArkKey, DeleteCollection,)# EditCollection)
 	table_actions = (NewCollection, DeleteCollection)
 	pagination_param = 'collection_marker'
@@ -399,7 +402,7 @@ class Collection2sTable(tables.DataTable):
 
     class Meta:
         name = "collection2s"
-        verbose_name = _("Collections of Collections")
+        verbose_name = _("Projects")
         row_actions = (DeleteCollection2,)# EditCollection2)
 	table_actions = (NewCollection2, DeleteCollection2)
 	pagination_param = 'collection2_marker'
@@ -462,7 +465,7 @@ class GroupUsersTable(tables.DataTable):
 class CollectionFilesTable(tables.DataTable):
 
     collection_name = tables.Column(get_ref_collection,
-        verbose_name = _("Collection"))
+        verbose_name = _("Experimental Unit"))
         
     file_name = tables.Column(get_ref_file,
         verbose_name = _("File"))
@@ -475,7 +478,7 @@ class CollectionFilesTable(tables.DataTable):
 
     class Meta:
         name = "collection_files"
-        verbose_name = _("Files in Collections")
+        verbose_name = _("Files in Experimental Units")
         row_actions = (RemoveCollectionFile,)#EditCollectionFile,)
 	table_actions = (NewCollectionFile, RemoveCollectionFile)
 	pagination_param = 'collection_file_marker'
@@ -484,14 +487,14 @@ class CollectionFilesTable(tables.DataTable):
 class Collection2CollectionsTable(tables.DataTable):
 
     collection2_name = tables.Column(get_ref_collection2,
-        verbose_name = _("Collection of Collections"))
+        verbose_name = _("Project"))
         
     collection_name = tables.Column(get_ref_collection,
-        verbose_name = _("Collection"))
+        verbose_name = _("Experimental Unit"))
 
     class Meta:
         name = "collection2_collections"
-        verbose_name = _("Collections in Collections")
+        verbose_name = _("Experimental Units in Projects")
         row_actions = (RemoveCollection2Collection,)# EditCollection2Collection)
 	table_actions = (NewCollection2Collection, RemoveCollection2Collection)
 	pagination_param = 'collection2_collection_marker'
