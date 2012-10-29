@@ -64,7 +64,8 @@ class ImportView(forms.ModalFormView):
 
 class DownloadView(TemplateView):
     def get_context_data(self, keypair_name=None):
-        return {'keypair_name': keypair_name}
+        return {'keypair_name': keypair_name, 
+	    'display_name': '-'.join(keypair_name.split('-')[1:]) }
     template_name = 'nova/access_and_security/keypairs/download.html'
 
 

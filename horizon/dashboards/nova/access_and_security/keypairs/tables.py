@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import api
 from horizon import tables
 
-from tukey.cloud_attribute import get_cloud
+from tukey.cloud_attribute import get_cloud, get_cloud_id
 
 
 LOG = logging.getLogger(__name__)
@@ -55,13 +55,14 @@ class KeypairsTable(tables.DataTable):
     # Thie should be somewhere else but I just don't know where
     # mgreenway
     from tukey.cloud_attribute import get_cloud
-    cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
+    cloud = tables.Column(get_cloud, verbose_name=_("Resource"))
     #end modified section mgreenway
 
     fingerprint = tables.Column("fingerprint", verbose_name=_("Fingerprint"))
 
     def get_object_id(self, keypair):
-        return get_cloud(keypair).lower() + '-' + keypair.name
+        #return get_cloud(keypair).lower() + '-' + keypair.name
+        return get_cloud_id(keypair) + '-' + keypair.name
 
     class Meta:
         name = "keypairs"

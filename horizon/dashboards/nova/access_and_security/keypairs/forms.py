@@ -36,16 +36,28 @@ NEW_LINES = re.compile(r"\r|\n")
 
 
 # mgreenway hacking the view to provide cloud where needed
-CREATE_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in cloud_details().items() 
-	    if has_function('create_keypair', key))
-IMPORT_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in cloud_details().items()
-            if has_function('import_keypair', key))
-#CLOUD_CHOICES=(ADLER,SULLIVAN)
 
-CREATE_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Cloud"),required=True,
+#to generate a keypair for the login-nodes
+KEYPAIR_LOGIN_CHOICES = {'all': 'Use this keypair with all resources.'}
+
+LOGIN_NODES = {'login' + name: name.title() + ' login node.'
+    for name in cloud_names()}
+
+KEYPAIR_LOGIN_CHOICES.update(LOGIN_NODES)
+
+
+CREATE_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in dict(
+    cloud_details(), **KEYPAIR_LOGIN_CHOICES).items() 
+	    if has_function('create_keypair', key))
+
+IMPORT_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in dict(
+    cloud_details(), **KEYPAIR_LOGIN_CHOICES).items()
+            if has_function('import_keypair', key))
+
+CREATE_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Resource"),required=True,
                                 choices=CREATE_KEYPAIR_CLOUD_CHOICES)
 
-IMPORT_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Cloud"),required=True,
+IMPORT_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Resource"),required=True,
                                 choices=IMPORT_KEYPAIR_CLOUD_CHOICES)
 
 
