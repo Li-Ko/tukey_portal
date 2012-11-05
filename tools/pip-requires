@@ -15,3 +15,4 @@ lockfile # for SECURE_KEY generation
 python-openid
 django-openid-auth
 psycopg2
+python-memcached

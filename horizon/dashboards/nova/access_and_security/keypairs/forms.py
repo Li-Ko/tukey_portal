@@ -29,7 +29,7 @@ from horizon import exceptions
 from horizon import forms
 from horizon import messages
 
-from tukey.cloud_attribute import cloud_names, cloud_details, has_function
+from tukey.cloud_attribute import cloud_details, has_function
 
 
 NEW_LINES = re.compile(r"\r|\n")
@@ -38,31 +38,12 @@ NEW_LINES = re.compile(r"\r|\n")
 # mgreenway hacking the view to provide cloud where needed
 
 #to generate a keypair for the login-nodes
-KEYPAIR_LOGIN_CHOICES = {'all': 'Use this keypair with all resources.'}
-
-LOGIN_NODES = {'login' + name: name.title() + ' login node.'
-    for name in cloud_names()}
-
-KEYPAIR_LOGIN_CHOICES.update(LOGIN_NODES)
-
-
-CREATE_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in dict(
-    cloud_details(), **KEYPAIR_LOGIN_CHOICES).items() 
-	    if has_function('create_keypair', key))
-
-IMPORT_KEYPAIR_CLOUD_CHOICES=((key, _(value)) for (key, value) in dict(
-    cloud_details(), **KEYPAIR_LOGIN_CHOICES).items()
-            if has_function('import_keypair', key))
-
-CREATE_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Resource"),required=True,
-                                choices=CREATE_KEYPAIR_CLOUD_CHOICES)
-
-IMPORT_KEYPAIR_CLOUD = forms.ChoiceField(label=_("Resource"),required=True,
-                                choices=IMPORT_KEYPAIR_CLOUD_CHOICES)
-
+#KEYPAIR_LOGIN_CHOICES = {'all': 'Use this keypair with all resources.'}
 
 
 class CreateKeypair(forms.SelfHandlingForm):
+
+
     name = forms.CharField(max_length="20",
                            label=_("Keypair Name"),
                            validators=[validators.validate_slug],
@@ -70,18 +51,40 @@ class CreateKeypair(forms.SelfHandlingForm):
                                 'only contain letters, numbers, underscores '
                                 'and hyphens.')})
 
-    cloud = CREATE_KEYPAIR_CLOUD
+    cloud = forms.ChoiceField(label=_("Resource"),required=True)
+
+
+    def __init__(self, request, *args, **kwargs):
+
+	self.base_fields['cloud'].choices = ((key, _(value)) for 
+	    (key, value) in cloud_details(request.user).items() if 
+	    has_function('create_keypair', key))
+
+        super(CreateKeypair, self).__init__(request, *args, **kwargs)
+
+
 
     def handle(self, request, data):
         return True  # We just redirect to the download view.
 
 
 class ImportKeypair(forms.SelfHandlingForm):
+
+
+    def __init__(self, request, *args, **kwargs):
+
+        self.base_fields['cloud'].choices = ((key, _(value)) for 
+            (key, value) in cloud_details(request.user).items() if 
+            has_function('import_keypair', key))
+
+        super(ImportKeypair, self).__init__(request, *args, **kwargs)
+
+
     name = forms.CharField(max_length="20", label=_("Keypair Name"),
                  validators=[validators.RegexValidator('\w+')])
     public_key = forms.CharField(label=_("Public Key"), widget=forms.Textarea)
 
-    cloud = IMPORT_KEYPAIR_CLOUD
+    cloud = forms.ChoiceField(label=_("Resource"),required=True)
 
     def handle(self, request, data):
         try:

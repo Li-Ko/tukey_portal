@@ -1,4 +1,6 @@
+from django.conf import settings
 
+import memcache
 
 # used for all clouds by monkey-patching the cloud datatables ojects
 # found in tables.py also requires modifications to html templates
@@ -44,20 +46,21 @@ def get_cloud_id(cloud_object):
 # will require some sort of context for querying an api or reading
 # a config file to see what the names are of the clouds
 # For now it is a stub 
-def cloud_names():
-    return ["adler", "sullivan"]
+def cloud_details(user):
 
-def cloud_details():
-    return {
-	'adler': 'Adler instances.',
-	'sullivan': 'Sullivan instances.'
-    }
+    active = active_clouds(user)
+
+    return {key: value for key, value in settings.CLOUD_DETAILS.items()
+	if key in active or key.startswith('login') and key[5:] in active}
 
 def has_function(function, cloud):
-    # easier just to keep track that Adler Euca <= 2 has no import
-    functions = {
-	"import_keypair": "adler"
-    }
-    if function in functions:
-        return cloud not in functions[function]
-    return True
+    return cloud in settings.CLOUD_FUNCTIONS[function]
+
+def active_clouds(user):
+
+    others = ['openstack', 'fake_tenant', 'fake_endpoint']
+
+    mc = memcache.Client([settings.AUTH_MEMCACHED], debug=0)
+    creds = mc.get(str(user.token.token['id']))
+
+    return [key for key in creds.keys() if key not in others]

@@ -40,7 +40,13 @@
     </div>
     {% endblock %}
 
-    <div id="footer">
+    <div id="main-footer">
+      <div class="modal-footer">
+  <div class="container">
+    <span>A resource of the</span>
+    <a href="http://opencloudconsortium.org/"><img style="vertical-align:middle" src="{{ STATIC_URL}}/occ_logo_sm.png" alt="Open Cloud Consortium"></a> <span>and made possible by our <a href="http://www.opensciencedatacloud.org/sponsors"> sponsors.</a></span>
+    </div>
+</div>
       {% block footer %}{% endblock %}
     </div>
 

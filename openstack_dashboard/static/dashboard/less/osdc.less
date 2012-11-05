@@ -12,11 +12,6 @@
 * html .clearfix             { zoom: 1; } /* IE6 */
 *:first-child+html .clearfix { zoom: 1; } /* IE7 */
 
-a {
-  color: #43a1d6;
-}
-
-
 
 dt {
   font-weight: bold;
@@ -679,6 +674,10 @@ form.horizontal fieldset {
   margin-bottom: 0;
 }
 
+#main-footer > .modal-footer{
+  margin-top: 40px;
+}
+
 .static_page {
   float: left;
   width: 700px;
@@ -1266,12 +1265,17 @@ label.log-length {
 
 .navbar .nav > li > a {
   float: none;
-  padding: 9px 10px 11px;
+  padding: 10px 10px 12px 10px;
   line-height: 19px;
   color: @grayDark;
   text-decoration: none;
   font-weight: bold;
+  font-size: 16px;
   text-shadow: 0 -1px 0 rgba(0, 65, 107, 0.1);
+}
+
+#nav-overview-a {
+  padding: 3px 20px 3px 0px;
 }
 
 .navbar .nav .active > a,
@@ -1389,7 +1393,6 @@ label.log-length {
 /* Jumbotrons                                                                                                                                
 -------------------------------------------------- */
 .jumbotron {
-  margin-top: 60px;
   position: relative;
 }
 .jumbotron h1 {
