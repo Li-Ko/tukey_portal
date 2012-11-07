@@ -34,31 +34,35 @@ LOG = logging.getLogger(__name__)
 
 def get_user(request):
     try:
-	LOG.debug("in get user new")
         user_id = request.session[auth.SESSION_KEY]
         backend_path = request.session[auth.BACKEND_SESSION_KEY]
         backend = auth.load_backend(backend_path)
         backend.request = request
-	LOG.debug("about to call backend.get_user")
-	LOG.debug(backend)
         user = backend.get_user(user_id) or AnonymousUser()
 	LOG.debug("user %s", user)
     except KeyError:
-	LOG.debug("'twas a KeyError")
-        if 'HTTP_EPPN' in request.META and request.META.get('HTTP_EPPN'):
+        shib_header = None
+	for possible_header in settings.SHIB_HEADERS:
+            if possible_header in request.META and request.META.get(
+                possible_header):
+                shib_header = possible_header
+                break
+
+        if shib_header is not None:
+            
             LOG.debug("Shibboleth header is set")
-            LOG.debug("username %s", request.META.get('HTTP_EPPN'))
+            LOG.debug("username %s", request.META.get(shib_header))
 
             keystone = KeystoneBackend()
             try:
                 user = keystone.authenticate(password='shibboleth',
-                    username=request.META.get('HTTP_EPPN'),
+                    username=request.META.get(shib_header),
                     auth_url=settings.OPENSTACK_KEYSTONE_URL,
                     request=request)
                 return user
             except (keystone_exceptions.Unauthorized, KeystoneAuthException):
 		user = UnregisteredUser('Shibboleth', 
-		    request.META.get('HTTP_EPPN'))
+		    request.META.get(shib_header))
 
 	else:
             user = AnonymousUser()
@@ -66,7 +70,6 @@ def get_user(request):
 
 
 def login(request, user):
-    LOG.debug("in login!!!")
     if user is None:
         user = request.user
     # TODO: It would be nice to support different login methods, like signed cookies.
@@ -86,7 +89,6 @@ def login(request, user):
     if hasattr(request, 'user'):
         request.user = user
     user_logged_in.send(sender=user.__class__, request=request, user=user)
-    LOG.debug("made it to the end")
 
 
 # monkey-patching this does nothing probably because the 

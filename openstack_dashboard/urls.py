@@ -34,7 +34,8 @@ from tukey.shibboleth_auth import patch_openstack_middleware_get_user
 patch_openstack_middleware_get_user()
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {"template": "index.html"}, name="index"),
+#    url(r'^$', direct_to_template, {"template": "index.html"}, name="index"),
+    url(r'^$', 'horizon.views.splash', name='splash'),
     url(r'^console/', 'horizon.views.splash', name='splash'),
     url(r'^openid/', include('django_openid_auth.urls', namespace='openid')),
     url(r'^auth/', include('openstack_auth.urls')),
