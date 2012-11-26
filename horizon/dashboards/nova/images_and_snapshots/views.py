@@ -32,14 +32,14 @@ from horizon import exceptions
 from horizon import tables
 from .images.tables import ImagesTable
 from .snapshots.tables import SnapshotsTable
-#from .volume_snapshots.tables import VolumeSnapshotsTable
+from .volume_snapshots.tables import VolumeSnapshotsTable
 
 
 LOG = logging.getLogger(__name__)
 
 
 class IndexView(tables.MultiTableView):
-    table_classes = (ImagesTable, SnapshotsTable)#, VolumeSnapshotsTable)
+    table_classes = (ImagesTable, SnapshotsTable, VolumeSnapshotsTable)
     template_name = 'nova/images_and_snapshots/index.html'
 
     def has_more_data(self, table):
@@ -53,17 +53,9 @@ class IndexView(tables.MultiTableView):
             (all_images,
              self._more_images) = api.image_list_detailed(self.request,
                                                           marker=marker)
-
             images = [im for im in all_images
                       if im.container_format not in ['aki', 'ari'] and
                       im.properties.get("image_type", '') != "snapshot"]
-
-	    euca_ids = ('emi','eki','eri')
-
-	    if marker and marker.startswith(euca_ids):
-		images = [im for im in images
-                      if im.id.startswith(euca_ids)]
-
         except:
             images = []
             exceptions.handle(self.request, _("Unable to retrieve images."))
@@ -80,11 +72,11 @@ class IndexView(tables.MultiTableView):
             exceptions.handle(req, _("Unable to retrieve snapshots."))
         return snaps
 
-#    def get_volume_snapshots_data(self):
-#        try:
-#            snapshots = api.volume_snapshot_list(self.request)
-#        except:
-#            snapshots = []
-#            exceptions.handle(self.request, _("Unable to retrieve "
-#                    "volume snapshots."))
-#        return snapshots
+    def get_volume_snapshots_data(self):
+        try:
+            snapshots = api.volume_snapshot_list(self.request)
+        except:
+            snapshots = []
+            exceptions.handle(self.request, _("Unable to retrieve "
+                    "volume snapshots."))
+        return snapshots

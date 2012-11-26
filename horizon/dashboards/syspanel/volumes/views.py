@@ -14,33 +14,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from django.utils.translation import ugettext_lazy as _
+"""
+Admin views for managing Nova volumes.
+"""
 
-import horizon
-
-
-class BasePanels(horizon.PanelGroup):
-    slug = "compute"
-    name = _("Manage Compute")
-    panels = ('overview',
-              'instances',
-              'volumes',
-              'images_and_snapshots',
-              'access_and_security')
+from horizon.dashboards.nova.volumes.views import (IndexView as _IndexView,
+                                                   DetailView as _DetailView)
+from .tables import VolumesTable
 
 
-class ObjectStorePanels(horizon.PanelGroup):
-    slug = "object_store"
-    name = _("Object Store")
-    panels = ('containers',)
+class IndexView(_IndexView):
+    table_class = VolumesTable
+    template_name = "syspanel/volumes/index.html"
 
 
-class Nova(horizon.Dashboard):
-    name = _("Project")
-    slug = "nova"
-    panels = (BasePanels, ObjectStorePanels)
-    default_panel = 'overview'
-    supports_tenants = True
-
-
-horizon.register(Nova)
+class DetailView(_DetailView):
+    template_name = "syspanel/volumes/detail.html"

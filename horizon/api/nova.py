@@ -35,7 +35,6 @@ from novaclient.v1_1.servers import REBOOT_HARD
 from horizon.api.base import APIResourceWrapper, APIDictWrapper, url_for
 from horizon.utils.memoized import memoized
 
-from tukey.cloud_attribute import get_cloud
 
 LOG = logging.getLogger(__name__)
 
@@ -72,21 +71,6 @@ class QuotaSet(object):
             if k in ['id']:
                 continue
             limit = apiresource._info[k]
-            v = int(limit) if limit is not None else limit
-            q = Quota(k, v)
-            self.items.append(q)
-            setattr(self, k, v)
-
-class QuotaSet2(object):
-    """Wrapper for novaclient.quotas.QuotaSet objects which wraps the
-    individual quotas inside Quota objects.
-    """
-    def __init__(self, apiresource):
-        self.items = []
-        for k in apiresource.keys():
-            if k in ['id']:
-                continue
-            limit = apiresource[k]
             v = int(limit) if limit is not None else limit
             q = Quota(k, v)
             self.items.append(q)
@@ -410,15 +394,7 @@ def server_remove_floating_ip(request, server, floating_ip):
 
 
 def tenant_quota_get(request, tenant_id):
-    quotas = novaclient(request).quotas.get(tenant_id)
-    if 'cloud' in request.GET:
-        cloud = request.GET['cloud']
-    elif 'cloud' in request.POST:
-        cloud = request.POST['cloud']
-    quotas = quotas._info[cloud]
-    print quotas
-    del(quotas['cloud'])
-    return QuotaSet2(quotas)
+    return QuotaSet(novaclient(request).quotas.get(tenant_id))
 
 
 def tenant_quota_update(request, tenant_id, **kwargs):
@@ -443,19 +419,11 @@ def tenant_quota_usages(request):
     Builds a dictionary of current usage against quota for the current
     project.
     """
-    if 'cloud' in request.GET:
-	cloud = request.GET['cloud']
-    elif 'cloud' in request.POST:
-	cloud = request.POST['cloud']
-    else:
-	cloud = None
-    by_cloud = lambda items: [item for item in items if get_cloud(item) == cloud]
-    instances = by_cloud(server_list(request))
-    floating_ips = by_cloud(tenant_floating_ip_list(request))
+    instances = server_list(request)
+    floating_ips = tenant_floating_ip_list(request)
     quotas = tenant_quota_get(request, request.user.tenant_id)
-    print "internal quotas", quotas
-    flavors = dict([(f.id, f) for f in by_cloud(flavor_list(request))])
-    volumes = []#volume_list(request)
+    flavors = dict([(f.id, f) for f in flavor_list(request)])
+    volumes = volume_list(request)
 
     usages = {'instances': {'flavor_fields': [], 'used': len(instances)},
               'cores': {'flavor_fields': ['vcpus'], 'used': 0},
@@ -464,8 +432,6 @@ def tenant_quota_usages(request):
               'volumes': {'used': len(volumes), 'flavor_fields': []},
               'ram': {'flavor_fields': ['ram'], 'used': 0},
               'floating_ips': {'flavor_fields': [], 'used': len(floating_ips)}}
-
-    print usages
 
     for usage in usages:
         for instance in instances:
@@ -487,7 +453,6 @@ def tenant_quota_usages(request):
             usages[usage]['available'] = usages[usage]['quota'] - \
                                          usages[usage]['used']
 
-    print usages
     return usages
 
 

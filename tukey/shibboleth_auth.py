@@ -145,14 +145,11 @@ def patch_openstack_middleware_get_user():
     openid_views.login_complete = new_login_complete
 
 
-    from horizon.api import nova
-    from .usage import MultiResourceUsage
-    nova.Usage = MultiResourceUsage
-
     from horizon.usage import base
     base.GlobalUsage.show_terminated = True
 
     base.TenantUsage.attrs = ('memory_mb', 'vcpus', 'uptime',
              'hours', 'local_gb', 'adler_ram')
-   
 
+    from create_patches import test_run
+    test_run()

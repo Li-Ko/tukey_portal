@@ -38,7 +38,7 @@ LOG = logging.getLogger(__name__)
 
 
 class IndexView(tables.MultiTableView):
-    table_classes = (KeypairsTable, )#SecurityGroupsTable)#, FloatingIPsTable)
+    table_classes = (KeypairsTable, SecurityGroupsTable, FloatingIPsTable)
     template_name = 'nova/access_and_security/index.html'
 
     def get_keypairs_data(self):
