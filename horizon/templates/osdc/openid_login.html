@@ -59,6 +59,23 @@ input.openid {
    {% endif %}
       </fieldset>
   </form>
+
+
+  <form name="fopenid" action="{{ action }}" method="post">
+      {% csrf_token %}
+      <fieldset>
+          <div class="form-row">
+            <input name="openid_identifier" type="hidden" value="https://yahoo.com" />
+          </div>
+          <div class="submit-row ">
+              <input name="bsignin" type="image" src="../../static/dashboard/img/yahoo.png" value="{% trans "Sign in" %}">
+          </div>
+   {% if next %}
+          <input type="hidden" name="next" value="{{ next }}" />
+   {% endif %}
+      </fieldset>
+  </form>
+
   </div>
 </body>
 </html>
