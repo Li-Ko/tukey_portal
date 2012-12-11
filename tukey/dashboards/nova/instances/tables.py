@@ -5,8 +5,9 @@ from tukey.cloud_attribute import get_cloud
 
 from horizon import tables
 
-from horizon.dashboards.nova.instances.tables import InstancesTable as OldInstancesTable
-from horizon.dashboards.nova.instances.tables import AssociateIP as OldAssociateIP
+from horizon.dashboards.nova.instances.tables import (
+    InstancesTable as OldInstancesTable,
+    AssociateIP, EditInstance)
 
 class LaunchLink(tables.LinkAction):
     name = "launch"
@@ -20,10 +21,14 @@ class InstancesTable(OldInstancesTable):
     Meta = OldInstancesTable.Meta
 
 
+def edit_instance_allowed(self, request, instance=None):
 
-class AssociateIP(OldAssociateIP):
+    return get_cloud(instance).lower() in settings.CLOUD_FUNCTIONS['edit_instance']
 
-    def allowed(self, request, instance=None):
+EditInstance.allowed = edit_instance_allowed
 
-        return get_cloud(instance) in settings.CLOUD_FUNCTIONS['associate_ip']
-    
+def associate_ip_allowed(self, request, instance=None):
+
+    return get_cloud(instance).lower() in settings.CLOUD_FUNCTIONS['associate_ip']
+
+AssociateIP.allowed = associate_ip_allowed

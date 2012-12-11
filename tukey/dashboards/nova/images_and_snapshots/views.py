@@ -5,8 +5,11 @@ from horizon import api
 
 from horizon.dashboards.nova.images_and_snapshots.views import IndexView as OldIndexView
 
-from horizon.dashboards.nova.images_and_snapshots.images.tables import ImagesTable
-from horizon.dashboards.nova.images_and_snapshots.snapshots.tables import SnapshotsTable
+from tukey.dashboards.nova.images_and_snapshots.images.tables import ImagesTable
+from tukey.dashboards.nova.images_and_snapshots.snapshots.tables import SnapshotsTable
+
+#from horizon.dashboards.nova.images_and_snapshots.images.tables import ImagesTable
+#from horizon.dashboards.nova.images_and_snapshots.snapshots.tables import SnapshotsTable
 
 class IndexView(OldIndexView):
 

@@ -1,33 +1,3 @@
-# django-openid-auth -  OpenID integration for django.contrib.auth
-#
-# Copyright (C) 2008-2010 Canonical Ltd.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-# * Redistributions of source code must retain the above copyright
-# notice, this list of conditions and the following disclaimer.
-#
-# * Redistributions in binary form must reproduce the above copyright
-# notice, this list of conditions and the following disclaimer in the
-# documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
-"""Glue between OpenID and django.contrib.auth."""
-
 import logging
 
 from django.conf import settings
@@ -51,7 +21,6 @@ from django_openid_auth.views import (
     REDIRECT_FIELD_NAME
 )
 
-
 from django.contrib.auth.models import AnonymousUser
 from openstack_auth.exceptions import KeystoneAuthException
 
@@ -63,51 +32,17 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django_openid_auth.auth import OpenIDBackend
 
-# TODO
-# CHECK IF THESE ARE NEEDED
-
-import re
-import urllib
-from urlparse import urlsplit
-
-from django.conf import settings
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, authenticate, login as auth_login)
-from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.template.loader import render_to_string
-try:
-    from django.views.decorators.csrf import csrf_exempt
-except ImportError:
-    from django.contrib.csrf.middleware import csrf_exempt
-
-from openid.consumer.consumer import (
-    Consumer, SUCCESS, CANCEL, FAILURE)
-from openid.consumer.discover import DiscoveryFailure
-from openid.extensions import sreg, ax, pape
-
-from django_openid_auth import teams
-from django_openid_auth.forms import OpenIDLoginForm
-from django_openid_auth.models import UserOpenID
 from django_openid_auth.signals import openid_login_complete
-from django_openid_auth.store import DjangoOpenIDStore
 from django_openid_auth.exceptions import (
-    RequiredAttributeNotReturned,
     DjangoOpenIDException,
 )
-
-# END CHECK IF THESE ARE NEEDED
 
 from django_openid_auth.views import (
     parse_openid_response,
     sanitise_redirect_url,
 )
-
-
-
 
 LOG = logging.getLogger(__name__)
 

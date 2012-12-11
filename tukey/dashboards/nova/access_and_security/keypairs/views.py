@@ -19,7 +19,6 @@ class CreateView(OldCreateView):
     def get_success_url(self):
         #append on the cloud name to to go through the nova api 
         #and be switched by the middlewarea
-        print "THIS ONE WAS CALLED"
         cloud_and_name = self.request.POST['cloud'] + '-' + self.request.POST['name']
         return reverse(self.success_url,
                        kwargs={"keypair_name": cloud_and_name})
