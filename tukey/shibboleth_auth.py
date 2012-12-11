@@ -122,3 +122,11 @@ def patch_openstack_middleware_get_user():
 
     from create_patches import patch
     patch()
+
+    from horizon.dashboards.nova.dashboard import BasePanels
+    BasePanels.panels = panels = ('overview',
+              'instances',
+              #'volumes',
+              'images_and_snapshots',
+              'access_and_security')
+

@@ -28,17 +28,17 @@ BIN_DIR = os.path.abspath(os.path.join(ROOT_PATH, '..', 'bin'))
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-SITE_BRANDING = 'OSDC Console'
+SITE_BRANDING = 'OpenStack Dashboard'
 
 LOGIN_URL = '/auth/login/'
 LOGOUT_URL = '/auth/logout/'
 # LOGIN_REDIRECT_URL can be used as an alternative for
 # HORIZON_CONFIG.user_home, if user_home is not set.
 # Do not set it to '/home/', as this will cause circular redirect loop
-#LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
 
 MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'media'))
 MEDIA_URL = '/media/'
@@ -49,7 +49,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 ROOT_URLCONF = 'openstack_dashboard.urls'
 
 HORIZON_CONFIG = {
-    'dashboards': ('nova', 'syspanel', 'settings'),
+    'dashboards': ('nova', 'syspanel', 'settings',),
     'default_dashboard': 'nova',
     'user_home': 'horizon.views.user_home',
     'ajax_queue_limit': 10
@@ -105,7 +105,6 @@ COMPRESS_OUTPUT_DIR = 'dashboard'
 COMPRESS_CSS_HASHING_METHOD = 'hash'
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
-
 INSTALLED_APPS = (
     'openstack_dashboard',
     'django.contrib.contenttypes',
@@ -119,23 +118,11 @@ INSTALLED_APPS = (
     'horizon.dashboards.nova',
     'horizon.dashboards.syspanel',
     'horizon.dashboards.settings',
-    'django_openid_auth',
     'openstack_auth',
-    'files',
-    'tukey_admin',
-    'status',
-    'webforms',
-    'datasets',
-    'tukey_templatetags',
-    'keyservice'
-#    'horizon_billing',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-AUTHENTICATION_BACKENDS = (
-    'django_openid_auth.auth.OpenIDBackend',
-    'openstack_auth.backend.KeystoneBackend',
-)
+AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -171,12 +158,3 @@ except ImportError:
 
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
-
-
-OPENID_CREATE_USERS = True
-#import tukey.openid_auth
-#OPENID_RENDER_FAILURE = tukey.openid_auth.render_failure
-
-APPLICATION_EMAIL = 'aheath@uchicago.edu'
-APPLICATION_INVITE_EMAIL = 'aheath@uchicago.edu'
-SUPPORT_EMAIL = 'aheath@uchicago.edu'
