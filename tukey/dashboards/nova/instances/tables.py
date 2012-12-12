@@ -7,7 +7,8 @@ from horizon import tables
 
 from horizon.dashboards.nova.instances.tables import (
     InstancesTable as OldInstancesTable,
-    AssociateIP, EditInstance)
+    AssociateIP, EditInstance, TerminateInstance)
+
 
 class LaunchLink(tables.LinkAction):
     name = "launch"
@@ -19,6 +20,7 @@ class InstancesTable(OldInstancesTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
     Meta = OldInstancesTable.Meta
+    Meta.table_actions = (LaunchLink, TerminateInstance)
 
 
 def edit_instance_allowed(self, request, instance=None):
