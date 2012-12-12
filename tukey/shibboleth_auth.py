@@ -60,11 +60,11 @@ def get_user(request):
                     auth_url=settings.OPENSTACK_KEYSTONE_URL,
                     request=request)
                 user.backend = 'openstack_auth.backend.KeystoneBackend'
+                login(request, user)
             except (keystone_exceptions.Unauthorized, KeystoneAuthException):
                 user = UnregisteredUser('Shibboleth', 
                     request.META.get(shib_header))
 
-            login(request, user)
 
         else:
             user = AnonymousUser()
@@ -72,7 +72,6 @@ def get_user(request):
 
 
 def login(request, user):
-    print "in login function"
     if user is None:
         user = request.user
     # TODO: It would be nice to support different login methods, like signed cookies.
@@ -85,7 +84,6 @@ def login(request, user):
     else:
         request.session.cycle_key()
     request.session[auth.SESSION_KEY] = user.id
-    print user.backend
     request.session[auth.BACKEND_SESSION_KEY] = user.backend
     
     set_session_from_user(request, user)
