@@ -11,10 +11,14 @@ from horizon.dashboards.nova.access_and_security.keypairs.views import (
     ImportView as OldImportView,
     DownloadView as OldDownloadView)
 
+from .forms import CreateKeypair, ImportKeypair
+
 LOG = logging.getLogger(__name__)
 
 
 class CreateView(OldCreateView):
+
+    form_class = CreateKeypair
 
     def get_success_url(self):
         #append on the cloud name to to go through the nova api 
@@ -25,6 +29,8 @@ class CreateView(OldCreateView):
 
 
 class ImportView(OldImportView):
+
+    form_class = ImportKeypair
 
     def get_object_id(self, keypair):
         #append on the cloud name to to go through the nova api
