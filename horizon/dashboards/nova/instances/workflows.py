@@ -334,7 +334,7 @@ class SetAccessControlsAction(workflows.Action):
                                                    "authentication."),
                                        add_item_link=KEYPAIR_IMPORT_URL)
     groups = forms.MultipleChoiceField(label=_("Security Groups"),
-                                       required=True,
+                                       required=False,
                                        initial=["default"],
                                        widget=forms.CheckboxSelectMultiple(),
                                        help_text=_("Launch instance in these "
