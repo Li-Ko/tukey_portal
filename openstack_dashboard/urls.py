@@ -29,26 +29,25 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.simple import direct_to_template
 import horizon
 
+
 from tukey.shibboleth_auth import patch_openstack_middleware_get_user
 
 patch_openstack_middleware_get_user()
 
 urlpatterns = patterns('',
-#    url(r'^$', direct_to_template, {"template": "index.html"}, name="index"),
-    url(r'^$', 'horizon.views.splash', name='splash'),
+    url(r'^$', 'tukey.content.views.page', name='home'),
     url(r'^console/', 'horizon.views.splash', name='splash'),
     url(r'^openid/', include('django_openid_auth.urls', namespace='openid')),
     url(r'^auth/', include('openstack_auth.urls')),
-    url(r'^files/', include('files.urls', namespace='files')),
-    url(r'^tukey_admin/', include('tukey_admin.urls', namespace='tukey_admin')),
-    url(r'^status/', include('status.urls', namespace='status')),
-    url(r'^sponsors/', direct_to_template, {"template": "sponsors.html"}, name="sponsors"),                   
-    url(r'^news/', direct_to_template, {"template": "news.html"}, name="news"),
-    url(r'^projects/', direct_to_template, {"template": "projects.html"}, name="projects"),
-    url(r'^publicdata/', include('datasets.urls', namespace='datasets')),
-    url(r'^keyservice/', include('keyservice.urls', namespace='keyservice')),
-    url(r'', include('webforms.urls')),                   
-    url(r'', include(horizon.urls)))
+    url(r'^files/', include('tukey.files.urls', namespace='files')),
+    url(r'^tukey_admin/', include('tukey.tukey_admin.urls', namespace='tukey_admin')),
+    url(r'^status/', include('tukey.status.urls', namespace='status')),
+    url(r'^publicdata/', include('tukey.datasets.urls', namespace='datasets')),
+    url(r'^keyservice/', include('tukey.keyservice.urls', namespace='keyservice')),                   
+    url(r'', include('tukey.webforms.urls')), 
+    url(r'', include(horizon.urls)),                  
+    url(r'', include('tukey.content.urls', namespace='content')),
+    )
 
 # Development static app and project media serving using the staticfiles app.
 urlpatterns += staticfiles_urlpatterns()

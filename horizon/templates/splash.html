@@ -1,5 +1,5 @@
 
-{% load i18n branding %}
+{% load i18n branding nav_tags %}
 
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
@@ -9,7 +9,7 @@
     {% include "_stylesheets.html" %}
   </head>
   <body id="splash">
-    {% include "osdc/_osdc_nav.html" %}
+    {% show_nav 'console' %}
     <div class="container">
       <div class="row large-rounded">
         {% include 'auth/_login.html' %}
