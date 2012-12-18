@@ -51,7 +51,8 @@ def cloud_details(user):
     active = active_clouds(user)
 
     return {key: value for key, value in settings.CLOUD_DETAILS.items()
-	if key in active or key.startswith('login') and key[5:] in active}
+	    if key in active or key.startswith('login') 
+        and key[5:] in active or key == 'all'}
 
 def has_function(function, cloud):
     return cloud in settings.CLOUD_FUNCTIONS[function]
