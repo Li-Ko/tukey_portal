@@ -1,19 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
 
-{% load i18n branding nav_tags %}
+{% block title %}{% trans "Login" %}{% endblock %}
 
-<!DOCTYPE html>
-<html lang="en" xml:lang="en">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>{% trans "Login" %} - {% site_branding %}</title>
-    {% include "_stylesheets.html" %}
-  </head>
-  <body id="splash">
-    {% show_nav 'console' %}
-    <div class="container">
-      <div class="row large-rounded">
-        {% include 'auth/_login.html' %}
-      </div>
-    </div>
-  </body>
-</html>
+{% block body_id %}splash{% endblock %}
+
+{% block main %}
+  {% include 'auth/_login.html' %}
+{% endblock %}
+
