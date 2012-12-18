@@ -1,6 +1,7 @@
 import os
 
 from django.utils.translation import ugettext_lazy as _
+from settings import *
 
 DEBUG = True
 
@@ -26,6 +27,7 @@ USE_X_FORWARDED_HOST = True
 # }
 
 LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
+TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
 
 #FORCE_SCRIPT_NAME = '/demo'
 
@@ -38,7 +40,7 @@ DATABASES = {
         # Not used with sqlite3.
         "USER": "osdc_user",
         # Not used with sqlite3.
-        "PASSWORD": "",
+        "PASSWORD": "0sdc-1812",
         # Set to empty string for localhost. Not used with sqlite3.
         "HOST": "",
         # Set to empty string for default. Not used with sqlite3.
@@ -249,13 +251,14 @@ INSTALLED_APPS = (
     'horizon.dashboards.settings',
     'django_openid_auth',
     'openstack_auth',
-    'files',
-    'tukey_admin',
-    'status',
-    'webforms',
-    'datasets',
-    'tukey_templatetags',
-    'keyservice'
+    'tukey.files',
+    'tukey.tukey_admin',
+    'tukey.status',
+    'tukey.webforms',
+    'tukey.datasets',
+    'tukey.customtags',
+    'tukey.keyservice',
+    'tukey.content'
 #    'horizon_billing',
 )
 
@@ -270,3 +273,4 @@ APPLICATION_EMAIL = 'aheath@uchicago.edu'
 APPLICATION_INVITE_EMAIL = 'aheath@uchicago.edu'
 SUPPORT_EMAIL = 'aheath@uchicago.edu'
 
+TEMPLATE_DIRS += ( os.path.abspath(os.path.join(TUKEY_ROOT, 'templates')), )

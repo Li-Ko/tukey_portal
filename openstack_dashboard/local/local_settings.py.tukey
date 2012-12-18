@@ -36,7 +36,7 @@ DATABASES = {
         # Not used with sqlite3.
         "USER": "osdc_user",
         # Not used with sqlite3.
-        "PASSWORD": "",
+        "PASSWORD": "0sdc-1812",
         # Set to empty string for localhost. Not used with sqlite3.
         "HOST": "",
         # Set to empty string for default. Not used with sqlite3.

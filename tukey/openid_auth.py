@@ -153,7 +153,7 @@ def login_begin(request, template_name='openid/login.html',
 
     LOG.debug('new login begin')
     return old_login_begin(request, 
-	settings.ROOT_PATH + '/../horizon/templates/osdc/openid_login.html', login_complete_view,
+	settings.ROOT_PATH + '/../tukey/templates/osdc/openid_login.html', login_complete_view,
 	form_class, render_failure, redirect_field_name)
 
 

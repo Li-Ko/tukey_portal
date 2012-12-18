@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
-    <title>{% block title %}{% endblock %} - {% site_branding %}</title>
+    <title>{% block meta_title %}{% endblock %} - {% site_branding %}</title>
     {% include "horizon/_conf.html" %}
     {% block css %}
     {% include "_stylesheets.html" %}
@@ -21,40 +21,35 @@
       })();
     </script>
   </head>
-  <body id="{% block body_id %}{% endblock %}">
-    {% show_nav 'console' %}
+    {% show_nav content.slug %}
     {% block content %}
-    {% include "osdc/_osdc_console_menu.html" %}
+    
     <div class='container'>
-      <div class='row row-header'>
-      <div class='span12'>
-          {% block page_header %}{% endblock %}
-        </div>
-      </div>
-      <div class='row'>
-      <div class='span12'>
-        {% include "horizon/_messages.html" %}
-        {% block main %}{% endblock %}
-      </div>
-      </div>
+      {% block header %}{% endblock %}
+      {% block main %}{% endblock %}
     </div>
     {% endblock %}
 
-    <div id="main-footer">
-      <div class="modal-footer">
-        <div class="container">
-          Footer content here.
-        </div>
-      </div>
+    <div id="footer">
       {% block footer %}{% endblock %}
     </div>
 
     {% block js %}
     {% include "horizon/_scripts.html" %}
+    {% comment %}
+    {% if not content.img %}
     <script type="text/javascript">
-    $("#nav-console").attr('class', 'active')
+      $("#nav-{{ content.slug }}").attr('class', 'active')
     </script>
+    {% endif %}
+    {% endcomment %}
+
     {% endblock %}
     <div id="modal_wrapper"></div>
+    <div class="modal-footer osdc-footer">
+      <div class="container">
+        Footer content here.
+      </div>
+    </div>
   </body>
 </html>
