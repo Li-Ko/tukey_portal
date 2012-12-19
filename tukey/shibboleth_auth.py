@@ -30,6 +30,7 @@ from horizon import decorators
 
 from .models import UnregisteredUser
 
+
 LOG = logging.getLogger(__name__)
 
 def get_user(request):
@@ -95,11 +96,9 @@ def login(request, user):
 
 def patch_openstack_middleware_get_user():
 
-    LOG.debug(auth.login)
+    LOG.debug("IS PATCHNG")
 
     auth.login = login
-
-    LOG.debug(auth.login)
 
     utils.get_user = get_user
     

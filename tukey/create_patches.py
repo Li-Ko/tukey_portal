@@ -35,13 +35,15 @@ def split(path, result=None):
 
 
 def patch():
-    my_dir = 'tukey'
-    their_dir = 'horizon'
+
+    # getting rid of the /tukey
+    local_dir = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1]) + '/'
+
+    my_dir = local_dir + 'tukey'
+    their_dir = local_dir + 'horizon'
     target_dirs = ['api','dashboards']
 
     target_dirs = ['/'.join([my_dir, target]) for target in target_dirs]
-
-    #print target_dirs
 
     modules = []
 
@@ -57,9 +59,10 @@ def patch():
                     for f in filenames if not f.endswith(('.pyc','.swp','.html'))
                     and f != '__init__.py']
 
-    #print modules
-
     for module in modules:
+
+        my_dir = my_dir.split('/')[-1]
+        their_dir = their_dir.split('/')[-1]
 
         my_module_path = '.'.join([my_dir, module])
         their_module_path = '.'.join([their_dir,module])
@@ -69,8 +72,6 @@ def patch():
 
 
         patchables = intersection(theirs, mine)
-
-        #print "MODULES:, ", patchables
 
         for to_patch in patchables:
 
