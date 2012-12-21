@@ -1,23 +1,18 @@
 from django.conf import settings
 
 from horizon.api import nova
-
-from horizon.utils.memoized import memoized
-
-from horizon.api.nova import server_list
-from horizon.api.nova import tenant_floating_ip_list
-from horizon.api.nova import tenant_quota_get
 from horizon.api.nova import Quota
 from horizon.api.nova import flavor_list
 from horizon.api.nova import novaclient
+from horizon.api.nova import server_list
+from horizon.api.nova import tenant_floating_ip_list
+from horizon.api.nova import tenant_quota_get
+from horizon.utils.memoized import memoized
 
 from tukey.cloud_attribute import get_cloud
 
 class Usage(nova.Usage):
 
-
-
-    """Simple wrapper around contrib/simple_usage.py."""
     _attrs = ['start', 'server_usages', 'stop', 'tenant_id',
              'total_local_gb_usage', 'total_memory_mb_usage',
              'total_vcpus_usage', 'total_hours', 
@@ -46,9 +41,7 @@ class Usage(nova.Usage):
     
 
 class QuotaSet2(object):
-    """Wrapper for novaclient.quotas.QuotaSet objects which wraps the
-    individual quotas inside Quota objects.
-    """
+
     def __init__(self, apiresource):
         self.items = []
         for k in apiresource.keys():

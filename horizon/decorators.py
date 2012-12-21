@@ -52,13 +52,11 @@ def require_auth(view_func):
     @functools.wraps(view_func, assigned=available_attrs(view_func))
     def dec(request, *args, **kwargs):
         if request.user.is_authenticated():
-            print "user is authenticated"
             return view_func(request, *args, **kwargs)
         #TODO this is absolutely horrible must fix this somehow
         #from django.http import HttpResponseRedirect
         from tukey.views import register_user
         try:
-            print "returning new registered user"
             return register_user(request)
         except AttributeError:
             pass

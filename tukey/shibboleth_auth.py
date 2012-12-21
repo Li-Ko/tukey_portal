@@ -1,35 +1,21 @@
+import functools
 import logging
 
+from .models import UnregisteredUser
+from django import shortcuts
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import AnonymousUser
-
-
-from openstack_auth import utils
-from openstack_auth.backend import KeystoneBackend
-from openstack_auth.user import set_session_from_user
-
-from keystoneclient import exceptions as keystone_exceptions
-from openstack_auth.exceptions import KeystoneAuthException
-
-
 from django.contrib.auth.signals import user_logged_in
-
-from django import shortcuts
-
-#TODO double check these
-import functools
-
 from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext as _
-
-from horizon.exceptions import NotAuthorized, NotAuthenticated
-# end double check
-
 from horizon import decorators
-
-from .models import UnregisteredUser
-
+from horizon.exceptions import NotAuthorized, NotAuthenticated
+from keystoneclient import exceptions as keystone_exceptions
+from openstack_auth import utils
+from openstack_auth.backend import KeystoneBackend
+from openstack_auth.exceptions import KeystoneAuthException
+from openstack_auth.user import set_session_from_user
 
 LOG = logging.getLogger(__name__)
 
@@ -95,8 +81,6 @@ def login(request, user):
 
 
 def patch_openstack_middleware_get_user():
-
-    LOG.debug("IS PATCHNG")
 
     auth.login = login
 

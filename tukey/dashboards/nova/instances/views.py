@@ -19,7 +19,6 @@ class DetailView(OldDetailView):
             try:
                 instance_id = self.kwargs['instance_id']
                 instance = api.server_get(self.request, instance_id)
-                print instance
                 #instance.volumes = api.volume_instance_list(self.request,
                 #                                            instance_id)
                 # Sort by device name
