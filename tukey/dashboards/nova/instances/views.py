@@ -6,6 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from horizon.dashboards.nova.instances.views import DetailView as OldDetailView
+from horizon.dashboards.nova.instances.views import IndexView as OldIndexView
+
+from .tables import InstancesTable
+
+class IndexView(OldIndexView):
+    table_class = InstancesTable
+    template_name = 'nova/instances/index.html'
+
 
 class DetailView(OldDetailView):
 
