@@ -31,6 +31,16 @@ TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
 
 #FORCE_SCRIPT_NAME = '/demo'
 
+# ignore what openstack_dashboard/settings.py it is ignored and the 
+# value is actually coming from the openstack_auth/urls.py
+# so instead we are using this in addtion like:
+# {% url logout %}{{ LOGOUT_URL }}
+#LOGOUT_URL = '?next=/Shibboleth.sso/Logout%3Freturn%3Dhttp%3A%2F%2Fconsole.opensciencedatacloud.org' + FORCE_SCRIPT_NAME + LOGIN_URL + '%3Fshib%3Dtrue' 
+LOGOUT_URL = '?next=/Shibboleth.sso/Logout%3Freturn%3Dhttp%3A%2F%2Fconsole.opensciencedatacloud.org' + LOGIN_URL + '%3Fshib%3Dtrue' 
+
+TEMPLATE_CONTEXT_PROCESSORS += ( "tukey.context_processors.logout_url", )
+
+
 DATABASES = {
     "default": {
         # Ends with "postgresql_psycopg2", "mysql", "sqlite3" or "oracle".
