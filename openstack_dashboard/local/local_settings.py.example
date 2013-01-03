@@ -152,6 +152,12 @@ API_RESULT_PAGE_SIZE = 20
 # of your entire OpenStack installation, and hopefully be in UTC.
 TIME_ZONE = "UTC"
 
+# For usage that looks the same as a monthly billing based on local time
+# you should set this value to your local time.
+# also set your server's time zone to be the same e.g.:
+# sudo dpkg-reconfigure tzdata
+#TIME_ZONE = "America/Chicago"
+
 LOGGING = {
         'version': 1,
         # When set to True this will disable all logging except
