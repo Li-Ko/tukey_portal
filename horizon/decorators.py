@@ -60,8 +60,6 @@ def require_auth(view_func):
             return register_user(request)
         except AttributeError:
             pass
-        #return HttpResponseRedirect("http://opensciencedatacloud.org/apply/")
-        #return HttpResponse('<h1>save the unregistered users credentials in the session then open their actions in this form etc also this is horrible</h1>')
         raise NotAuthenticated(_("Please log in to continue."))
     return dec
 
