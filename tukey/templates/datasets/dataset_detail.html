@@ -21,6 +21,10 @@
 <a href="{{ dataset.source_url }}">
 {{ dataset.source }}
 </a>
+{% elif dataset.source_url %}
+<a href="{{ dataset.source_url }}">
+{{ dataset.source_url }}
+</a>
 {% endif %}
 </div>
 
@@ -59,21 +63,21 @@ UDR is a wrapper around rsync that enables rsync to use the high performance <a 
 
 <h4>Download/synchronize {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}/ /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}/ /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}} /path/to/local_copy</code></li>
 {% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}}/ -avu /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}}/ -avu /path/to/local_copy</code></li>
+<li>Using rsync (high speed connection): <code>rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} -avu /path/to/local_copy</code></li>
+<li>Using udr (high speed connection): <code>udr rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} -avu /path/to/local_copy</code></li>
 {% endif %}
 </ul>
 
 <h4>Download an individual file from {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}/remotefile /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}/remotefile /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
 {% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}/remotefile /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}/remotefile /path/to/local_copy</code></li>
+<li>Using rsync (high speed connection): <code>rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using udr (high speed connection): <code>udr rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}remotefile /path/to/local_copy</code></li>
 {% endif %}
 </ul>
 </p>
@@ -99,7 +103,7 @@ Then you can run <code> mount -tcifs -oguest 10.103.112.253:/osdc_datasets /mnt/
 <h4>OCC-Y: </h4>
 </p>
 <p>
-The public data sets are mounted on the namenode in <code>/mnt/pubdata</code>.
+The public data sets are mounted on the starlight node under <code>/mnt/pubdata</code>.
 </p>
 </div>
 <div class="span12 data-header"><h3>License/Attribution Requirements</h3></div>
