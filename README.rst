@@ -34,6 +34,12 @@ directory which can be dropped into any horizon installation.
 Dependencies
 ============
 
+Application form requires sendmail
+
+For Ubuntu use apt to install sendmail::
+
+    $ sudo apt-get install sendmail
+
 Install Horizon.
 
 
