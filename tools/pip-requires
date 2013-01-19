@@ -13,3 +13,9 @@ pytz
 
 # Horizon Utility Requirements
 lockfile # for SECURE_KEY generation
+
+# Tukey Requirements
+python-openid
+django-openid-auth
+psycopg2
+python-memcached
