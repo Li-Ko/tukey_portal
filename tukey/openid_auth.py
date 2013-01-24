@@ -1,48 +1,27 @@
 import logging
 
-from django.conf import settings
-from openid.consumer.consumer import SUCCESS
-from openid.extensions import pape
-
-from django_openid_auth import teams
-from django_openid_auth.models import UserOpenID
-from django_openid_auth.exceptions import (
-    MissingPhysicalMultiFactor,
-    RequiredAttributeNotReturned,
-)
-
-from django_openid_auth.forms import OpenIDLoginForm
-
-from openstack_auth.backend import KeystoneBackend
-
 from django_openid_auth.views import (
     login_begin as old_login_begin,
     default_render_failure,
     REDIRECT_FIELD_NAME
 )
 
-from django.contrib.auth.models import AnonymousUser
-from openstack_auth.exceptions import KeystoneAuthException
-
 from .models import UnregisteredUser
-
-from django.template.loader import render_to_string
-from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseRedirect
-
+from django.conf import settings
+from django.contrib.auth import authenticate, login as auth_login
+from django.http import HttpResponseRedirect
+from django_openid_auth import teams
 from django_openid_auth.auth import OpenIDBackend
-
-from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, authenticate, login as auth_login)
+from django_openid_auth.exceptions import DjangoOpenIDException
+from django_openid_auth.exceptions import MissingPhysicalMultiFactor
+from django_openid_auth.forms import OpenIDLoginForm
+from django_openid_auth.models import UserOpenID
 from django_openid_auth.signals import openid_login_complete
-from django_openid_auth.exceptions import (
-    DjangoOpenIDException,
-)
-
-from django_openid_auth.views import (
-    parse_openid_response,
-    sanitise_redirect_url,
-)
+from django_openid_auth.views import parse_openid_response, sanitise_redirect_url
+from openid.consumer.consumer import SUCCESS
+from openid.extensions import pape
+from openstack_auth.backend import KeystoneBackend
+from openstack_auth.exceptions import KeystoneAuthException
 
 LOG = logging.getLogger(__name__)
 
@@ -94,7 +73,7 @@ class OpenIDKeystoneBackend(KeystoneBackend):
             self.update_groups_from_teams(user, teams_response)
             self.update_staff_status_from_teams(user, teams_response)
 
-	LOG.debug("email %s:", details['email'])
+        LOG.debug("email %s:", details['email'])
 
 
         try:
@@ -103,46 +82,39 @@ class OpenIDKeystoneBackend(KeystoneBackend):
                 request=kwargs.get('request'))
 
         except KeystoneAuthException:
-            print "KeystoneAuth exception returning UnregisteredUser"
             return UnregisteredUser('OpenID', details['email'])
 
-        print "USER: %s", user
-        print "user.id: %s", user.id
-        print "user token: %s", user.token
-        print "endpoint %s", user.endpoint
-        print " %s", dir(self)
-        
         return user
 
 
     def _extract_user_details(self, openid_response):
-	return self.openid_backend._extract_user_details(openid_response)
+        return self.openid_backend._extract_user_details(openid_response)
  
 
     def _get_available_username(self, nickname, identity_url):
-	return self.openid_backend._get_available_username(nickname, identity_url)
+        return self.openid_backend._get_available_username(nickname, identity_url)
 
 
     def create_user_from_openid(self, openid_response):
-	return self.openid_backend.create_user_from_openid(openid_response)
+        return self.openid_backend.create_user_from_openid(openid_response)
 
 
     def associate_openid(self, user, openid_response):
-	return self.openid_backedn.associate_openid(user, openid_response)
+        return self.openid_backedn.associate_openid(user, openid_response)
 
 
     def update_user_details(self, user, details, openid_response):
-	return self.openid_backend.update_user_details(user, details,
-	    openid_response)
+        return self.openid_backend.update_user_details(user, details,
+            openid_response)
 
 
     def update_groups_from_teams(self, user, teams_response):
-	return self.openid_backend.update_groups_from_teams(user, teams_response)
+        return self.openid_backend.update_groups_from_teams(user, teams_response)
 
 
     def update_staff_status_from_teams(self, user, teams_response):
-	return self.openid_backend.update_staff_status_from_teams(user,
-	    teams_response)
+        return self.openid_backend.update_staff_status_from_teams(user,
+            teams_response)
 
 
 def login_begin(request, template_name='openid/login.html',
@@ -153,8 +125,8 @@ def login_begin(request, template_name='openid/login.html',
 
     LOG.debug('new login begin')
     return old_login_begin(request, 
-	settings.ROOT_PATH + '/../tukey/templates/osdc/openid_login.html', login_complete_view,
-	form_class, render_failure, redirect_field_name)
+        settings.ROOT_PATH + '/../tukey/templates/osdc/openid_login.html',
+        login_complete_view, form_class, render_failure, redirect_field_name)
 
 
 
@@ -164,7 +136,6 @@ def login_begin(request, template_name='openid/login.html',
 
 def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
                    render_failure=None):
-    print "USing correct function"
     redirect_to = request.REQUEST.get(redirect_field_name, '')
     render_failure = render_failure or \
                      getattr(settings, 'OPENID_RENDER_FAILURE', None) or \
@@ -179,8 +150,8 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
     if openid_response.status == SUCCESS:
         try:
             user = authenticate(openid_response=openid_response)
-        except DjangoOpenIDException, e:
-	    return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
+        except DjangoOpenIDException:
+            return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
 #            return render_failure(request, e.message, exception=e)
 
         if user is not None:
@@ -190,13 +161,12 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
                 # Notify any listeners that we successfully logged in.
                 openid_login_complete.send(sender=UserOpenID, request=request,
-		    user=user,
-                    openid_response=openid_response)
+                    user=user, openid_response=openid_response)
 
                 return response
             else:
-		from tukey.views import register_user
-	    	return register_user(request, user)
+                from tukey.views import register_user
+                return register_user(request, user)
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
 #

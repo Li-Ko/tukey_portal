@@ -11,12 +11,13 @@ from openstack_dashboard.exceptions import UNAUTHORIZED, RECOVERABLE, NOT_FOUND
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.abspath(os.path.join(TEST_DIR, ".."))
 
-TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
-
-
 SECRET_KEY = generate_or_read_from_file(os.path.join(TEST_DIR,
                                                      '.secret_key_store'))
 ROOT_URLCONF = 'openstack_dashboard.urls'
+
+
+TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
+
 TEMPLATE_DIRS = (
     os.path.join(TEST_DIR, 'templates'),
     os.path.abspath(os.path.join(TUKEY_ROOT, 'templates')),
@@ -43,7 +44,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.auth',
     'django_openid_auth',
-#   order might matter ?
     'openstack_auth',
     'tukey.files',
     'tukey.tukey_admin',
@@ -53,9 +53,6 @@ INSTALLED_APPS = (
     'tukey.customtags',
     'tukey.keyservice',
     'tukey.content'
-#    'tukey_templatetags',
-#    'horizon_billing',
-
 )
 
 AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
@@ -104,4 +101,4 @@ NOSE_ARGS = ['--nocapture',
              '--cover-inclusive',
              '--all-modules']
 
-from tukey.test.settings import *
+from tukey.test.shared_settings import *

@@ -1,8 +1,7 @@
-files that need to be actually patched:
-horizon/decorators.py
-horizon/dashboards/nova/instances/workflows.py
+Apply patched from the the root directory of the Horizon project
+using:
 
-horizon/dashboards/nova/overview/templates/overview/usage.csv
-horizon/dashboards/nova/overview/templates/overview/usage.html
-horizon/dashboards/nova/access_and_security/templates/access_and_security/keypairs/download.html
-horizon/dashboards/nova/images_and_snapshots/templates/images_and_snapshots/index.html
+patch -p1 < tukey/patches/horizon.patch
+
+
+For stability use commit 3a9b0da489030eaacc6cc0416f92192b74783ac8

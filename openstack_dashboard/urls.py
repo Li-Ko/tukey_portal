@@ -27,13 +27,13 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-import horizon
 
 # do some monkey patching
 from tukey.shibboleth_auth import patch_openstack_middleware_get_user
 
 patch_openstack_middleware_get_user()
 
+import horizon
 
 urlpatterns = patterns('',
 
@@ -69,10 +69,9 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     urlpatterns += patterns('',
         url(r'^500/$', 'django.views.defaults.server_error'),
-        #url(r'', include('tukey.content.urls', namespace='content'))
+        url(r'', include('tukey.content.urls', namespace='content'))
     )
 else:
-    print "overhere"
     urlpatterns += patterns('',
         url(r'', include('tukey.content.urls', namespace='content'))
     )

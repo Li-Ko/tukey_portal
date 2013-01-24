@@ -93,9 +93,14 @@ class QuotaSet2(Sequence):
         return match.pop() if len(match) else Quota(key, default)
 
 
+def default_quota_get(request, tenant_id):
+    return cloud_quota(request, novaclient(request).quotas.defaults(tenant_id))
 
 def tenant_quota_get(request, tenant_id):
-    quotas = novaclient(request).quotas.get(tenant_id)
+    return cloud_quota(request, novaclient(request).quotas.get(tenant_id))
+
+
+def cloud_quota(request, quotas):
     cloud = None
     if 'cloud' in request.GET:
         cloud = request.GET['cloud']

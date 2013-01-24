@@ -52,6 +52,12 @@ def require_auth(view_func):
     def dec(request, *args, **kwargs):
         if request.user.is_authenticated():
             return view_func(request, *args, **kwargs)
+        #TODO this is absolutely horrible must fix this somehow
+        from tukey.views import register_user
+        try:
+               return register_user(request)
+        except AttributeError:
+            pass
         raise NotAuthenticated(_("Please log in to continue."))
     return dec
 

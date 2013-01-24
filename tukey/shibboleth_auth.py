@@ -1,16 +1,10 @@
-import functools
 import logging
 
 from .models import UnregisteredUser
-from django import shortcuts
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.signals import user_logged_in
-from django.utils.decorators import available_attrs
-from django.utils.translation import ugettext as _
-from horizon import decorators
-from horizon.exceptions import NotAuthorized, NotAuthenticated
 from keystoneclient import exceptions as keystone_exceptions
 from openstack_auth import utils
 from openstack_auth.backend import KeystoneBackend
@@ -110,12 +104,3 @@ def patch_openstack_middleware_get_user():
     from create_patches import patch
     patch()
 
-    # Perhaps this can stay gone!
-
-#    from openstack_dashboard.dashboards.project.dashboard import BasePanels
-#    BasePanels.panels = panels = ('overview',
-#              'instances',
-#              #'volumes',
-#              'images_and_snapshots',
-#              'access_and_security')
-#

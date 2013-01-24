@@ -1,0 +1,127 @@
+diff --git a/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/download.html b/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/download.html
+index 3cc9de5..7fea4db 100644
+--- a/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/download.html
++++ b/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/download.html
+@@ -8,14 +8,16 @@
+ 
+ {% block main %}
+   <div class="modal-header">
+-    <h3>{% blocktrans %}The keypair &quot;{{ keypair_name }}&quot; should download automatically. If not use the link below.{% endblocktrans %}</h3>
++    <h3>{% blocktrans %}Use the link below to download the keypair &quot;{{ display_name }}&quot;.{% endblocktrans %}</h3>
+   </div>
+   <div class="modal-body clearfix">
+     <a href="{% url horizon:project:access_and_security:keypairs:generate keypair_name %}">
+-      {% blocktrans %}Download keypair &quot;{{ keypair_name}}&quot;{% endblocktrans %}
++      {% blocktrans %}Download keypair &quot;{{ display_name }}&quot;{% endblocktrans %}
+     </a>
+   </div>
++  <!--
+   <script type="text/javascript" charset="utf-8">
+     document.location = '{% url horizon:project:access_and_security:keypairs:generate keypair_name %}';
+   </script>
++  -->
+ {% endblock %}
+diff --git a/openstack_dashboard/dashboards/project/overview/templates/overview/usage.csv b/openstack_dashboard/dashboards/project/overview/templates/overview/usage.csv
+index 3e2ecd5..4ceac4e 100644
+--- a/openstack_dashboard/dashboards/project/overview/templates/overview/usage.csv
++++ b/openstack_dashboard/dashboards/project/overview/templates/overview/usage.csv
+@@ -1,11 +1,16 @@
+-Usage Report For Period:,{{ usage.start|date:"b. d Y" }},{{ usage.end|date:"b. d Y" }}
+-Tenant ID:,{{ usage.tenant_id }}
++Usage Report For Period:,{{ usage.start|date:"b. d Y" }},{{ usage.end|date:"b. d Y" }} 
++
++{% comment %}
+ Total Active VCPUs:,{{ usage.summary.instances }}
+-CPU-HRs Used:,{{ usage.summary.vcpu_hours|floatformat:2 }}
++CPU-HRs Used:,{{ usage.summary.vcpu_hours }}
+ Total Active Ram (MB):,{{ usage.summary.memory_mb }}
+ Total Disk Size:,{{ usage.summary.local_gb }}
+-Total Disk Usage:,{{ usage.summary.disk_gb_hours|floatformat:2 }}
++Total Disk Usage:,{{ usage.summary.disk_gb_hours }}
++
++Username:, {{ usage.user }}
++{% endcomment %}
++Tenant ID:,{{ usage.tenant_id }}
++
++{% for key,value in usage.summary.items %}{% if value != -1 and key != 'memory_mb' and key != 'instances' and key != 'local_gb' and key != 'disk_gb_hours' and key != 'vcpus' and key != 'vcpu_hours' and key != 'cloud_cores' and key != 'cloud_du' and key != 'hadoop_hdfsdu' and key != 'hadoop_jobs'%}{{ key }},{{ value }} 
++{% endif %}{% endfor %}
+ 
+-Name,VCPUs,RamMB,DiskGB,Usage(Hours),Uptime(Seconds),State
+-{% for s in usage.get_instances %}{{ s.name|addslashes }},{{ s.vcpus|addslashes }},{{ s.memory_mb|addslashes }},{{s.local_gb|addslashes }},{{ s.hours|floatformat:2 }},{{ s.uptime }},{{ s.state|capfirst|addslashes }}
+-{% endfor %}
+diff --git a/openstack_dashboard/test/settings.py b/openstack_dashboard/test/settings.py
+index 37347a5..294736a 100644
+--- a/openstack_dashboard/test/settings.py
++++ b/openstack_dashboard/test/settings.py
+@@ -11,12 +11,13 @@ from openstack_dashboard.exceptions import UNAUTHORIZED, RECOVERABLE, NOT_FOUND
+ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+ ROOT_PATH = os.path.abspath(os.path.join(TEST_DIR, ".."))
+ 
+-TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
+-
+-
+ SECRET_KEY = generate_or_read_from_file(os.path.join(TEST_DIR,
+                                                      '.secret_key_store'))
+ ROOT_URLCONF = 'openstack_dashboard.urls'
++
++
++TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
++
+ TEMPLATE_DIRS = (
+     os.path.join(TEST_DIR, 'templates'),
+     os.path.abspath(os.path.join(TUKEY_ROOT, 'templates')),
+@@ -43,7 +44,6 @@ INSTALLED_APPS = (
+     'django.contrib.contenttypes',
+     'django.contrib.auth',
+     'django_openid_auth',
+-#   order might matter ?
+     'openstack_auth',
+     'tukey.files',
+     'tukey.tukey_admin',
+@@ -53,9 +53,6 @@ INSTALLED_APPS = (
+     'tukey.customtags',
+     'tukey.keyservice',
+     'tukey.content'
+-#    'tukey_templatetags',
+-#    'horizon_billing',
+-
+ )
+ 
+ AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
+@@ -104,4 +101,4 @@ NOSE_ARGS = ['--nocapture',
+              '--cover-inclusive',
+              '--all-modules']
+ 
+-from tukey.test.settings import *
++from tukey.test.shared_settings import *
+diff --git a/openstack_dashboard/urls.py b/openstack_dashboard/urls.py
+index db93360..6f7fa4c 100644
+--- a/openstack_dashboard/urls.py
++++ b/openstack_dashboard/urls.py
+@@ -27,13 +27,13 @@ from django.conf.urls.static import static
+ from django.conf import settings
+ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+ 
+-import horizon
+ 
+ # do some monkey patching
+ from tukey.shibboleth_auth import patch_openstack_middleware_get_user
+ 
+ patch_openstack_middleware_get_user()
+ 
++import horizon
+ 
+ urlpatterns = patterns('',
+ 
+@@ -69,10 +69,9 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ if settings.DEBUG:
+     urlpatterns += patterns('',
+         url(r'^500/$', 'django.views.defaults.server_error'),
+-        #url(r'', include('tukey.content.urls', namespace='content'))
++        url(r'', include('tukey.content.urls', namespace='content'))
+     )
+ else:
+-    print "overhere"
+     urlpatterns += patterns('',
+         url(r'', include('tukey.content.urls', namespace='content'))
+     )

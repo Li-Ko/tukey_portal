@@ -1,5 +1,13 @@
 @import "../../bootstrap/less/bootstrap.less";
 
+// override Horizon variables
+//OSDC Colors
+@cloudBlue:             #00abc7;
+@cloudLightBlue:        #cbf8ff;
+
+@navbarBackground:                @cloudLightBlue;
+@navbarBackgroundHighlight:       @cloudBlue;
+
 /* new clearfix */
 .clearfix:after {
     visibility: hidden;
@@ -11,7 +19,6 @@
     }
 * html .clearfix             { zoom: 1; } /* IE6 */
 *:first-child+html .clearfix { zoom: 1; } /* IE7 */
-
 
 dt {
   font-weight: bold;
@@ -1483,3 +1490,7 @@ p, ul {
     font-size: 14px;
 }
 
+// This is probably bad
+.top-spacer{
+   margin-top: 25px;
+}
