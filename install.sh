@@ -21,26 +21,108 @@ HORIZON_DIR=horizon3
 RUN_USER=ubuntu
 RUN_GROUP=ubuntu
 
-cd $BASE_DIR
+# Probably wont change
+TUKEY_DIR=tukey
 
-git clone https://github.com/openstack/horizon.git $HORIZON_DIR
+source local_settings.sh
+
+git clone https://github.com/openstack/horizon.git $BASE_DIR/$HORIZON_DIR
 
 if $STABLE
 then
+    cd $BASE_DIR/$HORIZON_DIR
     echo "Using current stable Horizon commit: $HORIZON_COMMIT"
     git checkout $HORIZON_COMMIT
+    cd -
 else
     echo "WARNING! Using unstable latest version of Horizon"
 fi
 
 # Copy tukey subdir into Horizon 
-cp -r $TUKEY_DIR $HORIZON_DIR
+cp -r $TUKEY_DIR $BASE_DIR/$HORIZON_DIR
 
-cd $HORIZON_DIR
+cp local_settings.stub $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
+
+
+echo "TIME_ZONE = $TIME_ZONE
+
+LOGOUT_URL = $LOGOUT_URL
+
+SITE_BRANDING = $SITE_BRANDING
+
+DATABASES = {
+    'default': {
+        # Ends with 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # DB name or path to database file if using sqlite3.
+        'NAME': $DB_NAME,
+        # Not used with sqlite3.
+        'USER': $DB_USER,
+        # Not used with sqlite3.
+        'PASSWORD': $DB_PASSWORD,
+        # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '',
+        # Set to empty string for default. Not used with sqlite3.
+        'PORT': '',
+    }
+}
+
+# For times when a user needs to choose a resource to perform a
+# certain action on we need to know what resources support that
+# function those functions are currently:
+CLOUD_FUNCTIONS = {
+    'import_keypair': ['sullivan', 'loginadler', 'loginsullivan', 'all'],
+    'create_keypair': ['adler', 'sullivan', 'loginadler', 'loginsullivan', 'all'],
+    'associate_ip': ['sullivan'],
+    'edit_instance': ['sullivan'],
+    'launch_multiple': ['sullivan'],
+    'namable_servers': ['sullivan']
+}
+
+# Cloud ids that will match the tukey-middleware etc/enabled config
+# files as keys and the values a short description
+CLOUD_DETAILS = {
+    'loginadler': 'Adler login server',
+    'loginsullivan': 'Sullivan login server',
+    'adler':    'Adler instances',
+    'sullivan': 'Sullivan instances',
+    'all': 'All Resources'
+}
+
+AUTH_MEMCACHED = '127.0.0.1:11211'
+
+# Shibboleth headers we want to consume in the order we want to
+# check for them
+SHIB_HEADERS = ('HTTP_EPPN',)
+
+USAGE_ATTRIBUTES = {
+    'OCC-Y Hadoop Disk (GB):': 'occ_y_hdfsdu',
+    'OCC-Y Jobs:': 'occ_y_jobs',
+    'Adler Glusterfs Disk (GB):': 'adler_du',
+    'Sullivan Glusterfs Disk (GB):': 'sullivan_du',
+    'Sullivan Cloud Virtual Cores:': 'sullivan_cores',
+    'Sullivan Cloud RAM Hours (GB Hours):': 'sullivan_ram',
+    'Adler Cloud RAM Hours (GB Hours):': 'adler_ram',
+    'Adler Cloud Virtual Cores:': 'adler_cores',
+    'OCC LVOC Hadoop Disk (GB):': 'occ_lvoc_hdfsdu',
+    'OCC LVOC Jobs:': 'occ_lvoc_jobs'}
+
+
+
+APPLICATION_EMAIL = 'accounts@opencloudconsortium.org'
+APPLICATION_INVITE_EMAIL = 'accounts@opencloudconsortium.org'
+SUPPORT_EMAIL = 'support@opensciencedatacloud.org'
+
+SESSION_TIMEOUT = 3000
+" >> $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
+
+
+
+cd $BASE_DIR/$HORIZON_DIR
 
 # Apply patches for the stuff we couldn't monkey-patch
-patch -p1 < tukey/patches/horizon.patch
-patch -p1 < tukey/patches/openstack_dashboard.patch
+patch -p1 < $TUKEY_DIR/patches/horizon.patch
+patch -p1 < $TUKEY_DIR/patches/openstack_dashboard.patch
 
 # Append to 
 
@@ -51,6 +133,7 @@ psycopg2
 python-memcached
 " >> tools/pip-requires
 
+python tools/install_venv.py
 
 if $CONFIGURE_APACHE
 then
@@ -63,19 +146,19 @@ then
     
     WSGIProcessGroup tukey-portal
     
-    Alias /static $BASE_DIR/$HORIZON_DIR/tukey/static/
+    Alias /static $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/static/
     
     <Directory $BASE_DIR/$HORIZON_DIR/openstack_dashboard/wsgi>
       Order allow,deny
       Allow from all
     </Directory>
     
-    <Directory $BASE_DIR/$HORIZON_DIR/tukey/static>
+    <Directory $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/static>
       Order allow,deny
       Allow from all
-    </Directory>" > tukey/openstack-dashboard.conf 
+    </Directory>" > $TUKEY_DIR/openstack-dashboard.conf 
     
-    sudo ln -s $BASE_DIR/$HORIZON_DIR/tukey/openstack-dashboard.conf /etc/apache2/sites-available/
+    sudo ln -s $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/openstack-dashboard.conf /etc/apache2/sites-available/
     
 
     if $CREATE_CONSOLE
@@ -102,3 +185,4 @@ then
     fi
 
 fi
+
