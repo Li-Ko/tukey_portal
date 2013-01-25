@@ -5,6 +5,10 @@
 
 # Use the last stable Horizon commit
 STABLE=true
+#STABLE=false
+
+MULTI_SITE=false
+PATH=demo
 
 CONFIGURE_APACHE=true
 CREATE_CONSOLE=false
