@@ -129,8 +129,13 @@ body {
 }
 
 #splash .login {
+<<<<<<< HEAD:tukey/static/dashboard/less/osdc.less
   background: #fff url(/static/dashboard/img/logo.png) no-repeat center 35px;
   /*position: absolute;*/
+=======
+  background: #fff url(/static/dashboard/img/logo-splash.png) no-repeat center 35px;
+  position: absolute;
+>>>>>>> 59b7e6011b0c392a29a06e736e42b0277ab3e719:openstack_dashboard/static/dashboard/less/horizon.less
   top: 80px;
   left: 50%;
   margin: 70px auto 0 auto;
@@ -263,6 +268,16 @@ a.current_item:hover h3, a.current_item:hover h4 {
     font-size: 16px;
     margin: -6px 0 0 14px;
     padding: 0;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    &:hover {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: none;
+      padding-right: 1em;
+      word-wrap: break-word;
+    }
 }
 
 .sidebar .switcher_bar h4 {
@@ -397,6 +412,7 @@ a.current_item:hover h3, a.current_item:hover h4 {
 }
 .table th.header:hover {
   background-color: #e8e8e8;
+  text-decoration: underline;
 }
 .table tbody td.anchor a {
   display: block;
@@ -839,12 +855,22 @@ td.select {
 /* Actions dropdown */
 
 td.actions_column {
+<<<<<<< HEAD:tukey/static/dashboard/less/osdc.less
   width: 175px;
+=======
+  white-space: nowrap;
+>>>>>>> 59b7e6011b0c392a29a06e736e42b0277ab3e719:openstack_dashboard/static/dashboard/less/horizon.less
   padding: 10px;
   position: relative;
-  min-width: 140px;
-  min-height: 20px;
+  width: 200px;
 }
+<<<<<<< HEAD:tukey/static/dashboard/less/osdc.less
+=======
+
+td.actions_column .btn-group {
+  display: inline-block;
+}
+>>>>>>> 59b7e6011b0c392a29a06e736e42b0277ab3e719:openstack_dashboard/static/dashboard/less/horizon.less
 
 td.actions_column .row_actions a,
 td.actions_column .row_actions input,
