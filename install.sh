@@ -3,6 +3,8 @@
 # Install tukey portal!
 # TODO: Write this in python and make it portable
 
+LOCAL_SETTINGS_FILE=/home/ubuntu/site_local_settings.py
+
 # Use the last stable Horizon commit
 STABLE=true
 #STABLE=false
@@ -11,7 +13,7 @@ MULTI_SITE=false
 PATH=demo
 
 CONFIGURE_APACHE=true
-CREATE_CONSOLE=false
+CREATE_CONSOLE=true
 
 # Last commit of Horizon tested against
 HORIZON_COMMIT=3a9b0da489030eaacc6cc0416f92192b74783ac8
@@ -20,8 +22,8 @@ HORIZON_COMMIT=3a9b0da489030eaacc6cc0416f92192b74783ac8
 # Site specific installation variables
 
 # Where to install MUST be absolute path for linking
-BASE_DIR=/home/ubuntu
-HORIZON_DIR=horizon3
+BASE_DIR=/var/www/tukey
+HORIZON_DIR=tukey-portal
 RUN_USER=ubuntu
 RUN_GROUP=ubuntu
 
@@ -45,81 +47,90 @@ fi
 # Copy tukey subdir into Horizon 
 cp -r $TUKEY_DIR $BASE_DIR/$HORIZON_DIR
 
-cp local_settings.stub $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
 
 
-echo "TIME_ZONE = $TIME_ZONE
+# I no longer think this is the best way to do this
+# instead we will have the entire local settings file in a directory
+# that is site specific probably under /usr/local/etc/tukey
+# so lets just link our file from there...
 
-LOGOUT_URL = $LOGOUT_URL
+ln -s $LOCAL_SETTINGS_FILE $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
 
-SITE_BRANDING = $SITE_BRANDING
-
-DATABASES = {
-    'default': {
-        # Ends with 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # DB name or path to database file if using sqlite3.
-        'NAME': $DB_NAME,
-        # Not used with sqlite3.
-        'USER': $DB_USER,
-        # Not used with sqlite3.
-        'PASSWORD': $DB_PASSWORD,
-        # Set to empty string for localhost. Not used with sqlite3.
-        'HOST': '',
-        # Set to empty string for default. Not used with sqlite3.
-        'PORT': '',
-    }
-}
-
-# For times when a user needs to choose a resource to perform a
-# certain action on we need to know what resources support that
-# function those functions are currently:
-CLOUD_FUNCTIONS = {
-    'import_keypair': ['sullivan', 'loginadler', 'loginsullivan', 'all'],
-    'create_keypair': ['adler', 'sullivan', 'loginadler', 'loginsullivan', 'all'],
-    'associate_ip': ['sullivan'],
-    'edit_instance': ['sullivan'],
-    'launch_multiple': ['sullivan'],
-    'namable_servers': ['sullivan']
-}
-
-# Cloud ids that will match the tukey-middleware etc/enabled config
-# files as keys and the values a short description
-CLOUD_DETAILS = {
-    'loginadler': 'Adler login server',
-    'loginsullivan': 'Sullivan login server',
-    'adler':    'Adler instances',
-    'sullivan': 'Sullivan instances',
-    'all': 'All Resources'
-}
-
-AUTH_MEMCACHED = '127.0.0.1:11211'
-
-# Shibboleth headers we want to consume in the order we want to
-# check for them
-SHIB_HEADERS = ('HTTP_EPPN',)
-
-USAGE_ATTRIBUTES = {
-    'OCC-Y Hadoop Disk (GB):': 'occ_y_hdfsdu',
-    'OCC-Y Jobs:': 'occ_y_jobs',
-    'Adler Glusterfs Disk (GB):': 'adler_du',
-    'Sullivan Glusterfs Disk (GB):': 'sullivan_du',
-    'Sullivan Cloud Virtual Cores:': 'sullivan_cores',
-    'Sullivan Cloud RAM Hours (GB Hours):': 'sullivan_ram',
-    'Adler Cloud RAM Hours (GB Hours):': 'adler_ram',
-    'Adler Cloud Virtual Cores:': 'adler_cores',
-    'OCC LVOC Hadoop Disk (GB):': 'occ_lvoc_hdfsdu',
-    'OCC LVOC Jobs:': 'occ_lvoc_jobs'}
-
-
-
-APPLICATION_EMAIL = 'accounts@opencloudconsortium.org'
-APPLICATION_INVITE_EMAIL = 'accounts@opencloudconsortium.org'
-SUPPORT_EMAIL = 'support@opensciencedatacloud.org'
-
-SESSION_TIMEOUT = 3000
-" >> $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
-
+#cp local_settings.stub $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
+#
+#
+#echo "TIME_ZONE = $TIME_ZONE
+#
+#LOGOUT_URL = $LOGOUT_URL
+#
+#SITE_BRANDING = $SITE_BRANDING
+#
+#DATABASES = {
+#    'default': {
+#        # Ends with 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        # DB name or path to database file if using sqlite3.
+#        'NAME': $DB_NAME,
+#        # Not used with sqlite3.
+#        'USER': $DB_USER,
+#        # Not used with sqlite3.
+#        'PASSWORD': $DB_PASSWORD,
+#        # Set to empty string for localhost. Not used with sqlite3.
+#        'HOST': '',
+#        # Set to empty string for default. Not used with sqlite3.
+#        'PORT': '',
+#    }
+#}
+#
+## For times when a user needs to choose a resource to perform a
+## certain action on we need to know what resources support that
+## function those functions are currently:
+#CLOUD_FUNCTIONS = {
+#    'import_keypair': ['sullivan', 'loginadler', 'loginsullivan', 'all'],
+#    'create_keypair': ['adler', 'sullivan', 'loginadler', 'loginsullivan', 'all'],
+#    'associate_ip': ['sullivan'],
+#    'edit_instance': ['sullivan'],
+#    'launch_multiple': ['sullivan'],
+#    'namable_servers': ['sullivan']
+#}
+#
+## Cloud ids that will match the tukey-middleware etc/enabled config
+## files as keys and the values a short description
+#CLOUD_DETAILS = {
+#    'loginadler': 'Adler login server',
+#    'loginsullivan': 'Sullivan login server',
+#    'adler':    'Adler instances',
+#    'sullivan': 'Sullivan instances',
+#    'all': 'All Resources'
+#}
+#
+#AUTH_MEMCACHED = '127.0.0.1:11211'
+#
+## Shibboleth headers we want to consume in the order we want to
+## check for them
+#SHIB_HEADERS = ('HTTP_EPPN',)
+#
+#USAGE_ATTRIBUTES = {
+#    'OCC-Y Hadoop Disk (GB):': 'occ_y_hdfsdu',
+#    'OCC-Y Jobs:': 'occ_y_jobs',
+#    'Adler Glusterfs Disk (GB):': 'adler_du',
+#    'Sullivan Glusterfs Disk (GB):': 'sullivan_du',
+#    'Sullivan Cloud Virtual Cores:': 'sullivan_cores',
+#    'Sullivan Cloud RAM Hours (GB Hours):': 'sullivan_ram',
+#    'Adler Cloud RAM Hours (GB Hours):': 'adler_ram',
+#    'Adler Cloud Virtual Cores:': 'adler_cores',
+#    'OCC LVOC Hadoop Disk (GB):': 'occ_lvoc_hdfsdu',
+#    'OCC LVOC Jobs:': 'occ_lvoc_jobs'}
+#
+#
+#
+#APPLICATION_EMAIL = 'accounts@opencloudconsortium.org'
+#APPLICATION_INVITE_EMAIL = 'accounts@opencloudconsortium.org'
+#SUPPORT_EMAIL = 'support@opensciencedatacloud.org'
+#
+#SESSION_TIMEOUT = 3000
+#" >> $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
+#
 
 
 cd $BASE_DIR/$HORIZON_DIR
