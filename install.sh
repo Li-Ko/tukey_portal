@@ -127,6 +127,12 @@ fi
 
 if $CREATE_DATABASE
 then
-    sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
-    sudo -u postgres psql -c "CREATE USER $DB_USER with PASSWORD '$DB_PASSWORD';"
+    if [ -z $DB_NAME ] || [ -z $DB_USER ] || [ -z $DB_PASSWORD ]
+    then
+        echo "Variables DB_NAME DB_USER and DB_PASSWORD need to be set"
+        exit 1
+    else
+        sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
+        sudo -u postgres psql -c "CREATE USER $DB_USER with PASSWORD '$DB_PASSWORD';"
+    fi
 fi
