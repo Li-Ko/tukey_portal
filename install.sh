@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # Install tukey portal
 # TODO: Write this in python and make it portable
 
@@ -11,6 +9,8 @@ LOCAL_SETTINGS_FILE=/home/ubuntu/site_local_settings.py
 STABLE=true
 
 MULTI_SITE=false
+
+CREATE_DATABASE=false
 
 CONFIGURE_APACHE=true
 CREATE_CONSOLE=true
@@ -125,3 +125,8 @@ then
 
 fi
 
+if $CREATE_DATABASE
+then
+    sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
+    sudo -u postgres psql -c "CREATE USER $DB_USER with PASSWORD '$DB_PASSWORD';"
+fi
