@@ -30,7 +30,10 @@ RUN_GROUP=ubuntu
 # Probably wont change
 TUKEY_DIR=tukey
 
-source local_settings.sh
+# we dont need this anymore
+#source local_settings.sh
+
+sudo apt-get install nodejs
 
 git clone https://github.com/openstack/horizon.git $BASE_DIR/$HORIZON_DIR
 
