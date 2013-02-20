@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>OSDC Query Builder</h1>
+{% endblock %}
+
+{% block main %}
+    
+    <div class="hidden">
+        <div class="row-fluid" id="fieldSelect">
+            {% comment %}<p>AND</p>{% endcomment %}
+            <select class="attrSelect">
+            {% for field in query_fields %}
+                <option class="span2" title="{{field.help_text}}">{{field.label}}</option>
+            {% endfor %}
+            </select>
+            <input type="text" data-provide="typeahead" data-items="4" data-source='["test","test2"]' />
+            <button type="button" class="btn-danger btn-mini removeParent">&times;</button>
+    
+        </div>
+    </div>
+
+<div class='workflow static_page'>
+
+    <div class="container-fluid">
+
+        <div class="modal-header"> <h3> Query Builder </h3></div>
+        <div class="modal-body clearfix">
+        <label for="query_name">Query Name</label>
+        <input type="text" name="query_name" />
+    
+        <div class="container-fluid" id="query">
+            <h3> Include: </h3>
+            <div class="row-fluid">
+                <select class="attrSelect">
+                {% for field in query_fields %}
+                    <option class="span2" title="{{field.help_text}}"  >{{field.label}}</option>
+                {% endfor %}
+                </select>
+                <input type="text" data-provide="typeahead" data-items="4" data-source='["test","test2"]' />
+            </div>
+        </div>
+        <div class="row-fluid">
+            <a class="btn btn-small" id="addTerm">+ Add Term</a>
+        </div>
+
+        <div class="container-fluid">
+            <h3>Exclude:</h3>
+            <div class="row-fluid">
+                <select>
+                {% for field in query_fields %}
+                    <option class="span2" title="{{field.help_text}}">{{field.label}}</option>
+                {% endfor %}
+                </select>
+                <input type="text" data-provide="typeahead" data-items="4" data-source='["test","test2"]' />
+            </div>
+        </div>
+        <div class="row-fluid">
+            <a class="btn btn-small" id="addTerm">+ Add Term</a>
+        </div>
+        </div>
+
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+           $("#addTerm").live('click', function() {
+                $('#fieldSelect').clone().appendTo($("#query"));
+                console.log("test");
+            });
+
+            $(".removeParent").live('click', function() {
+                console.log("test");
+                $(this).parent().remove();
+            });
+
+           $(".addOr").live('click', function(){
+                // clone the element the data source needs to be based on what is there
+                
+                $('#fieldSelect').clone().appendTo($("#query"));
+                console.log("test");
+            });
+
+            $(".attrSelect").live('change', function() {
+                console.log($(this).find(":selected").value());    
+            });
+
+
+        });
+    </script>
+
+        <div class="modal-footer">    
+
+        <form action="" method="post" class="form-horizontal"> {% csrf_token %}
+    
+        <input class="btn btn-primary" type="submit" value="Launch Instance" />
+        </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
