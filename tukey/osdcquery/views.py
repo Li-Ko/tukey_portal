@@ -26,68 +26,29 @@ def query_builder(request):
     if request.method == 'GET':
         data = request.GET
 
-    print data
-
     form = OsdcQueryForm(data)
+    form.set_cloud(request.user)
 
-#    print "form ", form
+    if request.method == 'POST': # If the form has been submitted...
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            #...
+
+            cloud = request.POST["cloud"]
+
+            rest_url = "?".join([urlresolvers.reverse(
+                "horizon:project:instances:launch"),
+                urlencode(
+                    {"cloud": cloud.capitalize(),
+                    "customization_script":
+                    "python -m osdcquery.osdcquery %s '%s'" % (
+                        data["query_name"], data["generated_query"]
+                    )})])
+
+            return HttpResponseRedirect(rest_url)
 
     return render(request, 'osdcquery/form.html', {
         'form': form,
         'query_fields': QueryFields()
     })
 
-#
-#
-#    if request.method == 'POST': # If the form has been submitted...
-#        print request.POST
-#        form = OsdcQueryForm(request.POST) # A form bound to the POST data
-#        if form.is_valid(): # All validation rules pass
-#            # Process the data in form.cleaned_data
-#            #...
-#            ignore = ['csrfmiddlewaretoken', 'cloud']
-#
-#            #pop this so it wont show up in the stuff
-#            cloud = request.POST["cloud"]
-#
-#            rest_url = "?".join([urlresolvers.reverse(
-#                "horizon:project:instances:launch"),
-#                urlencode(
-#                    {"cloud": cloud.capitalize(),
-#                    "customization_script": " AND ".join([
-#                        "%s:%s" % (attr, request.POST[attr]) for attr
-#                        in request.POST if attr not in ignore and
-#                        request.POST[attr] != ''])})])
-#
-#            return HttpResponseRedirect(rest_url)
-#
-#    else:
-#        print request.GET
-#        form = OsdcQueryForm(request.GET)
-#        form.set_cloud(request.user)
-#
-#    return render(request, 'osdcquery/form.html', {
-#        'form': form,
-#    })
-#
-
-@require_auth
-def select_field(request):
-    ''' This is the view for the dialog where a user selects a new field to
-    add to the query'''
-
-    return render(request, 'osdcquery/select.html', {
-        'query_fields': QueryFields()
-    })
-
-
-
-#def query(request):
-#    #return HttpResponse(request.POST['choice'])
-#
-#    q_str = ''
-#    for attr in request.POST:
-#        q_str += attr + ":" + request.POST[attr]
-#
-#    #return HttpResponse(q_str)
-#    return HttpResponse("The post : " +str(request.POST))

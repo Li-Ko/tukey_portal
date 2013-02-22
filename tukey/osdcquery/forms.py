@@ -5,22 +5,22 @@ from tukey.cloud_attribute import cloud_details
 
 class OsdcQueryForm(forms.Form):
 
-    def __init__(self, data):
-        super(OsdcQueryForm, self).__init__(data)
-
-        print self.fields.keys()
-
-        data_items = [(k,v) for k, v in data.items() if k not in
-            self.fields.keys() + ['csrfmiddlewaretoken']]
-
-        data_items = sorted(data_items, key=lambda x: int(x[0].split('_')[0]))
-        print data_items
-
-        for k, v in data_items:
-            #if k.startswith('Q') and k not in self.fields.keys():
-            field_type = '_'.join(k.split('_')[1:])
-            self.fields[k] = QueryFields.query_fields[field_type](v)
-
+#    def __init__(self, data):
+#        super(OsdcQueryForm, self).__init__(data)
+#
+#        print self.fields.keys()
+#
+#        data_items = [(k,v) for k, v in data.items() if k not in
+#            self.fields.keys() + ['csrfmiddlewaretoken']]
+#
+#        data_items = sorted(data_items, key=lambda x: int(x[0].split('_')[0]))
+#        print data_items
+#
+#        for k, v in data_items:
+#            #if k.startswith('Q') and k not in self.fields.keys():
+#            field_type = '_'.join(k.split('_')[1:])
+#            self.fields[k] = QueryFields.query_fields[field_type](v)
+#
 
     def set_cloud(self, user):
         clouds = cloud_details(user).items()
@@ -30,23 +30,19 @@ class OsdcQueryForm(forms.Form):
     query_name = forms.CharField(
         label="Query Name")
 
+    generated_query = forms.CharField(
+        label="Query Name",
+        widget=forms.TextInput(attrs={'class':'span9', 'id': 'generated_query'}))
+
+    cloud = forms.ChoiceField(widget=forms.Select(attrs={'class':'switchable'}))
 
 class QueryFields(forms.Form):
 
     def __init__(self):
         super(QueryFields, self).__init__()
-        self.fields = {k: v(None) for k,v in QueryFields.query_fields.items()
-             if k != "operator"}
+        self.fields = {k: v(None) for k,v in QueryFields.query_fields.items()}
 
     query_fields = {}
-
-    query_fields["operator"] = lambda v: forms.ChoiceField(
-        initial=v.upper(),
-        label='',
-        widget=forms.Select(attrs={'class':'switchable'}),
-        choices = [
-            ('AND', 'AND'),
-            ('OR', 'OR')])
 
     query_fields["disease_abbr"] = lambda v: forms.ChoiceField(
         initial=v,
@@ -942,9 +938,9 @@ class QueryFields(forms.Form):
         required=False,
         label="Search XML Text")
 
-    query_fields["cloud"] = lambda v: forms.ChoiceField(
-        initial=v,
-        help_text="The Cloud to Link files on.",
-        required=True,
-        label="Cloud",
-        widget=forms.Select(attrs={'class':'switchable'}))
+#    query_fields["cloud"] = lambda v: forms.ChoiceField(
+#        initial=v,
+#        help_text="The Cloud to Link files on.",
+#        required=True,
+#        label="Cloud",
+#        widget=forms.Select(attrs={'class':'switchable'}))
