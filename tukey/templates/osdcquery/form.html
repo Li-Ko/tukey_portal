@@ -8,15 +8,15 @@
     
     <div class="hidden">
         <div class="row-fluid selection" id="fieldSelect">
-            {% comment %}<p>AND</p>{% endcomment %}
             <select class="attrSelect">
             {% for field in query_fields %}
-                <option class="span2" title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
+                <option class="span2" title="{{field.help_text}}" 
+                    value="{{field.name}}">{{field.label}}</option>
             {% endfor %}
             </select>
-            <input class="queryValue" type="text" data-provide="typeahead" data-items="4"/>
-            <a class="btn btn-danger btn-mini removeParent">&times;</a>
+            <input class="queryValue" type="text" data-provide="typeahead"/>
         </div>
+        <a class="btn btn-danger btn-mini removeParent" id="removeParent">&times;</a>
     </div>
 
     <div class="container-fluid">
@@ -24,178 +24,53 @@
 
         <div class="modal-header"> <h3> Query Builder </h3></div>
         <div class="modal-body clearfix">
-           <p>
-              <label for="query_name">Query Name</label>
-              {% comment %}<input type="text" name="query_name" id="query_name" placeholder="Query Name" />{% endcomment %}
-              {{ form.query_name }}
-              <span class="help-inline">Name of directory in your query directory that will contain generated links.</span>
-   
-           </p>
-              <div class="container-fluid" id="include">
-                  <h3> Include: </h3>
-                  <div class="row-fluid selection">
-                      <select class="attrSelect">
-                      {% for field in query_fields %}
-                          <option class="span2" title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
-                      {% endfor %}
-                      </select>
-                      <input class="queryValue" type="text" data-provide="typeahead" data-items="4"/>
-                  </div>
-              </div>
-              <div class="row-fluid">
-                  <a class="btn btn-small include addTerm">Add Term</a>
-              </div>
-           </p>
-
-           <p>
-              <div class="container-fluid" id="exclude">
-                  <h3>Exclude:</h3>
-                  <div class="row-fluid selection">
-                      <select class="attrSelect">
-                      {% for field in query_fields %}
-                          <option class="span2" title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
-                      {% endfor %}
-                      </select>
-                      <input class="queryValue" type="text" data-provide="typeahead" data-items="4"/>
-                  </div>
-              </div>
-              <div class="row-fluid">
-                  <a class="btn btn-small exclude addTerm">Add Term</a>
-              </div>
-           </p>
-        <p>
-            <label for="generated_query">Generated Query</label>
-            {{ form.generated_query }}
-        </p>
-        <p>
-            <label for="cloud">Cloud</label>
-            {{ form.cloud }}
-        </p>
-<!--
-               { {% for field in query_fields %} {{ field.name }}: [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''}
--->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-           $(".addTerm").live('click', function() {
-                if ($(this).hasClass('include')) {
-                    $('#fieldSelect').clone().appendTo($("#include"));
-                }
-                else {
-                    $('#fieldSelect').clone().appendTo($("#exclude"));
-                }
-            });
-
-            $(".removeParent").live('click', function() {
-                $(this).parent().remove();
-                generateQueryString();
-            });
-
-            $(".attrSelect").live('change', function() {
-                var data_source = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''};
-
-                var the_input = $(this).parent().find('input');
-
-                var autocomplete = $(this).parent().find('input').typeahead();
-                console.log(autocomplete.data('typeahead').highlighter = function (a){
-                    the_input.attr('value', a);
-                    generateQueryString();
-                    console.log(a);
-                    return a.replace(new RegExp("("+this.query+")","ig"),function(a,b){return"<strong>"+b+"</strong>"});
-                });
-//                 autocomplete.updater = function (item) {
-//                    console.log("test");
-//                    generateQueryString();
-//                    return item;
-//                };
-               autocomplete.data('typeahead').source = data_source[$(this).find(":selected").val()];
-               $(this).parent().find('input').attr('data-source', data_source[$(this).find(":selected").val()]);
-
-            });
-
-            $("form").live('change', generateQueryString);
-
-            function generateQueryString() {
-    
-                function getCludeQuery(clude) {
-                    var cludeQuery = {};
-                    $(clude).find(".selection").each(function() {
-                        
-                        var attr = $(this).live('find', '.attrSelect').find(":selected").val();
-                        var value = $(this).find('input').attr('value');
-                        if (typeof cludeQuery[attr] === 'undefined') {
-                            cludeQuery[attr] = new Array();
-                        }
-                        cludeQuery[attr][cludeQuery[attr].length] = value;
-                    });
-                    return cludeQuery;
-                }
-
-                var includes = getCludeQuery("#include");
-                var excludes = getCludeQuery("#exclude");
-
-                function joinTerms(terms, innerJoinFunc, outerJoinFunc) {
-                    var count = 0;
-                    var queryString = [];
-                    $.each(terms, function(attr_name, outer_value) {
-                        var inner_queries = new Array();
-                        var inner_index = 0;
-                        $.each(outer_value, function(index, value) {
-                            if (value) {
-                             inner_queries[inner_index] = attr_name + ':' + '"' + value + '"';
-                                inner_index++;
-                            }
-                        });
-                        if (inner_queries.length > 0) {
-                            queryString[count] = innerJoinFunc(inner_queries);
-                            count++;
-                        }
-                    });
-                    queryString = outerJoinFunc(queryString);
-                    return queryString;
-                }
-
-                var includeString = joinTerms(includes, function(parts) {
-                    return "(" + parts.join(" OR ") + ")";
-                }, function(parts) {
-                    return parts.join(" AND ");
-                });
-
-                var excludeString = joinTerms(excludes, function(parts) {
-                    return parts.join(" OR ");
-                }, function(parts) {
-                    return parts.join(" OR ");
-                });
-
-                var current_query = '';
-                
-                if (includeString && excludeString) {
-                    current_query =[includeString, "(" + excludeString + ")"].join(" AND NOT ");
-                }
-                else if (includeString) {
-                    current_query = includeString;
-                }
-                else if (excludeString) {
-                    current_query = "NOT ("+excludeString+")";
-                }
-
-                $("#generated_query").attr('value', current_query);
-
-            }
-            
-
-            // queries will be grouped as follows
-            //((key1:value OR key1:value) AND (key2:value AND key2:value)... )  AND NOT (key:value OR key:value ...)
-
-
-        });
-    </script>
+            <p>
+                <label for="query_name">Query Name</label>
+                {{ form.query_name.errors }}
+                {{ form.query_name }}
+                <span class="help-inline">
+                    Name of directory in your query directory that will contain
+                    generated links.
+                </span>
+            </p>
+            <p><div>
+                <div class="container-fluid terms" id="include">
+                    <h3> Include: </h3>
+                </div>
+                <div class="row-fluid">
+                    <a class="btn btn-small include addTerm">Add Term</a>
+                </div>
+            </div></p>
+            <p><div>
+                <div class="container-fluid terms" id="exclude">
+                    <h3>Exclude:</h3>
+                </div>
+                <div class="row-fluid">
+                    <a class="btn btn-small exclude addTerm">Add Term</a>
+                </div>
+            </div></p>
+            <p>
+                <label for="generated_query">Generated Query</label>
+                {{ form.generated_query.errors }}
+                {{ form.generated_query }}
+            </p>
+            <p>
+                <label for="cloud">Cloud</label>
+                {{ form.cloud.errors }}
+                {{ form.cloud }}
+            </p>
 
             <div class="modal-footer">    
                 <input class="btn btn-primary" type="submit" value="Launch Instance On Results" />
             </div>
         </form>
     </div>
-{% endblock %}
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        var GLOBAL_DATA_SOURCE = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''};
+        {% include "osdcquery/query_builder.js" %}
+    </script>
+
+{% endblock %}
 
