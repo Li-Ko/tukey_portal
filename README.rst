@@ -2,14 +2,14 @@
 Tukey Portal
 ============
 
-Tukey Portal is built over Django leveraging Horizon for OpenStack and 
+Tukey Portal is built over Django leveraging Horizon for OpenStack and
 Eucalyptus VM management.
 
 
 Horizon Info
 ============
 
-Horizon is a Django-based project aimed at providing a complete OpenStack
+Horizon is a Django-based project that provides a complete OpenStack
 Dashboard along with an extensible framework for building new dashboards
 from reusable components. The ``openstack_dashboard`` module is a reference
 implementation of a Django site that uses the ``horizon`` app to provide
