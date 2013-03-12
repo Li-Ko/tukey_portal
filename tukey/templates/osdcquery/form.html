@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_web.html" %}
 
 {% block header %}
     <h1>OSDC Query Builder</h1>
@@ -26,12 +26,28 @@
         <div class="modal-body clearfix">
             <p>
                 <label for="query_name">Query Name</label>
-                {{ form.query_name.errors }}
-                {{ form.query_name }}
-                <span class="help-inline">
-                    Name of directory in your query directory that will contain
-                    generated links.
-                </span>
+                {% if form.query_name.errors %}
+                    <div class="control-group error">
+                        {{ form.query_name }}
+                        <span class="help-inline">
+                            {% for error in form.query_name.errors %}
+                                {{ error|escape }}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <span class="help-inline">
+                        Name of directory in your query directory that will 
+                        contain generated links.
+                    </span>
+
+                {% else %}
+                    {{ form.query_name }}
+                    <span class="help-inline">
+                        Name of directory in your query directory that will
+                        contain generated links.
+                    </span>
+                {% endif %}
+
             </p>
             <p><div>
                 <div class="container-fluid terms" id="include">
@@ -51,13 +67,34 @@
             </div></p>
             <p>
                 <label for="generated_query">Generated Query</label>
-                {{ form.generated_query.errors }}
-                {{ form.generated_query }}
+                {% if form.generated_query.errors %}
+                    <div class="control-group error">
+                        {{ form.generated_query}}
+                        <span class="help-inline">
+                            {% for error in form.generated_query.errors %}
+                                {{ error|escape }}
+                            {% endfor %}
+                        </span>
+                    </div>
+                {% else %}
+                    {{ form.generated_query }}
+                {% endif %}
+
             </p>
             <p>
                 <label for="cloud">Cloud</label>
-                {{ form.cloud.errors }}
-                {{ form.cloud }}
+                {% if form.cloud.errors %}
+                    <div class="control-group error">
+                        {{ form.cloud}}
+                        <span class="help-inline">
+                            {% for error in form.cloud.errors %}
+                                {{ error|escape }}
+                            {% endfor %}
+                        </span>
+                    </div>
+                {% else %}
+                    {{ form.cloud }}
+                {% endif %}
             </p>
 
             <div class="modal-footer">    
@@ -68,8 +105,13 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
-        var GLOBAL_DATA_SOURCE = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''};
-        {% include "osdcquery/query_builder.js" %}
+        $(document).ready(function() {
+
+            $("#nav-osdcquery").attr('class', 'active');
+
+            var GLOBAL_DATA_SOURCE = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''};
+            {% include "osdcquery/query_builder.js" %}
+        });
     </script>
 
 {% endblock %}

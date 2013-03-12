@@ -24,17 +24,23 @@ class OsdcQueryForm(forms.Form):
 
     def set_cloud(self, user):
         clouds = cloud_details(user).items()
+        print "where are the clouds? ", clouds
         self.base_fields['cloud'].choices = [(k, v) for k, v in clouds
+            if k in settings.CLOUD_FUNCTIONS['osdcquery']]
+
+        self.fields['cloud'].choices = [(k, v) for k, v in clouds
             if k in settings.CLOUD_FUNCTIONS['osdcquery']]
 
     query_name = forms.CharField(
         label="Query Name")
 
     generated_query = forms.CharField(
-        label="Query Name",
+        label="Generated Query",
         widget=forms.TextInput(attrs={'class':'span9', 'id': 'generated_query'}))
 
-    cloud = forms.ChoiceField(widget=forms.Select(attrs={'class':'switchable'}))
+    cloud = forms.ChoiceField(
+        label="Cloud",
+        widget=forms.Select(attrs={'class':'switchable'}))
 
 class QueryFields(forms.Form):
 

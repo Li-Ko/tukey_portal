@@ -1,4 +1,3 @@
-$(document).ready(function() {
 
     $('#fieldSelect').clone(true).appendTo($("#include"));
     $('#fieldSelect').clone(true).appendTo($("#exclude"));
@@ -106,4 +105,3 @@ $(document).ready(function() {
         $("#generated_query").attr('value', current_query);
 
     }
-});

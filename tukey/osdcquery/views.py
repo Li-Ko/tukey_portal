@@ -7,27 +7,25 @@ from horizon.decorators import require_auth
 from .forms import OsdcQueryForm
 from .forms import QueryFields
 
+
 @require_auth
 def query_builder(request):
     ''' Main view displays the running query and allows the user to run an
     instance from here '''
 
-    # Create a form from the current query string as so
-    # the required fields are "query_name" and "cloud" and they have a fixed
-    # name structure we could also add additional fields with fixed names as
-    # we need.
-    # The query up to this point is represented by the query string as
-    # follows: num_field=value
-    # for example: ?0_disease_abbr=BRCA&1_=AND&2_sample_id=231*
-    # or something like that
-
     if request.method == 'POST':
-        data = request.POST
+        form = OsdcQueryForm(request.POST)
+	data = request.POST
     if request.method == 'GET':
-        data = request.GET
+        form = OsdcQueryForm()
+	data = request.GET
 
-    form = OsdcQueryForm(data)
+    print "and the user is ", request.user
     form.set_cloud(request.user)
+
+    print form.base_fields['cloud'].choices
+    print form.fields
+    print form.fields['cloud']
 
     if request.method == 'POST': # If the form has been submitted...
         if form.is_valid(): # All validation rules pass
@@ -39,11 +37,20 @@ def query_builder(request):
             rest_url = "?".join([urlresolvers.reverse(
                 "horizon:project:instances:launch"),
                 urlencode(
-                    {"cloud": cloud.capitalize(),
-                    "customization_script":
-                    "python -m osdcquery.osdcquery %s '%s'" % (
-                        data["query_name"], data["generated_query"]
-                    )})])
+                    #{"cloud": cloud.capitalize(),
+                    {"cloud": cloud.upper(),
+                    "customization_script": ('''#!/bin/bash
+sudo apt-get update
+sudo apt-get install git -y
+export http_proxy="http://cloud-controller:3128"
+export https_proxy="http://cloud-controller:3128"
+cd /tmp
+git clone https://github.com/LabAdvComp/osdcquery.git /tmp/temp-osdcquery
+sudo dpkg -i /tmp/temp-osdcquery/python-osdcquery_0.1.6dev-1_all.deb
+echo "export no_proxy=172.16.1.3,$no_proxy" >> ~/.bashrc
+export no_proxy=172.16.1.3,$no_proxy
+python -m osdcquery.osdcquery %s '%s' ''') % (data["query_name"],
+                    data["generated_query"])})])
 
             return HttpResponseRedirect(rest_url)
 
