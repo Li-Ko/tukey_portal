@@ -7,9 +7,10 @@ Eucalyptus VM management.
 
 Installation
 ============
-You can install by modifying and running install.sh
+You can install by modifying and running install.sh as a user that has
+passwordless sudo
 
-Modify the user settings in the section starting with
+Before you run install.sh modify the user settings in the section starting with
 # USER SETTINGS ----- 
 
 Horizon Info
