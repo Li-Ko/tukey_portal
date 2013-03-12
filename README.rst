@@ -5,6 +5,12 @@ Tukey Portal
 Tukey Portal is built over Django leveraging Horizon for OpenStack and
 Eucalyptus VM management.
 
+Installation
+============
+You can install by modifying and running install.sh
+
+Modify the user settings in the section starting with
+# USER SETTINGS ----- 
 
 Horizon Info
 ============
@@ -30,7 +36,9 @@ For issue tracking:
 Dependencies
 ============
 
-Install Horizon.
+Install tukey-middleware https://github.com/opencloudconsortium/tukey-middleware
+Horizon and other dependencies will be install by the install.sh script and can
+be found there.
 
 
 Running with Apache

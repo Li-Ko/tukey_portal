@@ -3,31 +3,49 @@
 # Install tukey portal
 # TODO: Write this in python and make it portable
 
+
+# USER SETTINGS -----
+# Site specific installation variables
+
+# Local settings file contains passwords for db etc
 LOCAL_SETTINGS_FILE=/home/ubuntu/site_local_settings.py
 
 # Use the last stable Horizon commit
 STABLE=true
 
+# run as /something on a domain
 MULTI_SITE=false
 
+# create a postgres database for the django/osdc stuff
 CREATE_DATABASE=false
 
+# create apache sites-available file
 CONFIGURE_APACHE=true
+
+# create main site console.conf apache sites-available file
 CREATE_CONSOLE=true
-
-# Last commit of Horizon tested against
-HORIZON_COMMIT=3a9b0da489030eaacc6cc0416f92192b74783ac8
-
-# Site specific installation variables
 
 # Where to install MUST be absolute path for linking
 BASE_DIR=/var/www/tukey
+
+# directory under BASE_DIR to clone Horizon repo to
 HORIZON_DIR=tukey-portal
+
+# user to run apache wsgi as
 RUN_USER=ubuntu
+
+# group to run apache wsgi as
 RUN_GROUP=ubuntu
+
+# END USER SETTINGS ---
+
+
 
 # Probably wont change
 TUKEY_DIR=tukey
+
+# Last commit of Horizon tested against
+HORIZON_COMMIT=3a9b0da489030eaacc6cc0416f92192b74783ac8
 
 sudo apt-get install -y nodejs
 
