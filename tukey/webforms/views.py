@@ -40,6 +40,9 @@ def build_message(form, is_invite=False, is_pdc=False):
         msg_list.append(form.cleaned_data['projectlead'])
         msg_list.append('\n\nProject Lead E-mail:\n')
         msg_list.append(form.cleaned_data['projectlead_email'])
+    else:
+        msg_list.append('\n\neRA Commons Username:\n')
+        msg_list.append(form.cleaned_data['eracommons'])
     msg_list.append('\n\nProject Description\n')
     msg_list.append(form.cleaned_data['projectdescr'])
     msg_list.append('\n\nEstimated Resources:\n')
