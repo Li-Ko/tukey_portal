@@ -8,7 +8,7 @@
 # Site specific installation variables
 
 # Local settings file contains passwords for db etc
-LOCAL_SETTINGS_FILE=/home/ubuntu/site_local_settings.py
+LOCAL_SETTINGS_FILE=/var/www/tukey/config/portal/site_local_settings.py
 
 # Use the last stable Horizon commit
 STABLE=true
@@ -23,7 +23,7 @@ CREATE_DATABASE=false
 CONFIGURE_APACHE=true
 
 # create main site console.conf apache sites-available file
-CREATE_CONSOLE=true
+CREATE_CONSOLE=false
 
 # Where to install MUST be absolute path for linking
 BASE_DIR=/var/www/tukey
@@ -32,10 +32,10 @@ BASE_DIR=/var/www/tukey
 HORIZON_DIR=tukey-portal
 
 # user to run apache wsgi as
-RUN_USER=ubuntu
+RUN_USER=tukey
 
 # group to run apache wsgi as
-RUN_GROUP=ubuntu
+RUN_GROUP=tukey
 
 # END USER SETTINGS ---
 
@@ -56,30 +56,22 @@ if $STABLE
 then
     cd $BASE_DIR/$HORIZON_DIR
     echo "Using current stable Horizon commit: $HORIZON_COMMIT"
-    git checkout $HORIZON_COMMIT
+    sudo git checkout $HORIZON_COMMIT
     cd -
 else
     echo "WARNING! Using unstable latest version of Horizon"
 fi
 
 # Copy tukey subdir into Horizon 
-ln -s $(pwd)/$TUKEY_DIR $BASE_DIR/$HORIZON_DIR
+sudo ln -s $(pwd)/$TUKEY_DIR $BASE_DIR/$HORIZON_DIR
 
-
-
-# I no longer think this is the best way to do this
-# instead we will have the entire local settings file in a directory
-# that is site specific probably under /usr/local/etc/tukey
-# so lets just link our file from there...
-
-ln -s $LOCAL_SETTINGS_FILE $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
-
+sudo ln -s $LOCAL_SETTINGS_FILE $BASE_DIR/$HORIZON_DIR/openstack_dashboard/local/local_settings.py
 
 cd $BASE_DIR/$HORIZON_DIR
 
 # Apply patches for the stuff we couldn't monkey-patch
-patch -p1 < $TUKEY_DIR/patches/horizon.patch
-patch -p1 < $TUKEY_DIR/patches/openstack_dashboard.patch
+sudo patch -p1 < $TUKEY_DIR/patches/horizon.patch
+sudo patch -p1 < $TUKEY_DIR/patches/openstack_dashboard.patch
 
 # Append to 
 
@@ -91,11 +83,11 @@ python-openid
 django-openid-auth
 psycopg2
 python-memcached
-" >> tools/pip-requires
+" | sudo tee -a tools/pip-requires > /dev/null
 
-python tools/install_venv.py
+sudo python tools/install_venv.py
 
-$BASE_DIR/$HORIZON_DIR/tools/with_venv.sh pip install Django==1.4.3
+sudo $BASE_DIR/$HORIZON_DIR/tools/with_venv.sh pip install Django==1.4.3
 
 if $CONFIGURE_APACHE
 then
@@ -118,7 +110,7 @@ then
     <Directory $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/static>
       Order allow,deny
       Allow from all
-    </Directory>" > $TUKEY_DIR/openstack-dashboard.conf 
+    </Directory>" | sudo tee $TUKEY_DIR/openstack-dashboard.conf > /dev/null
     
     sudo ln -s $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/openstack-dashboard.conf /etc/apache2/sites-available/
     
@@ -140,7 +132,7 @@ then
         
             include /etc/apache2/sites-available/openstack-dashboard.conf
         
-        </virtualhost>" > /etc/apache2/sites-available/console.conf
+        </virtualhost>" | sudo tee /etc/apache2/sites-available/console.conf > /dev/null
 
         sudo a2ensite console
 
