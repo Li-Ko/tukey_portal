@@ -8,7 +8,7 @@
 # Site specific installation variables
 
 # Local settings file contains passwords for db etc
-LOCAL_SETTINGS_FILE=/var/www/tukey/config/portal/site_local_settings.py
+LOCAL_SETTINGS_FILE=/var/www/tukey/config/portal/local_settings.py
 
 # Use the last stable Horizon commit
 STABLE=true
@@ -87,7 +87,10 @@ python-memcached
 
 sudo python tools/install_venv.py
 
-sudo $BASE_DIR/$HORIZON_DIR/tools/with_venv.sh pip install Django==1.4.3
+for version in Django==1.4.3 django-openstack-auth==1.0.6
+do
+    sudo $BASE_DIR/$HORIZON_DIR/tools/with_venv.sh pip install $version
+done
 
 if $CONFIGURE_APACHE
 then
