@@ -41,7 +41,7 @@ def status_public(request):
     for url in settings.STATUS_URLS:
         status_req = urllib2.Request(url)
         opener = urllib2.build_opener()
-    this_one = json.loads(str(opener.open(status_req).read()), 'utf-8')
+        this_one = json.loads(str(opener.open(status_req).read()), 'utf-8')
         data = dict(data.items() + this_one.items())
 
     update_times = {}
