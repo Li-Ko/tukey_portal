@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 
 import urllib2, json
 
@@ -24,24 +25,24 @@ def status_public(request):
         STATUS = [
             ("Adler", {
                 "dashboard": "OSDC Cloud2",
-                "idprefix": "adler",
                 "type": "cloud"
             }),
             ("OCC-Y", {
                 "dashboard": "OCC-Y",
-                "idprefix": "occ-y",
                 "type": "map_reduce"
             }),
             ("OCC-Root", {
                 "dashboard": "OCC-Root",
-                "idprefix": "occ-root",
                 "type": "storage"})
         ]
     TODO: need to get the storage portion worked out'''
 
-    status_req = urllib2.Request(settings.STATUS_URL)
-    opener = urllib2.build_opener()
-    data = json.loads(str(opener.open(status_req).read()), 'utf-8')
+    data = {}
+    for url in settings.STATUS_URLS:
+        status_req = urllib2.Request(url)
+        opener = urllib2.build_opener()
+    this_one = json.loads(str(opener.open(status_req).read()), 'utf-8')
+        data = dict(data.items() + this_one.items())
 
     update_times = {}
     status_data = {}
@@ -64,13 +65,11 @@ def status_public(request):
             continue
         status_data[cloud_name] = []
 
-        if "idprefix" in cloud and "dashboard" in cloud and cloud["dashboard"] in data:
+        if "dashboard" in cloud and cloud["dashboard"] in data:
 
             for attr_name, attr_id in status_attrs[cloud["type"]]:
-                print cloud["idprefix"], cloud["dashboard"]
                 append_status(data, status_data[cloud_name],
-                    cloud["dashboard"], attr_name, cloud["idprefix"], attr_id)
-                print status_data[cloud_name]
+                    cloud["dashboard"], attr_name, slugify(cloud_name), attr_id)
 
             update_times[cloud_name] = data[cloud["dashboard"]]['users']['stsh']
         else:
@@ -114,5 +113,4 @@ def status_public(request):
         'status_data': status_data, 'cloud_names': [n for n, _ in settings.STATUS],
         'update_times': update_times},
         context_instance=RequestContext(request))
-
 
