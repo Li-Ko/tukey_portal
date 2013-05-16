@@ -10,14 +10,14 @@ from horizon import workflows
 from openstack_dashboard.dashboards.project.instances.views import DetailView as OldDetailView
 from openstack_dashboard.dashboards.project.instances.views import IndexView as OldIndexView
 
-from .tables import InstancesTable
 
-from .workflows import LaunchCluster
 
 class IndexView(OldIndexView):
+    from tukey.dashboards.project.instances.tables import InstancesTable
     table_class = InstancesTable
     template_name = 'project/instances/index.html'
 
+from .workflows import LaunchCluster
 
 class DetailView(OldDetailView):
 

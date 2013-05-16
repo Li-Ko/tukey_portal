@@ -13,6 +13,8 @@ from openstack_dashboard.dashboards.project.images_and_snapshots.snapshots.table
 
 from tukey.cloud_attribute import get_cloud
 
+from tukey.dashboards.project.images_and_snapshots.images.tables import LaunchCluster
+
 
 class LaunchSnapshot(OldLaunchSnapshot):
 
@@ -32,7 +34,7 @@ class SnapshotsTable(OldSnapshotsTable):
         name = "snapshots"
         verbose_name = _("Instance Snapshots")
         table_actions = (DeleteSnapshot,)
-        row_actions = (LaunchSnapshot, EditImage, DeleteSnapshot)
+        row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow
         status_columns = ["status"]

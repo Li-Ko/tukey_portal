@@ -31,7 +31,7 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
     image_id = forms.ChoiceField(label=_("Image"), required=False)
     instance_snapshot_id = forms.ChoiceField(label=_("Instance Snapshot"),
                                              required=False)
-    name = forms.HiddenInput()#label=_("Instance Name"))
+    name = forms.CharField(initial='none', widget=forms.HiddenInput())
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of compute nodes to launch."))
     count = forms.IntegerField(label=_("Compute Node Count"),
@@ -209,7 +209,7 @@ class LaunchCluster(workflows.Workflow):
         if int(count) > 1:
             return message % {"count": _("%s nodes") % count}
         else:
-            return message % {"count": _("cluster")}
+            return message % {"count": _("1 compute node")}
 
     def handle(self, request, context):
         custom_script = context.get('customization_script', '')
