@@ -121,6 +121,7 @@ def populate_image_id_choices(self, request, context):
         if cloud.lower() not in settings.CLOUD_FUNCTIONS['launch_multiple']:
             self.fields['count'].widget.attrs['readonly'] = True
 
+
         
         if cloud.lower() not in settings.CLOUD_FUNCTIONS['namable_servers']:
             self.fields['name'].widget.attrs['readonly'] = True
@@ -166,11 +167,15 @@ SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
 
 
 def populate_keypair_choices(self, request, context):
+
+
     try:
         keypairs = api.nova.keypair_list(request)
         if 'cloud' in request.GET:
             context['cloud'] = request.GET['cloud']
         if 'cloud' in context:
+            if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS['instance_keys']:
+                self.fields['keypair'].widget = forms.HiddenInput()
             cloud = context['cloud']
             keypair_list = [(kp.name, kp.name) for kp in keypairs
             if get_cloud(kp) == cloud]
