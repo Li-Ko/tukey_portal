@@ -1,42 +1,37 @@
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    $('#fieldSelect').clone(true).appendTo($("#include"));
-    $('#fieldSelect').clone(true).appendTo($("#exclude"));
+    for( var i=0; i < 7; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
 
+    return text;
+}
 
-   $(".addTerm").live('click', function() {
-            $('#fieldSelect').clone(true).append(
-                $("#removeParent").clone(true)
-            ).appendTo($(this).parent().parent().find(".terms"));
-    });
+function addChangeHandler(element){
+    element.on('change.fortypeahead', function() {
+    // Build a dictionary for the autocomplete    
+    var thelement = $(this).parent().find('input')
+    
+    var autocomplete = thelement.typeahead({ minLength: 0, items: 25 });
 
+    thelement.off('focus.fortypeahead');
+    thelement.on('focus.fortypeahead', thelement.typeahead.bind(thelement, 'lookup'));                                                     
 
-    $(".removeParent").live('click', function() {
-        $(this).parent().remove();
+    autocomplete.data('typeahead').select = function () {
+        var val = this.$menu.find('.active').attr('data-value');
+        this.$element.val(val);
         generateQueryString();
-    });
+        return this.hide();
+    };
 
+    // GLOBAL_DATA_SOURCE is defined in the template
+    autocomplete.data('typeahead').source = GLOBAL_DATA_SOURCE[$(this).find(":selected").val()];
+    }).change();
+}
 
-    $(".attrSelect").live('change', function() {
-        // Build a dictionary for the autocomplete
-        var autocomplete = $(this).parent().find('input').typeahead();
-
-        autocomplete.data('typeahead').select = function () {
-            var val = this.$menu.find('.active').attr('data-value');
-            this.$element.val(val);
-            generateQueryString();
-            return this.hide();
-        };
-
-        // GLOBAL_DATA_SOURCE is defined in the template 
-        autocomplete.data('typeahead').source = GLOBAL_DATA_SOURCE[
-            $(this).find(":selected").val()];
-    });
-
-
-    $(".queryValue").on('keyup', generateQueryString);
-
-
-    function generateQueryString() {
+function generateQueryString() {
 
         function getCludeQuery(clude) {
             var cludeQuery = {};
@@ -105,3 +100,36 @@
         $("#generated_query").attr('value', current_query);
 
     }
+
+
+var includeClone = $('#fieldSelect').clone(true)
+includeClone.find(".queryValue").attr('id', makeid());
+includeClone.appendTo($("#include"));
+addChangeHandler(includeClone.find(".attrSelect"));
+
+var excludeClone = $('#fieldSelect').clone(true)
+excludeClone.find(".queryValue").attr('id', makeid());
+excludeClone.appendTo($("#exclude"));
+addChangeHandler(excludeClone.find(".attrSelect"));
+
+$(".addTerm").live('click', function() {
+    var newid = makeid();
+    var fieldClone = $('#fieldSelect').clone(true);
+    fieldClone.find(".queryValue").attr('id', newid);
+
+    fieldClone.append(
+        $("#removeParent").clone(true)
+    ).appendTo($(this).parent().parent().find(".terms"));
+
+    addChangeHandler(fieldClone.find(".attrSelect"));
+});
+
+$(".removeParent").live('click', function() {
+    $(this).parent().remove();
+    generateQueryString();
+});
+
+$(".queryValue").on('keyup', generateQueryString);
+
+
+    

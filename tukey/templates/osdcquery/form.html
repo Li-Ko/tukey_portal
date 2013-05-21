@@ -5,13 +5,15 @@
 {% endblock %}
 
 {% block main %}
-    
     <div class="hidden">
         <div class="row-fluid selection" id="fieldSelect">
-            <select class="attrSelect">
+	       <select class="attrSelect">
             {% for field in query_fields %}
-                <option class="span2" title="{{field.help_text}}" 
-                    value="{{field.name}}">{{field.label}}</option>
+                <option title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
+            {% comment %}
+            {% for field_name field in query_fields %}
+                <option title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
+	    {% endcomment %}
             {% endfor %}
             </select>
             <input class="queryValue" type="text" data-provide="typeahead"/>
@@ -21,9 +23,35 @@
 
     <div class="container-fluid">
         <form action="" method="post" class="form-horizontal"> {% csrf_token %}
-
         <div class="modal-header"> <h3> Query Builder </h3></div>
         <div class="modal-body clearfix">
+	<p>Build a query over the TCGA data then launch an instance with links to matching files.</p>
+
+	<p>
+              <label for="query_top_dir">Link Directory</label>
+	      {% if form.query_top_dir.errors %}
+                    <div class="control-group error">
+                        {{ form.query_top_dir }}
+                        <span class="help-inline">
+                            {% for error in form.query_top_dir.errors %}
+                            {{ error|escape }}
+                            {% endfor %}
+                            </span>
+                    </div>
+                    <span class="help-inline">
+                      Name of directory on the VM that will
+                        contain generated links.
+                    </span>
+
+                {% else %}
+                    {{ form.query_top_dir }}
+                    <span class="help-inline">
+                        Name of directory on the VM that will
+                        contain generated links.
+                    </span>
+                {% endif %}
+            </p>
+
             <p>
                 <label for="query_name">Query Name</label>
                 {% if form.query_name.errors %}
@@ -36,14 +64,14 @@
                         </span>
                     </div>
                     <span class="help-inline">
-                        Name of directory in your query directory that will 
+                        Name of directory under the above Link Directory that will 
                         contain generated links.
                     </span>
 
                 {% else %}
                     {{ form.query_name }}
                     <span class="help-inline">
-                        Name of directory in your query directory that will
+                        Name of directory under the above Link Directory that will 
                         contain generated links.
                     </span>
                 {% endif %}
@@ -98,21 +126,33 @@
             </p>
 
             <div class="modal-footer">    
-                <input class="btn btn-primary" type="submit" value="Launch Instance On Results" />
+                <input class="btn btn-primary" type="submit" value="Preview Results" />
             </div>
         </form>
     </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-
-            $("#nav-osdcquery").attr('class', 'active');
-
-            var GLOBAL_DATA_SOURCE = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.field.choices %}'{{ value }}', {% endfor %}''], {% endfor %}'': ''};
-            {% include "osdcquery/query_builder.js" %}
-        });
-    </script>
-
 {% endblock %}
 
+{% block js %}
+    {% include "horizon/_scripts.html" %}
+{% comment %}	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script> {% comment %}
+
+{% comment %} <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> {% endcomment %}
+
+      <script>
+      $(document).ready(function() {
+
+        $("#nav-osdcquery").attr('class', 'active');
+
+        var GLOBAL_DATA_SOURCE = { {% for k,v in choices_dict.items %}'{{ k }}': [{% for value in v %}'{{ value }}', {% endfor %}], {% endfor %}};
+        {% comment %}
+        {% comment %}
+        var GLOBAL_DATA_SOURCE = { {% for field in query_fields %}'{{ field.name }}': [{% for value, text in field.values %}'{{ value }}', {% endfor %}], {% endfor %}};
+        {% endcomment %}
+
+	   {% include "osdcquery/query_builder.js" %}
+
+        });
+
+    </script>
+{% endblock %}
