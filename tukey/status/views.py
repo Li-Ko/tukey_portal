@@ -41,8 +41,12 @@ def status_public(request):
     for url in settings.STATUS_URLS:
         status_req = urllib2.Request(url)
         opener = urllib2.build_opener()
-        this_one = json.loads(str(opener.open(status_req).read()), 'utf-8')
-        data = dict(data.items() + this_one.items())
+        try:
+            this_one = json.loads(str(opener.open(status_req).read()), 'utf-8')
+            data = dict(data.items() + this_one.items())
+        except:
+            #TODO: find correct exception and log that this happened
+            pass
 
     update_times = {}
     status_data = {}
@@ -78,10 +82,11 @@ def status_public(request):
     #special for root here
     storage_names = ['OCC-Root']
 
-    old_ncbi_total = 333832
-    old_ncbi_max = 333832
+    #old_ncbi_total = 333832
+    #old_ncbi_max = 333832
 
-    storage_total = old_ncbi_total
+    #storage_total = old_ncbi_total
+    storage_total = 0
     max_storage = 0.0
     storage_percent = 0
     status_time = ""
@@ -96,8 +101,9 @@ def status_public(request):
                 max_storage = float(data[storage_name][data_set_name]['max'])
                 status_time = data[storage_name][data_set_name]['stsh']
 
-            max_storage = max_storage / 1024
-            max_storage = max_storage + old_ncbi_max
+            #max_storage = max_storage / 1024
+            max_storage = max_storage
+            #max_storage = max_storage + old_ncbi_max
             if max_storage != 0:
                 storage_percent = storage_total / max_storage
 
