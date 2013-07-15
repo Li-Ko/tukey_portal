@@ -49,6 +49,12 @@ def build_message(form, is_invite=False, is_pdc=False):
     msg_list.append(form.cleaned_data['resources'])
     return ''.join(msg_list)
 
+def blank(request):
+    form = OSDCForm()
+
+    return render(request, 'webforms/blank_form.html', { 'form': form, })
+        
+
 def osdc_apply(request):
     if request.method == 'POST': # If the form has been submitted...
         form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data

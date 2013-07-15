@@ -1,3 +1,7 @@
+from django.conf import settings
+from tukey.cloud_attribute import get_cloud
+
+
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
@@ -38,6 +42,10 @@ class LaunchCluster(tables.LinkAction):
                 "cloud": get_cloud(datum),
                             "source_id": self.table.get_object_id(datum)})
         return "?".join([base_url, params])
+
+    def allowed(self, request, image):
+        print image
+        return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
 
 class SnapshotsTable(OldSnapshotsTable):

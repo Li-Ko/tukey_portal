@@ -113,16 +113,12 @@ def populate_image_id_choices(self, request, context):
 
     images = self._get_available_images(request, context)
 
-
     if 'cloud' in request.GET:
         cloud = request.GET['cloud']
-
 
         if cloud.lower() not in settings.CLOUD_FUNCTIONS['launch_multiple']:
             self.fields['count'].widget.attrs['readonly'] = True
 
-
-        
         if cloud.lower() not in settings.CLOUD_FUNCTIONS['namable_servers']:
             self.fields['name'].widget.attrs['readonly'] = True
             self.fields['name'].widget.attrs['value'] = 'Feature not supported.'
@@ -138,6 +134,34 @@ def populate_image_id_choices(self, request, context):
     else:
         choices.insert(0, ("", _("No images available.")))
     return choices
+
+
+def populate_instance_snapshot_id_choices(self, request, context):
+    images = self._get_available_images(request, context)
+
+    if 'cloud' in request.GET:
+        cloud = request.GET['cloud']
+
+        if cloud.lower() not in settings.CLOUD_FUNCTIONS['launch_multiple']:
+            self.fields['count'].widget.attrs['readonly'] = True
+
+        if cloud.lower() not in settings.CLOUD_FUNCTIONS['namable_servers']:
+            self.fields['name'].widget.attrs['readonly'] = True
+            self.fields['name'].widget.attrs['value'] = 'Feature not supported.'
+
+        choices = [(image.id, image.name) for image in images
+            if image.properties.get("image_type", '') == "snapshot"
+            and (get_cloud(image) == cloud)]
+    else:
+        choices = [(image.id, image.name)
+               for image in images
+               if image.properties.get("image_type", '') == "snapshot"]
+    if choices:
+        choices.insert(0, ("", _("Select Instance Snapshot")))
+    else:
+        choices.insert(0, ("", _("No snapshots available.")))
+    return choices
+
 
 
 def populate_flavor_choices(self, request, context):
@@ -160,6 +184,7 @@ def populate_flavor_choices(self, request, context):
 
 
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
+SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
 
 

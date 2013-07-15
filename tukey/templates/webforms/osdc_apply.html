@@ -112,6 +112,14 @@
       </div>
     </div>
 
+    <div class="control-group {% if form.captcha.errors %}error{% endif %}">
+      <label class="control-label" for="id_recaptcha">ReCaptcha</label>
+      <div class="controls">
+        {{ form.captcha }}
+        <span class="help-inline">{{form.captcha.errors}}</span>
+      </div>
+    </div>
+
     <div class="control-group">
       <div class="controls">
 	<button type="submit" class="btn btn-warning">Submit Application</button>

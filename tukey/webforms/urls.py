@@ -9,4 +9,5 @@ urlpatterns = patterns('tukey.webforms.views',
     url(r'^apply/pdc/', 'osdc_apply_pdc'),                   
     url(r'^support/$', 'support'),
     url(r'^support/thanks/', 'support_thanks'),
+    url(r'^blank/$', 'blank')
 )

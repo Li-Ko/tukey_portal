@@ -1,4 +1,5 @@
 from django import forms
+from captcha.fields import ReCaptchaField
 
 class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, choices=()):
@@ -20,6 +21,7 @@ class OSDCForm(forms.Form):
     #othercontacts = forms.CharField(required=False)
     resources = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
     pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}))
+    captcha = ReCaptchaField()
 
 SYSTEM_CHOICES = (('occ-y', 'OCC-Y (A Hadoop-based data cloud)'), 
                   ('bionimbus_cc', 'Bionimbus Community Cloud (A community cloud for genomics data)'), 

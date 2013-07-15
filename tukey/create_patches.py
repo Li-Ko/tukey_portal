@@ -56,7 +56,7 @@ def patch():
 
             if filenames:
                 modules += ['.'.join([dirpath[len(my_dir) + 1:], f[:-3]]).replace('/','.') 
-                    for f in filenames if not f.endswith(('.pyc','.swp','.html'))
+                    for f in filenames if f.endswith(('.py',))
                     and f != '__init__.py']
 
     for module in modules:
