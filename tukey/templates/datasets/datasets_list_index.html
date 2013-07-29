@@ -11,7 +11,7 @@
     Repository for public data sets of scientific interest, hosted on the OSDC.
     </div>
 <div class="data-lead">
-  The data sets below can downloaded over the internet or high performance networks such as Internet2, as well as computed over directly on the OSDC. Currently, the OSDC hosts about 450 TB of data and the plan is to steadily increase this to the petabyte level. If you have suggestions about data that should be included, please let us know at info@opencloudconsortium.org. 
+  The data sets below can downloaded over the internet or high performance networks such as Internet2, as well as computed over directly on the OSDC. Currently, the OSDC hosts about 700 TB of data and the plan is to steadily increase this to the petabyte level. If you have suggestions about data that should be included, please let us know at info@opencloudconsortium.org. 
 </div>
 </header>
 {% endblock %}
@@ -26,8 +26,9 @@
 
 {% if datasets %}
     {% for dataset in datasets %}
-      <div class="span12 data-header"><h3><a href="{{ dataset.slug }}">{{ titles|getvalue:dataset.slug }}</a></h3></div>
+      <div class="span12 data-header"><h3><a href="{% url datasets:datasets_list_index %}{{ dataset.slug }}">{{ titles|getvalue:dataset.slug }}</a></h3></div>
       <div class="span12 data-entry">{{ short_descripts|getvalue:dataset.slug }}</div>
+      <div class="span12 data-entry">Total Size: {{ sizes|getvalue:dataset.slug }}</div>
       <div class="span12 data-entry">Categories: 
 	   {% for category in categories|getvalue:dataset.slug %}
         <a href="{% url datasets:datasets_category category %}">{{ category }}</a>{% if forloop.last %}{% else %}, {% endif %}

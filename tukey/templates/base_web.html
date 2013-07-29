@@ -23,7 +23,7 @@
   </head>
     {% show_nav content.slug %}
     {% block content %}
-    
+
     <div class='container'>
       {% block header %}{% endblock %}
       {% block main %}{% endblock %}
@@ -31,11 +31,25 @@
     {% endblock %}
 
     <div id="footer">
-      {% block footer %}{% endblock %}
+      {% block footer %}
+      <div class="modal-footer osdc-footer">
+        <div class="container">
+          {% include "footer.html" %}
+        </div>
+      </div>
+      {% endblock %}
     </div>
 
     {% block js %}
     {% include "horizon/_scripts.html" %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('.carousel').carousel({
+            interval: 8000,
+            cycle: true
+        });
+    });
+    </script>
     {% comment %}
     {% if not content.img %}
     <script type="text/javascript">
@@ -43,13 +57,7 @@
     </script>
     {% endif %}
     {% endcomment %}
-
     {% endblock %}
-    <div id="modal_wrapper"></div>
-    <div class="modal-footer osdc-footer">
-      <div class="container">
-        Footer content here.
-      </div>
-    </div>
   </body>
 </html>
+

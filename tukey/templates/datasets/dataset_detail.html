@@ -53,31 +53,31 @@ UDR is a wrapper around rsync that enables rsync to use the high performance <a 
 <p>
 <h4>List the contents of {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync {{dataset.osdc_location}}:{{dataset.osdc_folder}} </code></li>
-<li>Using udr: <code>udr rsync {{dataset.osdc_location}}:{{dataset.osdc_folder}} </code></li>
+<li>Using rsync: <code>rsync opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} </code></li>
+<li>Using udr: <code>udr rsync opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} </code></li>
 {% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} </code></li>
-<li>Using udr (high speed connection): <code>udr rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} </code></li>
+<li>Using rsync (high speed connection): <code>rsync 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} </code></li>
+<li>Using udr (high speed connection): <code>udr rsync 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} </code></li>
 {% endif %}
 </ul>
 
 <h4>Download/synchronize {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
 {% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} -avu /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync {{dataset.osdc_hs_location}}:{{dataset.osdc_hs_folder}} -avu /path/to/local_copy</code></li>
+<li>Using rsync (high speed connection): <code>rsync -avzuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using udr (high speed connection): <code>udr rsync -avzuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
 {% endif %}
 </ul>
 
 <h4>Download an individual file from {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzu {{dataset.osdc_location}}:{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP opensciencedatacloud.org::osdc_public_data{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
 {% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}remotefile /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync -avu {{dataset.osdc_hs_location}}{{dataset.osdc_hs_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using rsync (high speed connection): <code>rsync -avuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using udr (high speed connection): <code>udr rsync -avuP 74.114.99.139::osdc_public_data/{{dataset.osdcx_folder}}remotefile /path/to/local_copy</code></li>
 {% endif %}
 </ul>
 </p>
@@ -94,10 +94,8 @@ Virtual machines on the OSDC have direct access to all of the public data sets. 
 <p>
 <h4>Adler or Sullivan:</h4>
 </p>
-To mount the public data sets on a VM, you need to have the <code>cifs-utils</code> package installed. 
-</p>
 <p>
-Then you can run <code> mount -tcifs -oguest 10.103.112.253:/osdc_datasets /mnt/point/</code> and all of the datasets will be located in /mnt/point/.
+ The script ‘/cloudconf/mount-glusterfs $USERNAME’ will mount /glusterfs. Your password is stored on the login node at either ~/smbpassword.txt or ~/glusterfs-password. The public data is located in /glusterfs/osdc_public_data.
 </p>
 <p>
 <h4>OCC-Y: </h4>

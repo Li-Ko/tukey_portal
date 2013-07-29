@@ -40,13 +40,15 @@
     </div>
     {% endblock %}
 
-    <div id="main-footer">
+
+    {% block footer %}
+      <div id="main-footer">
       <div class="modal-footer">
         <div class="container">
-          Footer content here.
+           {% include "footer.html" %}
         </div>
       </div>
-      {% block footer %}{% endblock %}
+    {% endblock %}
     </div>
 
     {% block js %}
