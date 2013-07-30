@@ -13,6 +13,8 @@ from horizon.utils.memoized import memoized
 
 from tukey.cloud_attribute import get_cloud
 
+from collections import OrderedDict
+
 class NovaUsage(nova.NovaUsage):
 
     _attrs = ['start', 'server_usages', 'stop', 'tenant_id',
@@ -22,24 +24,26 @@ class NovaUsage(nova.NovaUsage):
          'hadoop_hdfsdu'] + settings.USAGE_ATTRIBUTES.values()
 
     def get_summary(self):
-        standards = {'instances': self.total_active_instances,
-                'memory_mb': self.memory_mb,
-                'vcpus': getattr(self, "total_vcpus_usage", 0),
-                'vcpu_hours': self.vcpu_hours,
-                'local_gb': self.local_gb,
-                'disk_gb_hours': self.disk_gb_hours,
-                'cloud_cores': getattr(self, "cloud_cores", -1),
-                'cloud_du': getattr(self, "cloud_du", -1),
-                'hadoop_hdfsdu': getattr(self, "hadoop_hdfsdu", -1),
-                'hadoop_jobs': getattr(self, "hadoop_jobs", -1),
-                'Cloud Core Hours:': getattr(self, "cloud_cores", -1),
-                'Cloud Disk Usage (GB):': getattr(self, "cloud_du", -1),
-                'Cloud RAM Hours (GB Hours):': getattr(self, "cloud_ram", -1),
-                'Hadoop Disk Usage (GB):': getattr(self, "hadoop_hdfsdu", -1),
-                'Hadoop Job Hours:': getattr(self, "hadoop_jobs", -1)}
-
-        return dict(standards.items() + {key: getattr(self, value, -1) for key, value in 
-            settings.USAGE_ATTRIBUTES.items()}.items())
+        #TODO: find some way to make this ordered oh well it is not
+        # going to happen :(
+        return OrderedDict([('instances', self.total_active_instances),
+                ('memory_mb', self.memory_mb),
+                ('vcpus', getattr(self, "total_vcpus_usage", 0)),
+                ('vcpu_hours', self.vcpu_hours),
+                ('local_gb', self.local_gb),
+                ('disk_gb_hours', self.disk_gb_hours),
+                ('cloud_cores', getattr(self, "cloud_cores", -1)),
+                ('cloud_du', getattr(self, "cloud_du", -1)),
+                ('hadoop_hdfsdu', getattr(self, "hadoop_hdfsdu", -1)),
+                ('hadoop_jobs', getattr(self, "hadoop_jobs", -1)),
+                ('Cloud Core Hours', getattr(self, "cloud_cores", -1)),
+                ('Cloud Disk Usage (GB)', getattr(self, "cloud_du", -1)),
+                ('Cloud RAM Hours (GB Hours)', getattr(self, "cloud_ram", -1)),
+                ('Hadoop Disk Usage (GB)', getattr(self, "hadoop_hdfsdu", -1)),
+                ('Hadoop Job Hours', getattr(self, "hadoop_jobs", -1))]
+            + [(key, getattr(self, value, -1)) for key, value in 
+            settings.USAGE_ATTRIBUTES.items()])
+        
     
 
 #class QuotaSet2(object):
