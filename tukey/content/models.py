@@ -8,5 +8,3 @@ class Page(models.Model):
     img = models.CharField(max_length=500, blank=True)
     img_alt = models.CharField(max_length=500, blank=True)
     content = models.TextField()
-
-
