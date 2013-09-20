@@ -98,11 +98,11 @@ institutions in the drop down menu of our <a href="/console">Console Login page<
       </div>
     </div>
 
-    <div class="control-group extra_occy {% if form.pubkey.errors %}error{% endif %}">
-      <label class="control-label" for="id_pubkey">OCC-Y SSH public key*</label>
+    <div class="control-group extra_pubkey {% if form.pubkey.errors %}error{% endif %}">
+      <label class="control-label" for="id_pubkey">SSH public key*</label>
       <div class="controls">
         <span class="text-block">
-          Access to OCC-Y is only provided by SSH public/private key pairs, please provide your public key for access.
+          Access to the OCC-Y and Skidmore clusters is only provided by SSH public/private key pairs, please provide your public key for access.
         </span>
         {{ form.pubkey }}
         <span class="help-inline">{{form.pubkey.errors}}</span>
@@ -173,11 +173,24 @@ institutions in the drop down menu of our <a href="/console">Console Login page<
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
   $(document).ready(function() {
-  $("#nav-apply").attr('class', 'active')
-    $("#id_systems_3").change(function() {
-      $(".extra_occy").toggle(this.checked);
-    }).change();
 
+    function true_toggle(selector, condition){
+      if (condition) {
+        $(selector).show();
+      }
+      else {
+        $(selector).hide();
+      }
+    }
+        
+    $("#nav-apply").attr('class', 'active');
+    $("#id_systems_4").change(function() {
+      true_toggle(".extra_occy", this.checked);
+      true_toggle(".extra_pubkey", this.checked || $("#id_systems_3")[0].checked);
+    }).change();
+    $("#id_systems_3").change(function() {
+      true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
+    }).change();
   });
 </script>
 {% endblock %}

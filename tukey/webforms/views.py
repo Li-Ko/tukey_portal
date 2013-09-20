@@ -32,6 +32,8 @@ def build_message(form):
             msg_list.append('OSDC-Adler\n')
         elif item == 'OSDC-Atwood':
             msg_list.append('OSDC-Atwood\n')
+        elif item == 'OSDC-Skidmore':
+            msg_list.append('OSDC-Skidmore\n')
         elif item == 'occ-y':
             msg_list.append('OCC-Y\n')
         elif item == 'bionimbus_cc':

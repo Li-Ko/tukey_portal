@@ -8,9 +8,10 @@ class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
 
 SYSTEM_CHOICES = (
     ('OSDC-Sullivan', 'OSDC-Sullivan (newest OpenStack based cloud)'),
-    ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud, home of the Bionimbus Community Cloud and Project Matsu)'),
+    ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud)'),
     ('OSDC-Atwood', 'OSDC-Atwood (A protected data cloud, home of the Conte Center Cloud)'),
     #('bionimbus_web', 'Bionimbus Web Portal'),
+    ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
     ('occ-y', 'OCC-Y (Hadoop cluster donated by Yahoo!)'),
     ('matsu', 'Matsu Hadoop Testbed'),
     ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),

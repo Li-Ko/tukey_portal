@@ -56,6 +56,7 @@ def update_keyvalues(keyvalues_id_value):
 def datasets_list_index(request, category_filter=None):
     titles = dict()
     short_descripts = dict()
+    sizes = dict()
     categories = dict()
     modified_times = dict()
 
@@ -72,6 +73,11 @@ def datasets_list_index(request, category_filter=None):
             except KeyValue.DoesNotExist:
                 short_descripts[kv.dataset.slug] = ''
 
+            try:
+                sizes[kv.dataset.slug] = KeyValue.objects.get(dataset=kv.dataset, key='size').value
+            except KeyValue.DoesNotExist:
+                sizes[kv.dataset.slug] = ''
+
             for category in KeyValue.objects.filter(dataset=kv.dataset, key='category'):
                 if kv.dataset.slug not in categories:
                     categories[kv.dataset.slug] = []
@@ -82,7 +88,7 @@ def datasets_list_index(request, category_filter=None):
             except KeyValue.DoesNotExist:
                 modified_times[kv.dataset.slug] = ''
     else:
-        datasets = DataSet.objects.all()
+        datasets = DataSet.objects.all().order_by("title")
 
         #better way to do this? -- assuming one value for everything except categories
         #for title in KeyValue.objects.filter(key='title'):
@@ -93,6 +99,9 @@ def datasets_list_index(request, category_filter=None):
         for descript in KeyValue.objects.filter(key='short_description'):
             short_descripts[descript.dataset.slug] = descript.value
 
+        for size in KeyValue.objects.filter(key='size'):
+            sizes[size.dataset.slug] = size.value
+
         for category in KeyValue.objects.filter(key='category'):
             if category.dataset.slug not in categories:
                 categories[category.dataset.slug] = []
@@ -101,7 +110,7 @@ def datasets_list_index(request, category_filter=None):
         for time in KeyValue.objects.filter(key='modified'):
             modified_times[time.dataset.slug] = datetime.strptime(time.value, time_format)
     
-    return render_to_response('datasets/datasets_list_index.html', {'datasets' : datasets, 'titles' : titles, 'categories' : categories, 'short_descripts' : short_descripts, 'modified_times' : modified_times, 'category_filter' : category_filter}, context_instance=RequestContext(request))
+    return render_to_response('datasets/datasets_list_index.html', {'datasets' : datasets, 'titles' : titles, 'categories' : categories, 'short_descripts' : short_descripts, 'sizes' : sizes, 'modified_times' : modified_times, 'category_filter' : category_filter}, context_instance=RequestContext(request))
 
 def dataset_detail(request, dataset_id):
     d = get_object_or_404(DataSet, pk=dataset_id)
