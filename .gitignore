@@ -20,6 +20,9 @@ doc/source/sourcecode
 /static/
 .venv
 .tox
+.tx
+.gitreview
+.mailmap
 build
 dist
 AUTHORS
