@@ -17,13 +17,13 @@ STABLE=true
 MULTI_SITE=false
 
 # create a postgres database for the django/osdc stuff
-CREATE_DATABASE=false
+CREATE_DATABASE=true
 
 # create apache sites-available file
 CONFIGURE_APACHE=true
 
 # create main site console.conf apache sites-available file
-CREATE_CONSOLE=false
+CREATE_CONSOLE=true
 
 # Where to install MUST be absolute path for linking
 BASE_DIR=/var/www/tukey
@@ -32,15 +32,18 @@ BASE_DIR=/var/www/tukey
 HORIZON_DIR=tukey-portal
 
 # user to run apache wsgi as
-RUN_USER=tukey
+RUN_USER=ubuntu
 
 # group to run apache wsgi as
-RUN_GROUP=tukey
+RUN_GROUP=ubuntu
 
 # END USER SETTINGS ---
 
+DB_USER="osdcdb_user"
+DB_NAME="osdcdb"
+DB_PASSWORD="password"
 
-
+OSDCQUERY_REPO=ssh://git@source.bionimbus.org/home/git/osdcquery.git
 # Probably wont change
 TUKEY_DIR=tukey
 
@@ -83,6 +86,8 @@ python-openid
 django-openid-auth
 psycopg2
 python-memcached
+django-recaptcha
+pyelasticsearch
 " | sudo tee -a tools/pip-requires > /dev/null
 
 sudo python tools/install_venv.py
@@ -135,7 +140,7 @@ then
         
             include /etc/apache2/sites-available/openstack-dashboard.conf
         
-        </virtualhost>" | sudo tee /etc/apache2/sites-available/console.conf > /dev/null
+        </virtualhost>" | sudo tee /etc/apache2/sites-available/console > /dev/null
 
         sudo a2ensite console
 
@@ -154,3 +159,11 @@ then
         sudo -u postgres psql -c "CREATE USER $DB_USER with PASSWORD '$DB_PASSWORD';"
     fi
 fi
+
+cd $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/osdcquery
+git clone $OSDCQUERY_REPO
+cd osdcquery
+git checkout dev
+
+cd $BASE_DIR/$HORIZON_DIR
+tools/with_venv.sh python manage.py syncdb
