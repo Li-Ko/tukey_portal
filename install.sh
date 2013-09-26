@@ -43,7 +43,7 @@ DB_USER="osdcdb_user"
 DB_NAME="osdcdb"
 DB_PASSWORD="password"
 
-OSDCQUERY_REPO=ssh://git@source.bionimbus.org/home/git/osdcquery.git
+OSDCQUERY_REPO=http://git.bionimbus.org/git/public/osdcquery.git
 # Probably wont change
 TUKEY_DIR=tukey
 
