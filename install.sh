@@ -75,6 +75,7 @@ cd $BASE_DIR/$HORIZON_DIR
 # Apply patches for the stuff we couldn't monkey-patch
 sudo patch -p1 < $TUKEY_DIR/patches/horizon.patch
 sudo patch -p1 < $TUKEY_DIR/patches/openstack_dashboard.patch
+sudo patch -p1 < $TUKEY_DIR/patches/cluster.patch
 
 # Append to 
 
