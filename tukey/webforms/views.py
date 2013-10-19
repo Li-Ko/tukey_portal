@@ -2,7 +2,7 @@ from django.conf import settings
 from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from tukey.webforms.forms import OSDCForm, OSDCSupportForm
+from tukey.webforms.forms import OSDCForm, OSDCSupportForm, OSDCDemoForm
 import smtplib
 
 def build_message(form):
@@ -113,3 +113,33 @@ def support(request):
 
 def support_thanks(request):
     return render(request, 'webforms/support_thanks.html')
+
+def osdc_demo(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = OSDCDemoForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            subject = "Demo Registration"# form.cleaned_data['subject']
+            message = ""
+            for k, v in form.cleaned_data.items():
+                message += k + ": " + v + "\n"
+            #message = str(form.cleaned_data)
+            sender = form.cleaned_data['email']
+
+            recipients = [settings.DEMO_REG_EMAIL]
+
+            from django.core.mail import send_mail
+            send_mail(subject, message, sender, recipients)
+            return HttpResponseRedirect('thanks/') # Redirect after POST
+
+    else:
+        form = OSDCDemoForm() # An unbound form
+
+    return render(request, 'webforms/demo_form.html', {
+        'form': form,
+    })
+
+
+def osdc_demo_thanks(request):
+    return render(request, 'webforms/demo_thanks.html', {
+        'email': settings.DEMO_REG_EMAIL
+    })

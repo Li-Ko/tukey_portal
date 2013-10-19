@@ -44,3 +44,11 @@ class OSDCSupportForm(forms.Form):
     sender = forms.EmailField()
     #captcha = ReCaptchaField()
 
+class OSDCDemoForm(forms.Form):
+    first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
+    last_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
+    organization = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
+    projectlead = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
+    how = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
+
