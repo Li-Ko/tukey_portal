@@ -71,11 +71,14 @@ def status_public(request):
 
         if "dashboard" in cloud and cloud["dashboard"] in data:
 
-            for attr_name, attr_id in status_attrs[cloud["type"]]:
-                append_status(data, status_data[cloud_name],
-                    cloud["dashboard"], attr_name, slugify(cloud_name), attr_id)
+            try:
+                for attr_name, attr_id in status_attrs[cloud["type"]]:
+                    append_status(data, status_data[cloud_name],
+                        cloud["dashboard"], attr_name, slugify(cloud_name), attr_id)
 
-            update_times[cloud_name] = data[cloud["dashboard"]]['users']['stsh']
+                update_times[cloud_name] = data[cloud["dashboard"]]['users']['stsh']
+            except ValueError:
+                update_times[cloud_name] = "None"
         else:
             update_times[cloud_name] = "None"
 

@@ -770,7 +770,7 @@ class QueryFields():
             with a collection of sequencing data files and their metadata.""",
         "label": "Analysis ID"})
 
-    query_fields.append({"name": "analysis_id",
+    query_fields.append({"name": "analysis_accession",
         "help_text": """Legacy SRZnnnnnn analysis accession # for data migrated from SRA.""",
         "label": "Analysis Accession"})
 
