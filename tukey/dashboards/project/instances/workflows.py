@@ -201,6 +201,8 @@ def populate_keypair_choices(self, request, context):
         if 'cloud' in context:
             if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS['instance_keys']:
                 self.fields['keypair'].widget = forms.HiddenInput()
+            else:
+                self.fields['keypair'].required = True
             cloud = context['cloud']
             keypair_list = [(kp.name, kp.name) for kp in keypairs
             if get_cloud(kp) == cloud]
