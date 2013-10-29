@@ -1,4 +1,7 @@
 from django.conf import settings
+# Allow sending email to users. Are the following two statements conflicting with each other?
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail, BadHeaderError
 from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -7,6 +10,7 @@ import smtplib
 
 def build_message(form):
     msg_list = []
+    msg_list.append('Summary of submitted information:\n\n')
     msg_list.append('From:\n')
     msg_list.append(form.cleaned_data['name'])
     msg_list.append('\n')
@@ -47,41 +51,71 @@ def build_message(form):
     msg_list.append(form.cleaned_data['projectname'])
     msg_list.append('\n\nProject Description\n')
     msg_list.append(form.cleaned_data['projectdescr'])
+   
+    if (form.cleaned_data['sharing'] != ""):
+        msg_list.append('\n\nSharing with:\n')
+	msg_list.append(form.cleaned_data['sharing'])
+
     msg_list.append('\n\nProject Lead\n')
     msg_list.append(form.cleaned_data['projectlead'])
     msg_list.append('\n\nProject Lead E-mail:\n')
     msg_list.append(form.cleaned_data['projectlead_email'])
-    msg_list.append('\n\nEstimated Resources:\n')
-    msg_list.append(form.cleaned_data['resources'])
+    msg_list.append('\n\nEstimated CPUs:\n')
+    msg_list.append(form.cleaned_data['cpus'])
+
+    if form.cleaned_data['more_cpus'] != "":
+	msg_list.append("(Specific requirements: " + form.cleaned_data['more_cpus'] + ")")    
+
+    msg_list.append('\n\nEstimated storage:\n')
+    msg_list.append(form.cleaned_data['storage'])
+
+    if form.cleaned_data['more_storage'] != "":
+	msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
+
+    msg_list.append('\n\nHeard about OSDC from:\n')
+    msg_list.append(form.cleaned_data['referral_source'])
+    msg_list.append('\n\n')
     return ''.join(msg_list)
 
 def osdc_apply(request):
-    if request.method == 'POST': # If the form has been submitted...
-        form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    # If the form has been submitted
+    if request.method == 'POST': 
+        form = OSDCForm(request.POST, request.FILES) 
+       	# A form bound to the POST data. If all validation rules pass...
+        if form.is_valid():
+	    # Values for email to OSDC admin
             subject = 'OSDC Account Request'
-            message = build_message(form)
-            sender = form.cleaned_data['email']
+            message_admin = build_message(form)
+            sender_admin = form.cleaned_data['email'] 
+            recipients_admin = [settings.APPLICATION_EMAIL]
+	   
+            # Values for confirmation email to user ('Subject' remains same)
+	    message_user = "Thank you for your application to the OSDC. " 
+	    message_user += "Someone from our team will contact you within one business day.\n\n%s" % message_admin
+	    sender_user = 'noreply@opensciencedatacloud.org'
+            recipients_user = [sender_admin]
 
-            recipients = [settings.APPLICATION_EMAIL]
-
-            from django.core.mail import EmailMessage
-            email = EmailMessage(subject, message, sender, recipients)
+            email_admin = EmailMessage(subject, message_admin, sender_admin, recipients_admin)
+	    email_user = EmailMessage(subject, message_user, sender_user, recipients_user)
 
             if "pubkey" in request.FILES:
                 pubkey = request.FILES["pubkey"]
-                email.attach(pubkey.name, pubkey.read(), pubkey.content_type)
-
+                email_admin.attach(pubkey.name, pubkey.read(), pubkey.content_type)
+		email_user.attach(pubkey.name, pubkey.read(), pubkey.content_type)
+                
             try:
-                email.send()
-                return HttpResponseRedirect('thanks/') # Redirect after POST
+                email_admin.send()
+                email_user.send()
+    		# Redirect after POST
+                return HttpResponseRedirect('thanks/')
 
             except smtplib.SMTPRecipientsRefused as e:
                 form._errors["email"] = ErrorList(
                     [u"Domain of address %s does not exist" % sender])
 
     else:
-        form = OSDCForm() # An unbound form
+	# An unbound form
+        form = OSDCForm()
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,
