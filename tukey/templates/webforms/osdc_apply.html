@@ -231,14 +231,11 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     }
         
     $("#nav-apply").attr('class', 'active');
-    $("#id_systems_4").change(function() {
+    $("#id_systems_1").change(function() {
       true_toggle(".extra_occy", this.checked);
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_3")[0].checked);
+      true_toggle(".extra_pubkey", this.checked);
     }).change();
-    $("#id_systems_3").change(function() {
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
-    }).change();
- 
+
     function more_cpus() {
       var cpus = $("#id_cpus").val();
       if (cpus == "16plus") {

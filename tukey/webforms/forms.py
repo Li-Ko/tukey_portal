@@ -49,15 +49,15 @@ class OSDCForm(forms.Form):
     more_cpus = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_cpus', 'class' : 'span4'}), required=False)
     storage = forms.ChoiceField(widget=forms.Select(attrs={'class' : 'span4'}), choices=STORAGE_CHOICES)
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
-    # pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
+    pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
-    # captcha = ReCaptchaField()
+    captcha = ReCaptchaField()
 
 class OSDCSupportForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
     sender = forms.EmailField()
-    #captcha = ReCaptchaField()
+    captcha = ReCaptchaField()
 
 class OSDCDemoForm(forms.Form):
     first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
