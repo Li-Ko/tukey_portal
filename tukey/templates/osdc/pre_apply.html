@@ -1,0 +1,45 @@
+{% extends "base_web.html" %}
+
+{% block meta_title %}OSDC Application{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h2>Login to an Identity Provider</h2>
+</header>
+{% endblock %}
+
+{% block main %}
+<div class="span10">
+<p>
+If you are a member of an institution that is listed below, please sign in to that account. If you are not associated with these institutions, you may use continue using gmail or yahoo but be aware restrictions may be placed on the account. If you have neither of these, you should not be using the internet. Please turn off your computer, failure to do so will result in the notification of the NSA.
+</p>
+  {% include 'osdc/shibboleth_openid.html' %}
+</div>
+{% endblock %}
+ 
+{% block js %}
+
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    function true_toggle(selector, condition){
+      if (condition) {
+        $(selector).show();
+      }
+      else {
+        $(selector).hide();
+      }
+    }
+        
+    $("#nav-apply").attr('class', 'active');
+    $("#id_systems_4").change(function() {
+      true_toggle(".extra_occy", this.checked);
+      true_toggle(".extra_pubkey", this.checked || $("#id_systems_3")[0].checked);
+    }).change();
+    $("#id_systems_3").change(function() {
+      true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
+    }).change();
+  });
+</script>
+{% endblock %}

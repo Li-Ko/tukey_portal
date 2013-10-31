@@ -2,8 +2,11 @@ from django.conf import settings
 from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django_openid_auth.views import parse_openid_response
+from openid.consumer.consumer import SUCCESS
 from tukey.webforms.forms import OSDCForm, OSDCSupportForm, OSDCDemoForm
 import smtplib
+from tukey.openid_auth import pre_apply
 
 def build_message(form):
     msg_list = []
@@ -55,7 +58,22 @@ def build_message(form):
     msg_list.append(form.cleaned_data['resources'])
     return ''.join(msg_list)
 
-def osdc_apply(request):
+def osdc_apply(request, user=None):
+    if "pre_apply" not in request.session:
+        return HttpResponseRedirect('/pre_apply/')
+
+    if user is None:
+        user = request.user
+
+    #openid_response = parse_openid_response(request)
+    #if not openid_response:
+    #    request.session["pre_apply"] = "false"
+    #    return HttpResponseRedirect("/pre_apply/")
+
+    #if openid_response.status != SUCCESS:
+    #    request.session["pre_apply"] = "false"
+    #    return HttpResponseRedirect("/pre_apply/")
+
     if request.method == 'POST': # If the form has been submitted...
         form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
@@ -81,7 +99,14 @@ def osdc_apply(request):
                     [u"Domain of address %s does not exist" % sender])
 
     else:
-        form = OSDCForm() # An unbound form
+        eppn = request.GET.get('eppn', '')
+        if eppn == '':
+            if hasattr(user, 'identifier'):
+                form = OSDCForm(initial={'email': user.identifier}) # An unbound form
+            else:
+                return HttpResponseRedirect('/pre_apply/')
+        else:
+            form = OSDCForm(initial={'email': eppn}) # An unbound form
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,

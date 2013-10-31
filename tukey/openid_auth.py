@@ -160,6 +160,35 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
             self.fields["entityid"].initial = request.COOKIES["entityid_cookie"]
 
 
+
+def pre_apply(request, template_name='openid/login.html',
+                login_complete_view='openid:openid-complete',
+                form_class=ShibbolethOpenIDLoginForm,
+                render_failure=default_render_failure,
+                redirect_field_name=REDIRECT_FIELD_NAME):
+
+    if request.method == 'POST':
+        request.session["pre_apply"] = "true"
+
+    if request.user.is_authenticated():
+        return shortcuts.redirect(get_user_home(request.user))
+
+    if "openid_identifier" not in request.POST and "entityid" in request.POST:
+        response = HttpResponseRedirect(
+            "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
+                {"entityID": request.POST["entityid"],
+                    "target": "/apply/"}
+            )
+        )
+        response.set_cookie("entityid_cookie", request.POST["entityid"])
+        return response
+
+    return old_login_begin(request,
+        settings.ROOT_PATH + '/../tukey/templates/osdc/pre_apply.html',
+        login_complete_view, curry(form_class, request), render_failure,
+            "/apply/")
+
+
 def login_begin(request, template_name='openid/login.html',
                 login_complete_view='openid:openid-complete',
                 form_class=ShibbolethOpenIDLoginForm,
@@ -239,8 +268,10 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
                 return response
             else:
-                from tukey.views import register_user
-                return register_user(request, user)
+                from tukey.webforms.views import osdc_apply
+                request.session["pre_apply"] = "true"
+                #return register_user(request, user)
+                return osdc_apply(request, user)
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
 #
