@@ -36,10 +36,12 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       <div class="controls">
         {{ form.email}}
         <span class="help-inline">{{form.email.errors}}</span>
-        <span class="help-block-apply"> The OSDC console uses federated login for authentication. If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using that e-mail address. Please provide your primary institutional e-mail, not an alias (ie: uchicago.edu not med.uchicago.edu). 
-</span>
-<span class="help-block-apply">
-We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to provide an appropriate institutional email.</span>
+        <span class="help-block-apply"> The OSDC console uses federated login for authentication. 
+        If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using that e-mail address. Please provide your primary institutional e-mail, not an alias (ie: uchicago.edu not med.uchicago.edu). 
+        </span>
+        <span class="help-block-apply">We also support OpenID (Gmail and Yahoo) logins, 
+          but only if you're unable to provide an appropriate institutional email.
+        </span>
       </div>
     </div>
 
@@ -83,6 +85,7 @@ We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to pr
         <span class="help-inline"><a href="https://bionimbus-pdc.opensciencedatacloud.org/apply">Apply for access to Bionimbus-PDC (requires dbGaP access to TCGA)</a>{{form.system.errors}}</span>
       </div>
     </div>
+
     <div class="control-group extra_occy">
       <label class="control-label" for="id_system">Extra Forms for OCC-Y</label>
       <div class="controls">
@@ -102,7 +105,7 @@ We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to pr
       <label class="control-label" for="id_pubkey">SSH public key*</label>
       <div class="controls">
         <span class="text-block">
-          Access to the OCC-Y and Skidmore clusters is only provided by SSH public/private key pairs, please provide your public key for access.
+          Access to the OCC-Y cluster is only provided by SSH public/private key pairs. Please provide your public key for access.
         </span>
         {{ form.pubkey }}
         <span class="help-inline">{{form.pubkey.errors}}</span>
@@ -141,12 +144,56 @@ We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to pr
       </div>
     </div>
 
-    <div class="control-group {% if form.resources.errors %}error{% endif %}">
-      <label class="control-label" for="id_resources">Estimate of resources required (for example, how many CPUs and storage space)*
-</label>
+    <div class="control-group {% if form.sharing.errors %}error{% endif %}">
+      <label class="control-label" for="id_sharing">If project requires sharing files or directories, 
+        please list names of individuals needing access.</label>
       <div class="controls">
-        {{ form.resources }}
-        <span class="help-inline">{{form.resources.errors}}</span>
+        {{ form.sharing }}
+        <span class="help-inline">{{ form.sharing.errors }}</span>
+      </div>
+    </div>
+
+    <div class="control-group cpus {% if form.cpus.errors %}error{% endif %}">
+      <label class="control-label" for="id_cpus">Estimate of CPUs required*</label>
+      <div class="controls">     
+        {{ form.cpus }}
+        <span class="help-inline">{{ form.cpus.errors }}</span>
+      </div>    
+    </div>
+
+<!-- if requesting 16+, display below -->
+    <div class="control-group extra_cpus {% if form.more_cpus.errors  %}error{% endif %}">
+      <label class="control-label" for="id_more_cpus">Please specify how many CPUs required*</label>
+      <div class="controls">
+        {{ form.more_cpus }}
+        <span class="help-inline">{{ form.more_cpus.errors }}</span>
+      </div>
+    </div>
+<!-- end if 16+-->
+
+    <div class="control-group storage {% if form.storage.errors %}error{% endif %}">
+     <label class="control-label" for="id_storage">Estimate of storage required*</label>
+     <div class="controls">
+       {{ form.storage }}
+       <span class="help-inline">{{ form.storage.errors }}</span>
+     </div>
+    </div>
+
+<!-- If requesting 1+, display below -->
+    <div class="control-group extra_storage {% if form.more_storage.errors %}error{% endif %}">
+      <label class="control-label" for="id_storage">Please specify how much storage required*</label>
+      <div class="controls">
+        {{ form.more_storage }}
+        <span class="help-inline">{{ form.more_storage.errors }}</span>
+      </div>
+    </div>
+<!-- end if 1+ -->    
+
+    <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
+      <label class="control-label" for="id_referral_source">How did you hear about the OSDC?*</label>
+      <div class="controls">
+        {{ form.referral_source }}
+        <span class="help-inline">{{ form.referral_source.errors }}</span>
       </div>
     </div>
 
@@ -184,13 +231,32 @@ We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to pr
     }
         
     $("#nav-apply").attr('class', 'active');
-    $("#id_systems_4").change(function() {
+    $("#id_systems_1").change(function() {
       true_toggle(".extra_occy", this.checked);
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_3")[0].checked);
+      true_toggle(".extra_pubkey", this.checked);
     }).change();
-    $("#id_systems_3").change(function() {
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
-    }).change();
-  });
+
+    function more_cpus() {
+      var cpus = $("#id_cpus").val();
+      if (cpus == "16plus") {
+        $(".extra_cpus").show();
+      } else {
+        $(".extra_cpus").hide();
+      }
+    }
+
+    function more_storage() {
+      var storage = $("#id_storage").val();
+      if (storage == "1plus") {
+        $(".extra_storage").show();
+      } else {
+        $(".extra_storage").hide();
+      }
+    }
+
+    $("#id_cpus").change(more_cpus);
+    $("#id_storage").change(more_storage);
+ });
+
 </script>
 {% endblock %}
