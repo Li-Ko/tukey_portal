@@ -30,7 +30,7 @@ STORAGE_CHOICES = (
 class OSDCForm(forms.Form):
     name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
     email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
-    login_email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}), required=False)
+    eppn = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4', 'type': 'hidden'}))
     organization = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
     systems = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple, choices=SYSTEM_CHOICES,
         initial=["OSDC-Sullivan"])

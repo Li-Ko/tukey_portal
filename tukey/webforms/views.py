@@ -132,11 +132,11 @@ def osdc_apply(request, user=None):
         eppn = request.GET.get('eppn', '')
         if eppn == '':
             if hasattr(user, 'identifier'):
-                form = OSDCForm(initial={'email': user.identifier}) # An unbound form
+                form = OSDCForm(initial={'eppn': user.identifier, 'email': user.identifier}) # An unbound form
             else:
                 return HttpResponseRedirect('/pre_apply/')
         else:
-            form = OSDCForm(initial={'email': eppn}) # An unbound form
+            form = OSDCForm(initial={'eppn': eppn, 'email': eppn}) # An unbound form
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,
