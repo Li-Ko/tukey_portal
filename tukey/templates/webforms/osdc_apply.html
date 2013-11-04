@@ -39,11 +39,10 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
         {{ form.email }}
         {{ form.eppn.as_hidden }}
         <span class="help-inline">{{form.email.errors}}</span>
-        <span class="help-block-apply"> The OSDC console uses federated login for authentication. 
-        If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using that e-mail address. Please provide your primary institutional e-mail, not an alias (ie: uchicago.edu not med.uchicago.edu). 
-        </span>
-        <span class="help-block-apply">We also support OpenID (Gmail and Yahoo) logins, 
-          but only if you're unable to provide an appropriate institutional email.
+        <span class="help-block-apply">
+          You may change your contact email above;
+          however, the identity <span class="label label-info">{{ form.eppn.value }}</span> will be sent in your application as your identifier.
+          To use a different identifier please sign out of federated account and start the application process over.
         </span>
       </div>
     </div>

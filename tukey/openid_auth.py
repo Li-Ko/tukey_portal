@@ -154,7 +154,7 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
 
     def __init__(self, request, *args, **kwargs):
         super(ShibbolethOpenIDLoginForm, self).__init__(*args, **kwargs)
-        LOG.debug("kwargs %s" kwargs)
+        LOG.debug("kwargs %s", kwargs)
         if "entityid_cookie" in request.COOKIES:
             LOG.debug("SETTING the entitty id to %s",
                 request.COOKIES["entityid_cookie"])
