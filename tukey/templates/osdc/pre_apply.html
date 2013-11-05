@@ -11,35 +11,10 @@
 {% block main %}
 <div class="span10">
 <p>
-OSDC does not provide it's own authentication service, you must authenticate with one of the following options. If you are a member of an institution that is listed below, please sign in to that account. If you are not associated with any of these institutions, you may use continue using gmail or yahoo but be aware restrictions may be placed on the account. For any other questions please send email to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>.
+The OSDC console uses federated login for authentication. If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using those credentials.
+We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to provide an appropriate institutional account.
+Please send any questions to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>.
 </p>
   {% include 'osdc/shibboleth_openid.html' %}
 </div>
-{% endblock %}
- 
-{% block js %}
-
-{% include "horizon/_scripts.html" %}
-<script type="text/javascript">
-  $(document).ready(function() {
-
-    function true_toggle(selector, condition){
-      if (condition) {
-        $(selector).show();
-      }
-      else {
-        $(selector).hide();
-      }
-    }
-        
-    $("#nav-apply").attr('class', 'active');
-    $("#id_systems_4").change(function() {
-      true_toggle(".extra_occy", this.checked);
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_3")[0].checked);
-    }).change();
-    $("#id_systems_3").change(function() {
-      true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
-    }).change();
-  });
-</script>
 {% endblock %}
