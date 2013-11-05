@@ -18,7 +18,11 @@ def build_message(form):
     msg_list.append(form.cleaned_data['name'])
     msg_list.append('\n')
     msg_list.append(form.cleaned_data['email'])
-    msg_list.append('\n\nOrganization/University\n')
+    msg_list.append('\nEPPN:\n')
+    msg_list.append(form.cleaned_data['eppn'])
+    msg_list.append('\nMethod:\n')
+    msg_list.append(form.cleaned_data['method'])
+    msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
 
     if form.cleaned_data['webpage'] != '':
@@ -81,20 +85,8 @@ def build_message(form):
     return ''.join(msg_list)
 
 def osdc_apply(request, user=None):
-    if "pre_apply" not in request.session:
-        return HttpResponseRedirect('/pre_apply/')
-
     if user is None:
         user = request.user
-
-    #openid_response = parse_openid_response(request)
-    #if not openid_response:
-    #    request.session["pre_apply"] = "false"
-    #    return HttpResponseRedirect("/pre_apply/")
-
-    #if openid_response.status != SUCCESS:
-    #    request.session["pre_apply"] = "false"
-    #    return HttpResponseRedirect("/pre_apply/")
 
     if request.method == 'POST': # If the form has been submitted...
         form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
@@ -129,14 +121,10 @@ def osdc_apply(request, user=None):
                     [u"Domain of address %s does not exist" % sender])
 
     else:
-        eppn = request.GET.get('eppn', '')
-        if eppn == '':
-            if hasattr(user, 'identifier'):
-                form = OSDCForm(initial={'eppn': user.identifier, 'email': user.identifier}) # An unbound form
-            else:
-                return HttpResponseRedirect('/pre_apply/')
+        if hasattr(user, 'identifier'):
+            form = OSDCForm(initial={"eppn": user.identifier, "email": user.identifier, "method": user.method})
         else:
-            form = OSDCForm(initial={'eppn': eppn, 'email': eppn}) # An unbound form
+            return HttpResponseRedirect('/pre_apply/')
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,
