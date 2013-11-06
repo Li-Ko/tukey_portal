@@ -154,10 +154,40 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
 
     def __init__(self, request, *args, **kwargs):
         super(ShibbolethOpenIDLoginForm, self).__init__(*args, **kwargs)
-        print kwargs
+        LOG.debug("kwargs %s", kwargs)
         if "entityid_cookie" in request.COOKIES:
-            print "SETTING the entitty id to ", request.COOKIES["entityid_cookie"]
+            LOG.debug("SETTING the entitty id to %s",
+                request.COOKIES["entityid_cookie"])
             self.fields["entityid"].initial = request.COOKIES["entityid_cookie"]
+
+
+
+def pre_apply(request, template_name='openid/login.html',
+                login_complete_view='openid:openid-complete',
+                form_class=ShibbolethOpenIDLoginForm,
+                render_failure=default_render_failure,
+                redirect_field_name=REDIRECT_FIELD_NAME):
+
+    if request.method == 'POST':
+        request.session["pre_apply"] = "true"
+
+    if request.user.is_authenticated():
+        return shortcuts.redirect(get_user_home(request.user))
+
+    if "openid_identifier" not in request.POST and "entityid" in request.POST:
+        response = HttpResponseRedirect(
+            "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
+                {"entityID": request.POST["entityid"],
+                    "target": "/apply/"}
+            )
+        )
+        response.set_cookie("entityid_cookie", request.POST["entityid"])
+        return response
+
+    return old_login_begin(request,
+        settings.ROOT_PATH + '/../tukey/templates/osdc/pre_apply.html',
+        login_complete_view, curry(form_class, request), render_failure,
+            "/apply/")
 
 
 def login_begin(request, template_name='openid/login.html',
@@ -165,21 +195,6 @@ def login_begin(request, template_name='openid/login.html',
                 form_class=ShibbolethOpenIDLoginForm,
                 render_failure=default_render_failure,
                 redirect_field_name=REDIRECT_FIELD_NAME):
-
-
-#    req = requests.get("https://www.opensciencedatacloud.org/Shibboleth.sso/DiscoFeed")
-#    #req = requests.get(request.build_absolute_uri("/Shibboleth.sso/DiscoFeed"))
-#
-#    disco_feed = req.json()
-#
-#    print disco_feed
-#
-#    idps = ["urn:mace:incommon:lbl.gov", "urn:mace:incommon:uchicago.edu"]
-#
-#    idp_info = [(org["entityID"], org["DisplayNames"][0]["value"]) for org in
-#        disco_feed if org["entityID"] in idps]
-#
-#    form_class.entityid.choices = idp_info
 
     LOG.debug('new login begin')
 
@@ -203,7 +218,6 @@ def login_begin(request, template_name='openid/login.html',
             redirect_field_name)
 
 
-
 # replace login complete so that if the user is not
 # authenticated this will send them to the page 
 # where they can register
@@ -218,15 +232,12 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
     openid_response = parse_openid_response(request)
     if not openid_response:
         return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
-#        return render_failure(
-#            request, 'This is an OpenID relying party endpoint.')
 
     if openid_response.status == SUCCESS:
         try:
             user = authenticate(openid_response=openid_response)
         except DjangoOpenIDException:
             return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
-#            return render_failure(request, e.message, exception=e)
 
         if user is not None:
             if user.is_active:
@@ -239,22 +250,8 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
                 return response
             else:
-                from tukey.views import register_user
-                return register_user(request, user)
+                from tukey.webforms.views import osdc_apply
+                request.session["pre_apply"] = "true"
+                return osdc_apply(request, user)
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))
-#
-#                #return render_failure(request, 'Disabled account')
-#        else:
-#            return render_failure(request, 'Unknown user')
-#    elif openid_response.status == FAILURE:
-#        return render_failure(
-#            request, 'OpenID authentication failed: %s' %
-#            openid_response.message)
-#    elif openid_response.status == CANCEL:
-#        return render_failure(request, 'Authentication cancelled')
-#    else:
-#        assert False, (
-#            "Unknown OpenID response type: %r" % openid_response.status)
-#
-

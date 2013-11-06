@@ -4,8 +4,11 @@ from django.core.mail import send_mail, BadHeaderError
 from django.forms.util import ErrorList
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django_openid_auth.views import parse_openid_response
+from openid.consumer.consumer import SUCCESS
 from tukey.webforms.forms import OSDCForm, OSDCSupportForm, OSDCDemoForm
 import smtplib
+from tukey.openid_auth import pre_apply
 
 def build_message(form):
     msg_list = []
@@ -14,7 +17,11 @@ def build_message(form):
     msg_list.append(form.cleaned_data['name'])
     msg_list.append('\n')
     msg_list.append(form.cleaned_data['email'])
-    msg_list.append('\n\nOrganization/University\n')
+    msg_list.append('\nEPPN:\n')
+    msg_list.append(form.cleaned_data['eppn'])
+    msg_list.append('\nMethod:\n')
+    msg_list.append(form.cleaned_data['method'])
+    msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
 
     if form.cleaned_data['webpage'] != '':
@@ -76,13 +83,13 @@ def build_message(form):
     msg_list.append('\n\n')
     return ''.join(msg_list)
 
-def osdc_apply(request):
-    # If the form has been submitted
-    if request.method == 'POST': 
-        form = OSDCForm(request.POST, request.FILES) 
-       	# A form bound to the POST data. If all validation rules pass...
-        if form.is_valid():
-	    # Values for email to OSDC admin
+def osdc_apply(request, user=None):
+    if user is None:
+        user = request.user
+
+    if request.method == 'POST': # If the form has been submitted...
+        form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
             subject = 'OSDC Account Request'
             message_admin = build_message(form)
             sender_admin = form.cleaned_data['email'] 
@@ -113,8 +120,10 @@ def osdc_apply(request):
                     [u"Domain of address %s does not exist" % sender])
 
     else:
-	# An unbound form
-        form = OSDCForm()
+        if hasattr(user, 'identifier'):
+            form = OSDCForm(initial={"eppn": user.identifier, "email": user.identifier, "method": user.method})
+        else:
+            return HttpResponseRedirect('/pre_apply/')
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,

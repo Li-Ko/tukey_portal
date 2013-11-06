@@ -7,12 +7,12 @@ class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         return mark_safe(html.replace('<ul>', '<ul class="foobar">'))
 
 SYSTEM_CHOICES = (
-    ('OSDC-Sullivan', 'OSDC-Sullivan (newest OpenStack based cloud)'),
+    ('OSDC-Sullivan', 'Public OpenStack Cloud'),
    # ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud)'),
-   # ('OSDC-Atwood', 'OSDC-Atwood (A protected data cloud, home of the Conte Center Cloud)'),
+   ('OSDC-Atwood', 'Protected OpenStack Cloud'),
    # ('bionimbus_web', 'Bionimbus Web Portal'),
    # ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
-    ('occ-y', 'OCC-Y (Hadoop cluster donated by Yahoo!)'),
+    ('occ-y', 'Hadoop Cluster'),
    # ('matsu', 'Matsu Hadoop Testbed'),
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
     )
@@ -30,7 +30,8 @@ STORAGE_CHOICES = (
 class OSDCForm(forms.Form):
     name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
     email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
-    login_email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}), required=False)
+    eppn = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'type': 'hidden'}))
+    method = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'type': 'hidden'}))
     organization = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
     systems = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple, choices=SYSTEM_CHOICES,
         initial=["OSDC-Sullivan"])
@@ -51,7 +52,7 @@ class OSDCForm(forms.Form):
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
     pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
-    # captcha = ReCaptchaField()
+    captcha = ReCaptchaField()
 
     # TODO: Conditional validation for more_cpus and more_storage fields
     # def clean(self):
@@ -63,7 +64,7 @@ class OSDCSupportForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
     sender = forms.EmailField()
-    #captcha = ReCaptchaField()
+    captcha = ReCaptchaField()
 
 class OSDCDemoForm(forms.Form):
     first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))

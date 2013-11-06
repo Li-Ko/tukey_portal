@@ -1,0 +1,20 @@
+{% extends "base_web.html" %}
+
+{% block meta_title %}OSDC Application{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h2>Login to an Identity Provider</h2>
+</header>
+{% endblock %}
+
+{% block main %}
+<div class="span10">
+<p>
+The OSDC console uses federated login for authentication. If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using those credentials.
+We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to provide an appropriate institutional account.
+Please send any questions to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>.
+</p>
+  {% include 'osdc/shibboleth_openid.html' %}
+</div>
+{% endblock %}
