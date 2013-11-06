@@ -7,12 +7,12 @@ class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         return mark_safe(html.replace('<ul>', '<ul class="foobar">'))
 
 SYSTEM_CHOICES = (
-    ('OSDC-Sullivan', 'OSDC-Sullivan (newest OpenStack based cloud)'),
+    ('OSDC-Sullivan', 'Public OpenStack Cloud'),
    # ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud)'),
-   # ('OSDC-Atwood', 'OSDC-Atwood (A protected data cloud, home of the Conte Center Cloud)'),
+   ('OSDC-Atwood', 'Protected OpenStack Cloud'),
    # ('bionimbus_web', 'Bionimbus Web Portal'),
    # ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
-    ('occ-y', 'OCC-Y (Hadoop cluster donated by Yahoo!)'),
+    ('occ-y', 'Hadoop Cluster'),
    # ('matsu', 'Matsu Hadoop Testbed'),
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
     )
