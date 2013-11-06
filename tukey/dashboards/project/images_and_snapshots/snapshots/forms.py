@@ -32,7 +32,6 @@ from openstack_dashboard import api
 
 LOG = logging.getLogger(__name__)
 
-
 class CreateSnapshot(forms.SelfHandlingForm):
     instance_id = forms.CharField(label=_("Instance ID"),
                                   widget=forms.HiddenInput(),

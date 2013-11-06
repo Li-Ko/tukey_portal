@@ -44,14 +44,20 @@ class OSDCForm(forms.Form):
     sharing = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}), required=False)
     # othercontacts = forms.CharField(required=False)
     # Below line commented out because split into "cpus" and "storage" as follows.
-    #resources = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
+    # resources = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
     cpus = forms.ChoiceField(widget=forms.Select(attrs={'class' : 'span4'}), choices=CPU_CHOICES)
     more_cpus = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_cpus', 'class' : 'span4'}), required=False)
     storage = forms.ChoiceField(widget=forms.Select(attrs={'class' : 'span4'}), choices=STORAGE_CHOICES)
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
-    # pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
+    pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
     # captcha = ReCaptchaField()
+
+    # TODO: Conditional validation for more_cpus and more_storage fields
+    # def clean(self):
+	# cleaned_data = super(OSDCForm, self).clean()
+	# more code here...
+
 
 class OSDCSupportForm(forms.Form):
     subject = forms.CharField(max_length=100)

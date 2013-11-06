@@ -1,5 +1,4 @@
 from django.conf import settings
-# Allow sending email to users. Are the following two statements conflicting with each other?
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail, BadHeaderError
 from django.forms.util import ErrorList

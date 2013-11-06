@@ -239,7 +239,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       true_toggle(".extra_pubkey", this.checked || $("#id_systems_4")[0].checked);
     }).change();
  
-    function more_cpus() {
+   function more_cpus() {
       var cpus = $("#id_cpus").val();
       if (cpus == "16plus") {
         $(".extra_cpus").show();
@@ -248,7 +248,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       }
     }
 
-    function more_storage() {
+   function more_storage() {
       var storage = $("#id_storage").val();
       if (storage == "1plus") {
         $(".extra_storage").show();
