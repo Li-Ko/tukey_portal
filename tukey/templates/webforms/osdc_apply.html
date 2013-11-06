@@ -165,7 +165,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
 <!-- if requesting 16+, display below -->
-    <div class="control-group extra_cpus {% if form.more_cpus.errors  %}error{% endif %}">
+    <div class="control-group extra_cpus {% if form.more_cpus.errors %}error{% endif %}">
       <label class="control-label" for="id_more_cpus">Please specify how many CPUs required*</label>
       <div class="controls">
         {{ form.more_cpus }}
@@ -184,7 +184,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 
 <!-- If requesting 1+, display below -->
     <div class="control-group extra_storage {% if form.more_storage.errors %}error{% endif %}">
-      <label class="control-label" for="id_storage">Please specify how much storage required*</label>
+      <label class="control-label" for="id_more_storage">Please specify how much storage required*</label>
       <div class="controls">
         {{ form.more_storage }}
         <span class="help-inline">{{ form.more_storage.errors }}</span>
@@ -238,8 +238,8 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       true_toggle(".extra_occy", this.checked);
       true_toggle(".extra_pubkey", this.checked);
     }).change();
-
-   function more_cpus() {
+    
+    function displayMoreCPUs() {
       var cpus = $("#id_cpus").val();
       if (cpus == "16plus") {
         $(".extra_cpus").show();
@@ -248,7 +248,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       }
     }
 
-   function more_storage() {
+    function displayMoreStorage() {
       var storage = $("#id_storage").val();
       if (storage == "1plus") {
         $(".extra_storage").show();
@@ -257,9 +257,11 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       }
     }
 
-    $("#id_cpus").change(more_cpus);
-    $("#id_storage").change(more_storage);
- });
+    $("#id_cpus").change(displayMoreCPUs);
+    $("#id_storage").change(displayMoreStorage);
+    displayMoreCPUs();
+    displayMoreStorage();
 
+});
 </script>
 {% endblock %}
