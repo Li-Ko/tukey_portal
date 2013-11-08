@@ -12,6 +12,11 @@ import smtplib
 from tukey.openid_auth import pre_apply
 from django.contrib.auth import logout
 
+def new_thing(self):
+    print vars(self)
+
+EmailMessage.send = new_thing
+
 def build_message(form):
     msg_list = []
     msg_list.append('Summary of submitted information:\n\n')
@@ -129,7 +134,7 @@ def osdc_apply(request, user=None):
         elif hasattr(user, 'identifier'):
             form = OSDCForm(initial={"eppn": user.identifier, "email": user.identifier, "method": user.method})
         else:
-            return HttpResponseRedirect('/pre_apply/')
+            return HttpResponseRedirect('/pre_apply/?next=/apply/')
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,
