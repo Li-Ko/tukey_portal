@@ -46,6 +46,7 @@ def get_user(request):
                     auth_url=settings.OPENSTACK_KEYSTONE_URL,
                     request=request)
                 user.backend = 'openstack_auth.backend.KeystoneBackend'
+                user.identifier = request.META.get(shib_header)
                 login(request, user)
             except (keystone_exceptions.Unauthorized, KeystoneAuthException):
                 user = UnregisteredUser('Shibboleth', 

@@ -52,7 +52,7 @@ class OSDCForm(forms.Form):
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
     pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
-    captcha = ReCaptchaField()
+    #captcha = ReCaptchaField()
 
 class OSDCSupportForm(forms.Form):
     subject = forms.CharField(max_length=100)
