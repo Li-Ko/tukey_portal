@@ -1,4 +1,6 @@
 {% extends "base_web.html" %}
+{% load i18n %}
+
 
 {% block meta_title %}OSDC Application{% endblock %}
 
@@ -11,10 +13,21 @@
 {% block main %}
 <div class="span10">
 <p>
-The OSDC console uses federated login for authentication. If you are at an academic institution that supports <a href="https://incommon.org/participants/">InCommon</a> or <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> we recommend using those credentials.
-We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to provide an appropriate institutional account.
-Please send any questions to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>.
+  The OSDC console uses federated login for authentication.
+  If you are at an academic institution that supports
+  <a href="https://incommon.org/participants/">InCommon</a> 
+  or
+  <a href="http://www.canarie.ca/en/caf/participants">CANARIE</a> 
+  we recommend using those credentials.
+  We also support Gmail and Yahoo logins, but only if you're unable to provide an appropriate institutional account.
+  Please send any questions to 
+  <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>.
 </p>
-  {% include 'osdc/shibboleth_openid.html' %}
+  <div class="modal-header">
+    <h3>{% trans "Select your Organization or Institution:" %}</h3>
+  </div>
+  <div class="modal-body clearfix">
+    {% include 'osdc/shibboleth_openid.html' %}
+  </div>
 </div>
 {% endblock %}

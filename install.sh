@@ -89,6 +89,7 @@ psycopg2
 python-memcached
 django-recaptcha
 pyelasticsearch
+feedparser
 " | sudo tee -a tools/pip-requires > /dev/null
 
 sudo python tools/install_venv.py

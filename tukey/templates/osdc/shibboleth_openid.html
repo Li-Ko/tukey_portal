@@ -1,3 +1,6 @@
+
+{% load i18n %}
+{% comment %}    
 {% extends "horizon/common/_modal_form.html" %}
 {% load i18n %}
 
@@ -5,6 +8,7 @@
 {% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
 
 {% block modal-body %}
+{% endcomment %}    
 
 <div class="container-fluid">
     <form method="post" class="form-inline">
@@ -26,7 +30,9 @@
     <p></p>
     <p>
         {% trans "or sign in using " %}
-        <span id="google-link"></span> {% trans "or" %} <span id="yahoo-link"></span>
+        <span id="google-link"></span>
+        {% trans "or" %}
+        <span id="yahoo-link"></span>
     </p>
 
    {% if request.GET.shib %}
@@ -37,7 +43,6 @@
     </div>
    {% endif %}
 
-    
     <form id="google-form" name="fopenid" action="{{ action }}" method="post">
         {% csrf_token %}
         <fieldset>
@@ -78,9 +83,12 @@
          $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});
      });
 </script>
-    
+
+{% comment %}    
 {% endblock %}
 
 {% block modal-footer %}
 {% endblock %}
+
+{% endcomment %}    
 

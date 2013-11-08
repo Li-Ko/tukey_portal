@@ -83,11 +83,11 @@ class OpenIDKeystoneBackend(KeystoneBackend):
 
         LOG.debug("email %s:", details['email'])
 
-
         try:
             user = super(OpenIDKeystoneBackend, self).authenticate(password='openid', 
                 username=details['email'], auth_url=settings.OPENSTACK_KEYSTONE_URL,
                 request=kwargs.get('request'))
+            user.identifier = details['email']
 
         except KeystoneAuthException:
             return UnregisteredUser('OpenID', details['email'])
@@ -168,12 +168,6 @@ def pre_apply(request, template_name='openid/login.html',
                 render_failure=default_render_failure,
                 redirect_field_name=REDIRECT_FIELD_NAME):
 
-    if request.method == 'POST':
-        request.session["pre_apply"] = "true"
-
-    if request.user.is_authenticated():
-        return shortcuts.redirect(get_user_home(request.user))
-
     if "openid_identifier" not in request.POST and "entityid" in request.POST:
         response = HttpResponseRedirect(
             "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
@@ -187,7 +181,7 @@ def pre_apply(request, template_name='openid/login.html',
     return old_login_begin(request,
         settings.ROOT_PATH + '/../tukey/templates/osdc/pre_apply.html',
         login_complete_view, curry(form_class, request), render_failure,
-            "/apply/")
+            redirect_field_name)
 
 
 def login_begin(request, template_name='openid/login.html',
@@ -251,7 +245,6 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
                 return response
             else:
                 from tukey.webforms.views import osdc_apply
-                request.session["pre_apply"] = "true"
                 return osdc_apply(request, user)
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))

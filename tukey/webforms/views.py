@@ -9,6 +9,12 @@ from openid.consumer.consumer import SUCCESS
 from tukey.webforms.forms import OSDCForm, OSDCSupportForm, OSDCDemoForm
 import smtplib
 from tukey.openid_auth import pre_apply
+from django.contrib.auth import logout
+
+def new_thing(self):
+    print vars(self)
+
+EmailMessage.send = new_thing
 
 def build_message(form):
     msg_list = []
@@ -112,6 +118,8 @@ def osdc_apply(request, user=None):
             try:
                 email_admin.send()
                 email_user.send()
+                if not request.user.is_authenticated():
+                    logout(request)
     		# Redirect after POST
                 return HttpResponseRedirect('thanks/')
 
@@ -120,10 +128,12 @@ def osdc_apply(request, user=None):
                     [u"Domain of address %s does not exist" % sender])
 
     else:
-        if hasattr(user, 'identifier'):
+        if request.user.is_authenticated():
+            form = OSDCForm(initial={"eppn": user.username, "method": "re-apply"})
+        elif hasattr(user, 'identifier'):
             form = OSDCForm(initial={"eppn": user.identifier, "email": user.identifier, "method": user.method})
         else:
-            return HttpResponseRedirect('/pre_apply/')
+            return HttpResponseRedirect('/pre_apply/?next=/apply/')
 
     return render(request, 'webforms/osdc_apply.html', {
         'form': form,
