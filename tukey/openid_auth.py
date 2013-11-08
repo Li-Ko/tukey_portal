@@ -181,7 +181,7 @@ def pre_apply(request, template_name='openid/login.html',
     return old_login_begin(request,
         settings.ROOT_PATH + '/../tukey/templates/osdc/pre_apply.html',
         login_complete_view, curry(form_class, request), render_failure,
-            "/apply/")
+            redirect_field_name)
 
 
 def login_begin(request, template_name='openid/login.html',
