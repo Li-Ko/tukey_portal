@@ -41,5 +41,5 @@ class IndexView(OldIndexView):
                                                                 )
         except:
             othersnaps = []
-            exceptions.handle(req, _("Unable to retrieve non-user-owned snapshots."))
+            exceptions.handle(req, _("Unable to retrieve list of all snapshots."))
         return othersnaps
