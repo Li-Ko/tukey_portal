@@ -14,6 +14,32 @@ from openstack_dashboard.dashboards.project.images_and_snapshots.volume_snapshot
 # from horizon.dashboards.nova.images_and_snapshots.snapshots.tables import SnapshotsTable
 
 class IndexView(OldIndexView):
-    # Wire the view to the template for modification instead of using horizon one
 
     table_classes = (ImagesTable, UserSnapshotsTable, OtherSnapshotsTable, VolumeSnapshotsTable)
+
+    def get_usersnapshots_data(self):
+        req = self.request
+        marker = req.GET.get(UserSnapshotsTable._meta.pagination_param, None)
+        try:
+            usersnaps, self._more_snapshots = api.snapshot_list_detailed(
+                                                               req,
+                                                               marker = marker,
+                                                               extra_filters = {"owner" : req.user.tenant_id}
+                                                               )
+        except:
+            usersnaps = []
+            exceptions.handle(req, _("Unable to retrieve user-owned snapshots."))
+        return usersnaps
+
+    def get_othersnapshots_data(self):  
+        req = self.request
+        marker = req.GET.get(OtherSnapshotsTable._meta.pagination_param, None)
+        try:
+            othersnaps, self._more_snapshots = api.snapshot_list_detailed(
+                                                                req,
+                                                                marker = marker
+                                                                )
+        except:
+            othersnaps = []
+            exceptions.handle(req, _("Unable to retrieve non-user-owned snapshots."))
+        return othersnaps
