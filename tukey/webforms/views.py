@@ -18,7 +18,7 @@ def build_message(form):
     msg_list.append(form.cleaned_data['name'])
     msg_list.append('\n')
     msg_list.append(form.cleaned_data['email'])
-    msg_list.append('\nEPPN:\n')
+    msg_list.append('\nIdentifier:\n')
     msg_list.append(form.cleaned_data['eppn'])
     msg_list.append('\nMethod:\n')
     msg_list.append(form.cleaned_data['method'])
