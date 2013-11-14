@@ -44,7 +44,6 @@ class LaunchCluster(tables.LinkAction):
         return "?".join([base_url, params])
 
     def allowed(self, request, image):
-        print image
         return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
 
