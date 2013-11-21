@@ -120,7 +120,8 @@ def osdc_apply(request, user=None):
 
             except smtplib.SMTPRecipientsRefused as e:
                 form._errors["email"] = ErrorList(
-                    [u"Domain of address %s does not exist" % sender])
+		    # Changed 'sender' to 'sender_admin' after code split into two emails.
+                    [u"Domain of address %s does not exist" % sender_admin])
 
     else:
         if request.user.is_authenticated():
