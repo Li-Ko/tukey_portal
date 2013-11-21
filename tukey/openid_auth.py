@@ -27,6 +27,8 @@ import requests
 from django.utils.http import urlencode
 from django.utils.functional import curry
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 from django import shortcuts
 from openstack_dashboard.views import get_user_home
@@ -161,7 +163,7 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
             self.fields["entityid"].initial = request.COOKIES["entityid_cookie"]
 
 
-
+@csrf_exempt
 def pre_apply(request, template_name='openid/login.html',
                 login_complete_view='openid:openid-complete',
                 form_class=ShibbolethOpenIDLoginForm,

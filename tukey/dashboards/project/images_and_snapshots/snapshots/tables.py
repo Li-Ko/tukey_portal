@@ -17,7 +17,7 @@ from openstack_dashboard.dashboards.project.images_and_snapshots.snapshots.table
 
 from tukey.cloud_attribute import get_cloud
 
-# from tukey.dashboards.project.images_and_snapshots.images.tables import LaunchCluster
+#from tukey.dashboards.project.images_and_snapshots.images.tables import LaunchCluster
 
 
 class LaunchSnapshot(OldLaunchSnapshot):
@@ -44,7 +44,6 @@ class LaunchCluster(tables.LinkAction):
         return "?".join([base_url, params])
 
     def allowed(self, request, image):
-        print image
         return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
 class UserSnapshotsTable(OldSnapshotsTable):
