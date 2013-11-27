@@ -59,19 +59,19 @@ class UserSnapshotsTable(OldSnapshotsTable):
     class Meta:
         name = "usersnapshots"
         verbose_name = _("User Snapshots")
-        table_actions = (DeleteSnapshot,)	
+        table_actions = (DeleteSnapshot, ImageFilterAction)	
         row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow
         status_columns = ["status"]
 
-class SnapshotsTable(OldSnapshotsTable):
+class OtherSnapshotsTable(OldSnapshotsTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
     class Meta:
         name = "othersnapshots"
         verbose_name = _("All Snapshots")
-        table_actions = (DeleteSnapshot,)
+        table_actions = (DeleteSnapshot, ImageFilterAction)
         row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow
