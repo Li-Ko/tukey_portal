@@ -30,6 +30,13 @@ class LaunchSnapshot(OldLaunchSnapshot):
         return "?".join([base_url, params])
 
 
+class ImageFilterAction(tables.FilterAction):
+
+    def filter(self, table, instances, filter_string):
+        q = filter_string.lower()
+        return [instance for instance in instances if q in instance.name.lower()]
+
+
 class LaunchCluster(tables.LinkAction):
     name = "launch_cluster"
     verbose_name = _("Launch Cluster")
@@ -44,22 +51,27 @@ class LaunchCluster(tables.LinkAction):
         return "?".join([base_url, params])
 
     def allowed(self, request, image):
-        print image
         return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
-class ImageFilterAction(tables.FilterAction):
+class UserSnapshotsTable(OldSnapshotsTable):
+    cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
-    def filter(self, table, instances, filter_string):
-        q = filter_string.lower()
-        return [instance for instance in instances if q in instance.name.lower()]
+    class Meta:
+        name = "usersnapshots"
+        verbose_name = _("User Snapshots")
+        table_actions = (DeleteSnapshot,)	
+        row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
+        pagination_param = "snapshot_marker"
+        row_class = UpdateRow
+        status_columns = ["status"]
 
 class SnapshotsTable(OldSnapshotsTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
     class Meta:
-        name = "snapshots"
-        verbose_name = _("Instance Snapshots")
-        table_actions = (DeleteSnapshot, ImageFilterAction)
+        name = "othersnapshots"
+        verbose_name = _("All Snapshots")
+        table_actions = (DeleteSnapshot,)
         row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow

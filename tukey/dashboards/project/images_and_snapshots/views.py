@@ -15,4 +15,31 @@ from openstack_dashboard.dashboards.project.images_and_snapshots.volume_snapshot
 
 class IndexView(OldIndexView):
 
-    table_classes = (ImagesTable, SnapshotsTable, VolumeSnapshotsTable)
+    table_classes = (ImagesTable, UserSnapshotsTable, OtherSnapshotsTable, VolumeSnapshotsTable)
+
+    def get_usersnapshots_data(self):
+        req = self.request
+        marker = req.GET.get(UserSnapshotsTable._meta.pagination_param, None)
+        try:
+            usersnaps, self._more_snapshots = api.snapshot_list_detailed(
+                                                               req,
+                                                               marker = marker,
+                                                               extra_filters = {"owner" : req.user.tenant_id}
+                                                               )
+        except:
+            usersnaps = []
+            exceptions.handle(req, _("Unable to retrieve user-owned snapshots."))
+        return usersnaps
+
+    def get_othersnapshots_data(self):  
+        req = self.request
+        marker = req.GET.get(OtherSnapshotsTable._meta.pagination_param, None)
+        try:
+            othersnaps, self._more_snapshots = api.snapshot_list_detailed(
+                                                                req,
+                                                                marker = marker
+                                                                )
+        except:
+            othersnaps = []
+            exceptions.handle(req, _("Unable to retrieve list of all snapshots."))
+        return othersnaps

@@ -15,10 +15,12 @@ def build_message(form):
     msg_list = []
     msg_list.append('Summary of submitted information:\n\n')
     msg_list.append('From:\n')
-    msg_list.append(form.cleaned_data['name'])
+    msg_list.append(form.cleaned_data['first_name'])
+    msg_list.append(' ')
+    msg_list.append(form.cleaned_data['last_name'])
     msg_list.append('\n')
     msg_list.append(form.cleaned_data['email'])
-    msg_list.append('\nEPPN:\n')
+    msg_list.append('\nIdentifier:\n')
     msg_list.append(form.cleaned_data['eppn'])
     msg_list.append('\nMethod:\n')
     msg_list.append(form.cleaned_data['method'])
@@ -120,7 +122,8 @@ def osdc_apply(request, user=None):
 
             except smtplib.SMTPRecipientsRefused as e:
                 form._errors["email"] = ErrorList(
-                    [u"Domain of address %s does not exist" % sender])
+		    # Changed 'sender' to 'sender_admin' after code split into two emails.
+                    [u"Domain of address %s does not exist" % sender_admin])
 
     else:
         if request.user.is_authenticated():
