@@ -245,6 +245,12 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
                 return response
             else:
                 from tukey.webforms.views import osdc_apply
-                return osdc_apply(request, user)
+#                return osdc_apply(request, user)
+                return HttpResponseRedirect(
+                    "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
+                        {"entityID": request.POST["entityid"],
+                        "target": request.POST.get("next", default="/project/")}
+                        )
+                    )
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))

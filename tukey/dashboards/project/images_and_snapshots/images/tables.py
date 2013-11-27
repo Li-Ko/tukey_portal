@@ -41,7 +41,11 @@ class LaunchCluster(tables.LinkAction):
     def allowed(self, request, image):
         return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
+class ImageFilterAction(tables.FilterAction):
 
+    def filter(self, table, instances, filter_string):
+        q = filter_string.lower()
+        return [instance for instance in instances if q in instance.name.lower()]
 
 class ImagesTable(OldImagesTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
@@ -51,6 +55,6 @@ class ImagesTable(OldImagesTable):
         row_class = UpdateRow
         status_columns = ["status"]
         verbose_name = _("Images")
-        table_actions = (CreateImage, DeleteImage,)
+        table_actions = (CreateImage, DeleteImage, ImageFilterAction)
         row_actions = (LaunchImage, LaunchCluster, EditImage, DeleteImage,)
         pagination_param = "image_marker"
