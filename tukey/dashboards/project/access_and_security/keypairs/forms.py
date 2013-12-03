@@ -26,8 +26,8 @@ def get_resources(function_name, user):
 
 
 class CreateKeypair(OldCreateKeypair):
-    
-    cloud = forms.ChoiceField(label=_("Resource"),required=True)
+    # Initial added by Alex.
+    cloud = forms.ChoiceField(label=_("Resource"),required=True, initial="all")
 
     def __init__(self, request, *args, **kwargs):
 
@@ -40,8 +40,8 @@ class CreateKeypair(OldCreateKeypair):
 
 
 class ImportKeypair(OldImportKeypair):
-
-    cloud = forms.ChoiceField(label=_("Resource"),required=True)
+    # Initial added by Alex.
+    cloud = forms.ChoiceField(label=_("Resource"),required=True, initial="all")
 
     def __init__(self, request, *args, **kwargs):
 
