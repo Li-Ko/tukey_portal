@@ -24,11 +24,15 @@
   <body>
     {% show_nav content.slug %}
     {% block content %}
-
+    <!-- THIS IS BASE WEB -->
     <div class='container'>
       {% block header %}{% endblock %}
+      {% include "horizon/_messages.html" %}
       {% block main %}{% endblock %}
     </div>
+    {% endblock %}
+
+    {% block modal-body %}
     {% endblock %}
 
     <div id="footer">
@@ -51,13 +55,6 @@
         });
     });
     </script>
-    {% comment %}
-    {% if not content.img %}
-    <script type="text/javascript">
-      $("#nav-{{ content.slug }}").attr('class', 'active')
-    </script>
-    {% endif %}
-    {% endcomment %}
     {% endblock %}
   </body>
 </html>

@@ -8,6 +8,30 @@
 @navbarBackground:                @cloudLightBlue;
 @navbarBackgroundHighlight:       @cloudBlue;
 
+/* Keep footer at bottom of page. Protection against minimal content pulling footer too high. */
+
+* {
+   margin: 0;
+}
+
+html, body {
+   height: 100%;
+}
+
+.container {
+   min-height: 85%;
+   height: auto;
+   margin: 0 auto;
+}
+
+.push {
+   height: 1em;
+}
+
+#main-footer {
+   height: 3em;
+}
+
 /* new clearfix */
 .clearfix:after {
     visibility: hidden;
@@ -709,7 +733,7 @@ form.horizontal fieldset {
   margin-bottom: 0;
 }
 
-#main-footer > .modal-footer{
+#main-footer > .modal-footer {
   margin-top: 40px;
 }
 

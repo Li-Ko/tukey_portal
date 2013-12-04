@@ -22,21 +22,26 @@
     </script>
   </head>
   <body id="{% block body_id %}{% endblock %}">
-    {% show_nav 'console' %}
-    {% block content %}
+    {% show_nav content.slug %}
     {% include "osdc/_osdc_console_menu.html" %}
+    {% block content %}
     <div class='container'>
-      <div class='row row-header'>
-      <div class='span12'>
+      <div class="row row-header">
+        <div class="span12">
           {% block page_header %}{% endblock %}
+          {% block header %}{% endblock %}
         </div>
       </div>
+      <!-- THIS IS BASE HTML -->
       <div class='row'>
       <div class='span12'>
         {% include "horizon/_messages.html" %}
         {% block main %}{% endblock %}
       </div>
       </div>
+    <div id="push">
+      <!-- Empty div to keep footer at bottom of viewport -->
+    </div>
     </div>
     {% endblock %}
 
@@ -54,7 +59,16 @@
     {% block js %}
     {% include "horizon/_scripts.html" %}
     <script type="text/javascript">
-    $("#nav-console").attr('class', 'active')
+      $(document).ready(function() {
+        $('.carousel').carousel({
+            interval: 8000,
+            cycle: true
+        });
+      });
+
+      if (content.slug !== "") {
+        $("#nav-{{ content.slug }}").attr("class", "active");
+      }
     </script>
     {% endblock %}
     <div id="modal_wrapper"></div>
