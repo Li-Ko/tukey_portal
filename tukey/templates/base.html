@@ -24,27 +24,29 @@
   <body id="{% block body_id %}{% endblock %}">
     {% show_nav content.slug %}
     {% include "osdc/_osdc_console_menu.html" %}
-    {% block content %}
-    <div class='container'>
-      <div class="row row-header">
-        <div class="span12">
-          {% block page_header %}{% endblock %}
-          {% block header %}{% endblock %}
+    <div class="wrapper">
+      {% block content %}
+      <div class='container'>
+        <div class="row row-header">
+          <div class="span12">
+            {% block page_header %}{% endblock %}
+            {% block header %}{% endblock %}
+            <!-- originally block main end block went here -->
+          </div>
+            {% block main %}{% endblock %}
+        </div>
+        <!-- THIS IS BASE HTML -->
+        <div class='row'>
+          <div class='span12'>
+            {% include "horizon/_messages.html" %}
+          </div>
+        </div>
+        <div id="push">
+          <!-- Empty div to keep footer at bottom of viewport -->
         </div>
       </div>
-      <!-- THIS IS BASE HTML -->
-      <div class='row'>
-      <div class='span12'>
-        {% include "horizon/_messages.html" %}
-        {% block main %}{% endblock %}
-      </div>
-      </div>
-    <div id="push">
-      <!-- Empty div to keep footer at bottom of viewport -->
+      {% endblock %}
     </div>
-    </div>
-    {% endblock %}
-
 
     {% block footer %}
       <div id="main-footer">
@@ -66,7 +68,7 @@
         });
       });
 
-      if (content.slug !== "") {
+      if (content.slug !== null) {
         $("#nav-{{ content.slug }}").attr("class", "active");
       }
     </script>
