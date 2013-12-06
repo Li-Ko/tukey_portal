@@ -123,3 +123,5 @@ def status_public(request):
         'update_times': update_times},
         context_instance=RequestContext(request))
 
+def server_down(request):
+    return render_to_response("maintenance.html")

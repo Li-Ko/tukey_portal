@@ -31,21 +31,20 @@
           <div class="span12">
             {% block page_header %}{% endblock %}
             {% block header %}{% endblock %}
-            <!-- originally block main end block went here -->
           </div>
             {% block main %}{% endblock %}
         </div>
-        <!-- THIS IS BASE HTML -->
         <div class='row'>
           <div class='span12'>
             {% include "horizon/_messages.html" %}
           </div>
         </div>
-        <div id="push">
-          <!-- Empty div to keep footer at bottom of viewport -->
-        </div>
+        <!-- PUSH was here -->
       </div>
       {% endblock %}
+      <div id="push">
+        <!-- Empty div to keep footer at bottom of viewport-->
+      </div>
     </div>
 
     {% block footer %}

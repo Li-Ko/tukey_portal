@@ -30,35 +30,38 @@ Contact the OSDC Support Team
     <div class="control-group {% if form.sender.errors %}error{% endif %}">  
       <label class="control-label" for="id_sender">Your Email</label>
       <div class="controls">
-  <input type="text" class="input-xlarge" id="id_sender" name="sender">
-  <span class="help-inline">{{form.sender.errors}}</span>
+        <input type="text" class="input-xlarge" id="id_sender" name="sender">
+        <span class="help-inline">{{form.sender.errors}}</span>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="id_subject">Subject</label>
       <div class="controls">
-  <input type="text" class="input-xlarge" id="id_subject" name="subject">
+        <input type="text" class="input-xlarge" id="id_subject" name="subject">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="id_message">Message</label>
       <div class="controls">
-  {{ form.message }}
+        {{ form.message }}
       </div>
     </div>
     <div class="control-group">
       <div class="controls">
-      <button type="submit" class="btn btn-primary">Send Message</button>
+        <button type="submit" class="btn btn-primary">Send Message</button>
       </div>
-      </div>
+    </div>
       
   </fieldset>
 </form>
-</div>
-</div>
-</div>
-</div>
-
+</div><!--  end .accordion-inner -->
+</div><!--  end #collapseOne, .accordion-body, .collapse -->
+</div><!--  end .accordion-group -->
+</div><!--  end #accordion, .accordion2 -->
+<iframe src="https://www.opensciencedatacloud.org/support-beta/" width="100%" height="800px">
+  <p>Your browser does not support iframes. See text below instead.</p>
+</iframe>
+<!--
 <p><h3>Open Science Data Cloud &#8220;Big Picture&#8221; Diagram of the OSDC infrastructure:</h3></p>
 <p>The Open Science Data Cloud is currently composed of Adler, a cloud based on Eucalyptus and Sullivan, a cloud based on OpenStack.</p>
 <p><code>Internet (users)</code><br />
@@ -192,7 +195,7 @@ These instructions only apply to the Sullivan cloud. Please see above for Adler 
 <ul><code>nova image-create INSTANCE_ID new-unique-name-DATE-ENUM</code></ul>
 <p>By default these images are private and can only be seen by you.  To make images public:</p>
 <ul><code>glance update INSTANCE_ID is_public=true</code></ul>
-
+-->
 </div>
 {% endblock %}
 
