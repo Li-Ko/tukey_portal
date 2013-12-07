@@ -26,6 +26,7 @@
     {% include "osdc/_osdc_console_menu.html" %}
     <div class="wrapper">
       {% block content %}
+      <!-- THIS IS BASE HTML -->
       <div class='container'>
         <div class="row row-header">
           <div class="span12">
@@ -65,6 +66,15 @@
             interval: 8000,
             cycle: true
         });
+
+        // Highlight "Console" if on one of its child pages.
+        var url = window.location.href;
+        var regEx = /project\//;
+        var contains = regEx.test(url);
+
+        if (contains == true) {
+          $("#nav-console").attr("class", "active");
+        }
       });
 
       if (content.slug !== null) {
