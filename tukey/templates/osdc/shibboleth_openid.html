@@ -17,7 +17,7 @@
     	<div class="row-fluid">
             <div class="form-horizontal">
     	    {{ form.entityid }}
-                <input name="bsignin" type="submit" value="{% trans "Sign in" %}" class="btn btn-primary"> 
+                <input id="bsignin" name="bsignin" type="submit" value="{% trans "Sign in" %}" class="btn btn-primary"> 
     	    </div>
     	</div>
             {% if next %}
@@ -80,7 +80,19 @@
          $("#yahoo-link").html('<a href="javascript:void(0)">Yahoo!</a>');
          $("#google-link").html('<a href="javascript:void(0)">Google</a>');
          $("#google-link").live("click", function(){$("#google-form").submit();});
-         $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});
+         $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});        
+        
+         function disableDefault() {
+           var institution = $("#id_entityid").val();
+           if (institution == " ") {
+             $("#bsignin").attr("disabled", "disabled");
+           } else {
+             $("#bsignin").removeAttr("disabled");
+           }
+         }
+       
+         disableDefault();    
+         $("#id_entityid").change(disableDefault);
      });
 </script>
 
