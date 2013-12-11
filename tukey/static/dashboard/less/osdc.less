@@ -8,6 +8,30 @@
 @navbarBackground:                @cloudLightBlue;
 @navbarBackgroundHighlight:       @cloudBlue;
 
+/* Keep footer at bottom of page. Protection against minimal content pulling footer too high. */
+
+* {
+   margin: 0;
+}
+
+html, body {
+   height: 100%;
+}
+
+.wrapper {
+   min-height: 83%;
+   height: auto;
+   margin: 0 auto;
+}
+
+.push {
+   height: 1em;
+}
+
+#main-footer {
+   height: 3em;
+}
+
 /* new clearfix */
 .clearfix:after {
     visibility: hidden;
@@ -489,6 +513,38 @@ table form {
     width: 1px;
 }
 
+/* --- SYSTEMS PAGE STYLES --- */
+.systems {
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.systems tr:nth-child {
+  background-color: #DDDDDD;
+}
+
+.systems th {
+  background: #F7BF71;
+  background: -moz-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(4%, #F7BF71), color-stop(96%, #F9AE40));
+  background: -webkit-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
+  background: -o-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
+  background: -ms-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
+  background: linear-gradient(to bottom, #F7BF71 4%, #F9AE40 96%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#F7BF1", endColorstr="#F9AE40", GradientType=0 );
+  border: 1px solid black;
+  padding: 20px 10px 20px 10px;
+  color: #3B598A;
+}
+
+.systems td {
+  padding: 15px 10px 15px 10px;
+  border: 1px solid black;
+  text-align: center;
+}
+
+/* --- END SYSTEMS PAGE STYLES --- */
+
 .messages {
   position: absolute;
   z-index: 9999;
@@ -709,7 +765,7 @@ form.horizontal fieldset {
   margin-bottom: 0;
 }
 
-#main-footer > .modal-footer{
+#main-footer > .modal-footer {
   margin-top: 40px;
 }
 
@@ -1392,34 +1448,34 @@ label.log-length {
             border-radius: 0;
   }
 
-.status-label{
+.status-label {
     font-size: 13px;
     font-weight: bold;
     }
 
-.status-row{
+.status-row {
     line-height: 24px;
-    margin: 10px 0;
+    margin: 10px 0 10px 25px;
     }
 
-.status-used{
+.status-used { 
     float: left;
     background-color: #faa732;
     text-align: right;
 }
 
-.status-bound{
+.status-bound {
     border: 1px solid #777777;
 }
 
-.status-total{
+.status-total {
     padding-left: 2px;
     float: left;
 }
 
 .status-header {
   padding-bottom: 5px;
-  margin: 10px 0;
+  margin: 10px 0 10px 25px;
   border-bottom: 1px solid #eeeeee;
 }
 
@@ -1428,7 +1484,6 @@ label.log-length {
 /* Jumbotrons                                                                                                                                
 -------------------------------------------------- */
 .jumbotron {
-  margin-top: 60px;
   position: relative;
 }
 .jumbotron h1 {
@@ -1497,9 +1552,16 @@ p, ul {
 }
 
 /* For the Public Data Pages */
+
+.data-entry, .data-faint {
+  margin-left: 35px;
+}
+
 .data-header {
   padding-bottom: 10px;
-  margin: 10px 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 25px;
   border-bottom: 1px solid #eeeeee;
 }
 
@@ -1510,13 +1572,13 @@ p, ul {
 
 .data-entry{
     margin-bottom: 8px;
-    }
+}
 
 .data-faint{
     color: #777777;
     font-size: 11px;
     font-style: italic;
-    }
+}
 
 .data-label{
     margin-top: 8px;
@@ -1586,6 +1648,10 @@ p, ul {
 
 .mainheader {
   padding: 0px 10px 0px 10px;
+}
+
+.mainheader, .cms {
+  margin-top: 67px;
 }
 
 .help-block-apply {

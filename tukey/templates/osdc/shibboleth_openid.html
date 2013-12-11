@@ -1,14 +1,14 @@
 
 {% load i18n %}
-{% comment %}    
-{% extends "horizon/common/_modal_form.html" %}
+{% comment %}
+{% extends "horizon/common/_modal_footer.html" %}
 {% load i18n %}
 
 {% block modal-header %} {% trans "Select your Organization or Institution:" %} {% endblock %}
 {% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
 
-{% block modal-body %}
-{% endcomment %}    
+{% block modal-body %}    
+{% endcomment %}
 
 <div class="container-fluid">
     <form method="post" class="form-inline">
@@ -17,7 +17,7 @@
     	<div class="row-fluid">
             <div class="form-horizontal">
     	    {{ form.entityid }}
-                <input name="bsignin" type="submit" value="{% trans "Sign in" %}" class="btn btn-primary"> 
+                <input id="bsignin" name="bsignin" type="submit" value="{% trans "Sign in" %}" class="btn btn-primary"> 
     	    </div>
     	</div>
             {% if next %}
@@ -80,15 +80,26 @@
          $("#yahoo-link").html('<a href="javascript:void(0)">Yahoo!</a>');
          $("#google-link").html('<a href="javascript:void(0)">Google</a>');
          $("#google-link").live("click", function(){$("#google-form").submit();});
-         $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});
+         $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});        
+        
+         function disableDefault() {
+           var institution = $("#id_entityid").val();
+           if (institution == " ") {
+             $("#bsignin").attr("disabled", "disabled");
+           } else {
+             $("#bsignin").removeAttr("disabled");
+           }
+         }
+       
+         disableDefault();    
+         $("#id_entityid").change(disableDefault);
      });
 </script>
 
-{% comment %}    
+{% comment %}   
 {% endblock %}
 
 {% block modal-footer %}
 {% endblock %}
 
-{% endcomment %}    
-
+{% endcomment %}

@@ -143,7 +143,7 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
 #         ], required=False)
 
     entityid = forms.ChoiceField(label="Institution or Organization",
-        choices=sorted([(entity, name) for entity, name in
+        choices=[(" ", "--- Select Your Institution ---")] + sorted([(entity, name) for entity, name in
             requests.get(
                 "https://www.opensciencedatacloud.org/misc/idps.json"
             ).json().items()

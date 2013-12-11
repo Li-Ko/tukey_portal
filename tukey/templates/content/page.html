@@ -1,9 +1,10 @@
-{% extends "base_web.html" %}
+{% extends "base.html" %}
 {% block meta_title %}
 {{ content.title }}
 {% endblock %}
 
 {% block content %}
+<br />
 <div class='container'>
 {{ content.content|safe }}
 </div>
