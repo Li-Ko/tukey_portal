@@ -91,6 +91,7 @@ django-recaptcha
 pyelasticsearch
 feedparser
 " | sudo tee -a tools/pip-requires > /dev/null
+# Probably need to add haystack and sphinxdoc later to this list
 
 sudo python tools/install_venv.py
 
