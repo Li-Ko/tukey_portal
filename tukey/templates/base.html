@@ -26,14 +26,15 @@
     {% include "osdc/_osdc_console_menu.html" %}
     <div class="wrapper">
       {% block content %}
+
       <!-- THIS IS BASE HTML -->
       <div class='container'>
         <div class="row row-header">
           <div class="span12">
             {% block page_header %}{% endblock %}
             {% block header %}{% endblock %}
-          </div>
             {% block main %}{% endblock %}
+          </div>
         </div>
         <div class='row'>
           <div class='span12'>
@@ -43,6 +44,7 @@
         <!-- PUSH was here -->
       </div>
       {% endblock %}
+
       <div id="push">
         <!-- Empty div to keep footer at bottom of viewport-->
       </div>
@@ -77,9 +79,6 @@
         }
       });
 
-      if (content.slug !== null) {
-        $("#nav-{{ content.slug }}").attr("class", "active");
-      }
     </script>
     {% endblock %}
     <div id="modal_wrapper"></div>
