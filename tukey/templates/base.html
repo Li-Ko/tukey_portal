@@ -33,8 +33,8 @@
           <div class="span12">
             {% block page_header %}{% endblock %}
             {% block header %}{% endblock %}
-          </div>
             {% block main %}{% endblock %}
+          </div>
         </div>
         <div class='row'>
           <div class='span12'>
@@ -78,10 +78,6 @@
           $("#nav-console").attr("class", "active");
         }
       });
-
-      if (content.slug !== null) {
-        $("#nav-{{ content.slug }}").attr("class", "active");
-      }
     </script>
     {% endblock %}
     <div id="modal_wrapper"></div>

@@ -3,18 +3,20 @@
 News
 {% endblock %}
 
-{% block content %}
-<div class="container">
+{% block header %}
 
+<div class="container">
 <header class="jumbotron subhead">
     <h1>OSDC News</h1>
 </header>
+{% endblock %}
 
+{% block main %}
 {% load wordpress_rss %}
 {% wordpress_rss rss_category 10 as rss_results %}
 <div class="container">
 {% for item in rss_results %}
-<div class="span10 news-story">
+<div class="span12 news-story">
     <h2 style="text-decoration: underline">{{ item.title }}</h2>
     <div class="news-byline">Posted on {{ item.published }} by {{ item.author }}</div>
     <p>{{ item.content }}</p>
@@ -24,8 +26,6 @@ News
 
 <h2><a href="http://news.opensciencedatacloud.org">News Archive</a></h2>
 </div>
-
-
 
 {% endblock %}
 
