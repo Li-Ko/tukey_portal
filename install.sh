@@ -111,13 +111,26 @@ then
     WSGIProcessGroup tukey-portal
     
     Alias /static $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/static/
+    Alias /misc $BASE_DIR/config/misc/
     
     <Directory $BASE_DIR/$HORIZON_DIR/openstack_dashboard/wsgi>
+      <IfModule mod_shib>
+        AuthType shibboleth
+        ShibRequireSession Off
+        ShibUseHeaders On
+        require shibboleth
+      </IfModule>
+
       Order allow,deny
       Allow from all
     </Directory>
-    
+
     <Directory $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/static>
+      Order allow,deny
+      Allow from all
+    </Directory>
+
+    <Directory $BASE_DIR/config/misc>
       Order allow,deny
       Allow from all
     </Directory>" | sudo tee $TUKEY_DIR/openstack-dashboard.conf > /dev/null
