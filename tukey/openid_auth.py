@@ -172,7 +172,7 @@ def pre_apply(request, template_name='openid/login.html',
 
     if "openid_identifier" not in request.POST and "entityid" in request.POST:
         response = HttpResponseRedirect(
-            "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
+            "/Shibboleth.sso/Login?%s" % urlencode(
                 {"entityID": request.POST["entityid"],
                     "target": "/apply/"}
             )
@@ -199,7 +199,7 @@ def login_begin(request, template_name='openid/login.html',
 
     if "openid_identifier" not in request.POST and "entityid" in request.POST:
         response = HttpResponseRedirect(
-            "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
+            "/Shibboleth.sso/Login?%s" % urlencode(
                 {"entityID": request.POST["entityid"],
                     "target": request.POST.get("next", default="/project/")}
             )
@@ -246,11 +246,15 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
 
                 return response
             else:
-                return HttpResponseRedirect(
-                    "https://www.opensciencedatacloud.org/Shibboleth.sso/Login?%s" % urlencode(
-                        {"entityID": request.POST["entityid"],
+                if "next" in request.POST:
+                    return HttpResponseRedirect(
+                        "/Shibboleth.sso/Login?%s" % urlencode(
+                        	{"entityID": request.POST.get("entityid", ""),
                         "target": request.POST.get("next", default="/project/")}
                         )
                     )
+
+                from tukey.webforms.views import osdc_apply
+                return osdc_apply(request, user)
 
     return HttpResponseRedirect(sanitise_redirect_url(redirect_to))

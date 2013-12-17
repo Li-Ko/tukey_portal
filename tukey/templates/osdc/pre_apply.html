@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-
 {% block meta_title %}OSDC Application{% endblock %}
 
 {% block header %}
@@ -30,4 +29,14 @@
     {% include 'osdc/shibboleth_openid.html' %}
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+
+{% include "horizon/_scripts.html" %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#nav-apply").attr('class', 'active');
+});
+</script>
 {% endblock %}
