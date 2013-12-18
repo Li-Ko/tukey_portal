@@ -10,7 +10,8 @@ from horizon import workflows
 from openstack_dashboard.dashboards.project.instances.views import DetailView as OldDetailView
 from openstack_dashboard.dashboards.project.instances.views import IndexView as OldIndexView
 
-
+# New version removes VNC
+from .tabs import InstanceDetailTabs
 
 class IndexView(OldIndexView):
     from tukey.dashboards.project.instances.tables import InstancesTable
@@ -20,6 +21,8 @@ class IndexView(OldIndexView):
 from .workflows import LaunchCluster
 
 class DetailView(OldDetailView):
+    
+    tab_group_class = InstanceDetailTabs
 
     def get_context_data(self, **kwargs):
         context = super(OldDetailView, self).get_context_data(**kwargs)
