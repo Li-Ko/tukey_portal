@@ -53,6 +53,8 @@ class LaunchCluster(tables.LinkAction):
     def allowed(self, request, image):
         return get_cloud(image).lower() in settings.CLOUD_FUNCTIONS['launch_cluster']
 
+
+# Tried to subclass this from OtherSnapshotsTable below to avoid repeating code, but that eliminates functionality. 
 class UserSnapshotsTable(OldSnapshotsTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
@@ -65,6 +67,7 @@ class UserSnapshotsTable(OldSnapshotsTable):
         row_class = UpdateRow
         status_columns = ["status"]
 
+
 class OtherSnapshotsTable(OldSnapshotsTable):
     cloud = tables.Column(get_cloud, verbose_name=_("Cloud"))
 
@@ -72,7 +75,7 @@ class OtherSnapshotsTable(OldSnapshotsTable):
         name = "othersnapshots"
         verbose_name = _("All Snapshots")
         table_actions = (DeleteSnapshot, ImageFilterAction)
-        row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
+        row_actions = (LaunchSnapshot, LaunchCluster, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow
         status_columns = ["status"]

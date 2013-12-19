@@ -39,6 +39,8 @@ class IndexView(OldIndexView):
                                                                 req,
                                                                 marker = marker
                                                                 )
+            othersnaps = [im for im in othersnaps
+                if im.container_format not in ['aki', 'ari'] and im.properties.get("image_type") == 'snapshot']
         except:
             othersnaps = []
             exceptions.handle(req, _("Unable to retrieve list of all snapshots."))
