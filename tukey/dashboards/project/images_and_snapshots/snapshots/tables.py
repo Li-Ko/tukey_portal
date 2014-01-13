@@ -75,7 +75,7 @@ class OtherSnapshotsTable(OldSnapshotsTable):
         name = "othersnapshots"
         verbose_name = _("All Snapshots")
         table_actions = (DeleteSnapshot, ImageFilterAction)
-        row_actions = (LaunchSnapshot, LaunchCluster, DeleteSnapshot)
+        row_actions = (LaunchSnapshot, LaunchCluster, EditImage, DeleteSnapshot)
         pagination_param = "snapshot_marker"
         row_class = UpdateRow
         status_columns = ["status"]
