@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block meta_title %}Metadata Upload Service{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h1>Metadata Upload Success</h1>
+</header>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+<p>
+Metadata <b>{{ data }}</b> successfully uploaded to project <b>{{ project }}</b>.<br>
+The files referenced in the metadata are indexed by collection ID <b>{{ id }}</b>.<br>
+To upload the files, follow the instructions below.<br>
+</p>
+</div>
+<h2>Next Steps</h2>
+<div class="span12">
+        <p>
+		<b>Install tukey_client:</b><br><code>
+			git@github.com:LabAdvComp/tukey_middleware.git</code><br>
+   			<code>cd tukey_middleware</code><br>
+    			<code>python setup.py install</code><br><br>
+
+		<b>Navigate to the directory containing the analysis files.</b> If the directory /data/ contains analysis files such as G26182.KMS-12-BM.2.bam then:<br>
+    			<code>cd /data/</code><br><br>
+
+		<b>Then run the upload command:</b><br>
+    			<code>osdc-upload-file <b>{{ id }}</b></code>
+        </p>
+</div>
+
+{% endblock %}

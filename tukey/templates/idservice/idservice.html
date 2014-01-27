@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block meta_title %}Metadata Upload Service{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h1>Upload Metadata</h1>
+</header>
+{% endblock %}
+
+{% block main %}
+
+<div class="hidden">
+        <div class="row-fluid selection" id="fieldSelect">
+               <select class="attrSelect">
+            {% for field in query_fields %}
+                <option title="{{field.help_text}}" value="{{field.name}}">{{field.label}}</option>
+            {% endfor %}
+            </select>
+            <input class="queryValue" type="text" data-provide="typeahead"/>
+        </div>
+        <a class="btn btn-danger btn-mini removeParent" id="removeParent">&times;</a>
+</div>
+
+<div class="span10">
+<p>
+Build a metadata file from the provided fields or select a file containing your data. A project must be selected before submission regardless of metadata source.
+</p>
+</div>
+<div class="span12">
+<form action="/idservice/" method="post" enctype="multipart/form-data" class="form-horizontal">{% csrf_token %}
+  <fieldset>
+
+	   <p><div>
+                <div class="container-fluid terms" id="include">
+                    <h3> Include: </h3>
+                </div>
+                <div class="row-fluid">
+                    <a class="btn btn-small include addTerm">Add Term</a>
+                </div>
+            </div></p>
+
+    <p>
+        {% if form.generated_json.errors %}
+            <div class="control-group error">
+                {{ form.generated_query}}
+                <span class="help-inline">
+                    {% for error in form.generated_json.errors %}
+                        {{ error|escape }}
+                    {% endfor %}
+                </span>
+            </div>
+        {% else %}
+            {{ form.generated_json }}
+        {% endif %}
+    </p>
+
+    <div class="control-group {% if form.project.errors %}error{% endif %}">
+      <label for="id_first_name">Select Project*</label>
+        {{ form.project }}
+        <span class="help-inline">{{form.project.errors}}</span>
+    </div>
+
+    <div class="control-group {% if form.file.errors %}error{% endif %}">
+      <label for="id_last_name">Select File</label>
+        {{ form.file }}
+        <span class="help-inline">{{form.file.errors}}</span>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn btn-warning">Upload Metadata</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+        <script>
+                $(document).ready(function() {
+                        $("#nav-osdcquery").attr('class', 'active');
+                        var GLOBAL_DATA_SOURCE = { {% for k,v in choices_dict.items %}'{{ k }}': [{% for value in v %}'{{ value }}', {% endfor %}], {% endfor %}};
+                        {% include "idservice/query_builder.js" %}
+                });
+        </script>
+{% endblock %}

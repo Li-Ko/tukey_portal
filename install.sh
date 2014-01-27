@@ -181,5 +181,11 @@ git clone $OSDCQUERY_REPO
 cd osdcquery
 git checkout dev
 
+cd $BASE_DIR/$HORIZON_DIR/$TUKEY_DIR/
+mkdir tukey_middleware
+git clone https://github.com/LabAdvComp/tukey_middleware tukey_middleware/
+cd tukey_middleware/
+$BASE_DIR/$HORIZON_DIR/tools/with_venv.sh python setup.py
+
 cd $BASE_DIR/$HORIZON_DIR
 tools/with_venv.sh python manage.py syncdb

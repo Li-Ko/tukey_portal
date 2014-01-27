@@ -42,6 +42,7 @@ index 64ef605..c3791ec 100644
 +    url(r'^publicdata/', include('tukey.datasets.urls', namespace='datasets')),
 +    url(r'^keyservice/', include('tukey.keyservice.urls', namespace='keyservice')),
 +    url(r'^osdcquery/', include('tukey.osdcquery.urls', namespace='osdquery')),
++    url(r'^idservice/', include('tukey.idservice.urls',  namespace='idservice')),
 +    url(r'', include('tukey.webforms.urls')),
 +    url(r'', include(horizon.urls)),
 +

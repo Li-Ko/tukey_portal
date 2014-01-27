@@ -41,6 +41,8 @@ OPENSTACK_KEYSTONE_BACKEND = {
 API_RESULT_LIMIT = 1000
 API_RESULT_PAGE_SIZE = 1000
 
+ID_SERVICE_URL = 'http://172.16.1.160:8774'
+
 LOGGING = {
         'version': 1,
         # When set to True this will disable all logging except

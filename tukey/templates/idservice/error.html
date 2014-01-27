@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block meta_title %}Metadata Upload Service{% endblock %}
+
+{% block header %}
+<header class="jumbotron subhead">
+  <h1>Metadata Upload Error</h1>
+</header>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+<p>
+Metadata <b>{{ data }}</b> failed to upload to project <b>{{ project }}</b>. Please check your formatting and try again.<br>
+</p>
+</div>
+{% endblock %}
