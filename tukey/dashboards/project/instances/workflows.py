@@ -104,7 +104,7 @@ class LaunchInstance(OldLaunchInstance):
 
 
 
-SetInstanceDetails.contributes = ("source_type", "source_id", "name", 
+SetInstanceDetails.contributes = ("source_type", "source_id", "name",
     "count", "flavor", "cloud")
 
 
@@ -191,23 +191,27 @@ SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choice
 SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
 
 
+def cloud_filter(self, elements, field_name, function, request, context):
+    if 'cloud' in request.GET:
+        context['cloud'] = request.GET['cloud']
+    if 'cloud' in context:
+        if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS[function]:
+            self.fields[field_name].widget = forms.HiddenInput()
+        else:
+            self.fields[field_name].required = True
+        cloud = context['cloud']
+        element_list = [(kp.name, kp.name) for kp in elements
+                if get_cloud(kp) == cloud]
+
+    return element_list
+
+
 def populate_keypair_choices(self, request, context):
-
-
     try:
         keypairs = api.nova.keypair_list(request)
-        if 'cloud' in request.GET:
-            context['cloud'] = request.GET['cloud']
-        if 'cloud' in context:
-            if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS['instance_keys']:
-                self.fields['keypair'].widget = forms.HiddenInput()
-            else:
-                self.fields['keypair'].required = True
-            cloud = context['cloud']
-            keypair_list = [(kp.name, kp.name) for kp in keypairs
-            if get_cloud(kp) == cloud]
-        else:
-            keypair_list = [(kp.name, kp.name) for kp in keypairs]
+        keypair_list = cloud_filter(self, keypairs, 'keypair', 'instance_keys', request,
+            context)
+    # fix this
     except:
         keypair_list = []
         exceptions.handle(request,
@@ -217,8 +221,24 @@ def populate_keypair_choices(self, request, context):
     else:
         keypair_list = (("", _("No keypairs available.")),)
     return keypair_list
-    
+
+
 SetAccessControlsAction.populate_keypair_choices = populate_keypair_choices
+
+
+def populate_groups_choices(self, request, context):
+    try:
+        groups = api.nova.security_group_list(request)
+        security_group_list = cloud_filter(self, groups, 'groups', 'instance_keys', request,
+                context)
+    except:
+        exceptions.handle(request,
+                          _('Unable to retrieve list of security groups'))
+        security_group_list = []
+    return security_group_list
+
+
+SetAccessControlsAction.populate_groups_choices = populate_groups_choices
 
 
 class LaunchCluster(workflows.Workflow):
