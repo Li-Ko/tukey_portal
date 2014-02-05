@@ -51,8 +51,8 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 	{{ form.method.as_hidden }}
         <span class="help-inline">{{form.email.errors}}</span>
         <span class="help-block-apply">
-          You may change your contact email above;
-          however, the identity <span class="label label-info">{{ form.eppn.value }}</span> will be sent in your application as your identifier.
+          You may change your contact email above.
+          The identity <span class="label label-info">{{ form.eppn.value }}</span> will be sent in your application as your identifier.
           To use a different identifier please sign out of your federated account and start the application process over.
         </span>
       </div>
@@ -158,7 +158,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.sharing.errors %}error{% endif %}">
-      <label class="control-label" for="id_sharing">If project requires sharing files or directories, 
+      <label class="control-label" for="id_sharing">If project requires sharing files or directories,
         please list names of individuals needing access.</label>
       <div class="controls">
         {{ form.sharing }}
@@ -168,10 +168,10 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 
     <div class="control-group cpus {% if form.cpus.errors %}error{% endif %}">
       <label class="control-label" for="id_cpus">Estimate of CPUs required*</label>
-      <div class="controls">     
+      <div class="controls">
         {{ form.cpus }}
         <span class="help-inline">{{ form.cpus.errors }}</span>
-      </div>    
+      </div>
     </div>
 
 <!-- if requesting 16+, display below -->
@@ -200,7 +200,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
         <span class="help-inline">{{ form.more_storage.errors }}</span>
       </div>
     </div>
-<!-- end if 1+ -->    
+<!-- end if 1+ -->
 
     <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
       <label class="control-label" for="id_referral_source">How did you hear about the OSDC?*</label>
@@ -219,7 +219,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 </form>
 </div>
 {% endblock %}
- 
+
 {% block js %}
 
 {% include "horizon/_scripts.html" %}
@@ -234,13 +234,13 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
         $(selector).hide();
       }
     }
-        
+
     $("#nav-apply").attr('class', 'active');
     $("#id_systems_2").change(function() {
       true_toggle(".extra_occy", this.checked);
       true_toggle(".extra_pubkey", this.checked);
     }).change();
-    
+
     function displayMoreCPUs() {
       var cpus = $("#id_cpus").val();
       if (cpus == "16plus") {
