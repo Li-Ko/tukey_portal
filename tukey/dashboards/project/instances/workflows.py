@@ -229,7 +229,7 @@ SetAccessControlsAction.populate_keypair_choices = populate_keypair_choices
 def populate_groups_choices(self, request, context):
     try:
         groups = api.nova.security_group_list(request)
-        security_group_list = cloud_filter(self, groups, 'groups', 'instance_keys', request,
+        security_group_list = cloud_filter(self, groups, 'groups', 'security_groups', request,
                 context)
     except:
         exceptions.handle(request,
