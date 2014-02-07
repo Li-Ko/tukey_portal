@@ -34,6 +34,8 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
     name = forms.CharField(initial='none', widget=forms.HiddenInput())
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of compute nodes to launch."))
+    headnode_flavor = forms.ChoiceField(label=_("Headnode Flavor"),
+                               help_text=_("Size of headnode to launch."))
     count = forms.IntegerField(label=_("Compute Node Count"),
                                min_value=1,
                                initial=1,
@@ -51,7 +53,8 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
 
 class SetClusterDetails(SetInstanceDetails):
     action_class = SetClusterDetailsAction
-    contributes = ("source_type", "source_id", "count", "flavor", "cloud")
+    contributes = ("source_type", "source_id", "count", "flavor",
+            "headnode_flavor", "cloud")
 
 
 
@@ -186,6 +189,7 @@ def populate_flavor_choices(self, request, context):
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
 SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
+SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_flavor_choices
 
 
 SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
@@ -285,16 +289,19 @@ class LaunchCluster(workflows.Workflow):
         else:
             nics = None
         try:
-            api.nova.server_create(request,
-                                   "cluster" + context['cloud'].lower() + "-none",
-                                   context['source_id'],
-                                   context['flavor'],
-                                   context['keypair_id'],
-                                   normalize_newlines(custom_script),
-                                   context['security_group_ids'],
-                                   dev_mapping,
-                                   nics=nics,
-                                   instance_count=int(context['count']))
+            # note the bottom part doesn't work just wishfull thinking
+            api.nova.novaclient(request).servers.create(
+                    "cluster%s-%s" % (context['cloud'].lower(),
+                        context['headnode_flavor']),
+                    context['source_id'],
+                    context['flavor'],
+                    key_name=context['keypair_id'],
+                    userdata=normalize_newlines(custom_script),
+                    security_groups=context['security_group_ids'],
+                    block_device_mapping=dev_mapping,
+                    nics=nics,
+                    min_count=int(context['count']),
+                    headnode_flavor=context['headnode_flavor'])
             return True
         except:
             exceptions.handle(request)
