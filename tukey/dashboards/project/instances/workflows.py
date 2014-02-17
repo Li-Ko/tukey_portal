@@ -186,10 +186,19 @@ def populate_flavor_choices(self, request, context):
     return sorted(flavor_list)
 
 
+def populate_headnode_flavor_choices(self, request, context):
+    ''' Make sure that medium is first '''
+
+    choices = populate_flavor_choices(self, request, context)
+    first = 'm1.medium'
+    return ([f for f in choices if f[1] == first] +
+            [f for f in choices if f[1] != first])
+
+
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
 SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
-SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_flavor_choices
+SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_headnode_flavor_choices
 
 
 SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
@@ -249,8 +258,9 @@ class LaunchCluster(workflows.Workflow):
     slug = "launch_cluster"
     name = _("Launch Cluster")
     finalize_button_name = _("Launch Cluster")
-    success_message = _('Launched cluster with %(count)s.')
-    failure_message = _('Unable to launch %(count)s.')
+    success_message = _("Cluster launching. Refresh the page to monitor node "
+                     "status while the cluster servers initialize.")
+    failure_message = _("Unable to launch cluster")
     success_url = "horizon:project:instances:index"
     default_steps = (SelectProjectUser,
                      SetClusterDetails,
@@ -260,12 +270,15 @@ class LaunchCluster(workflows.Workflow):
                      PostCreationStep)
 
     def format_status_message(self, message):
-        name = self.context.get('name', 'unknown instance')
-        count = self.context.get('count', 1)
-        if int(count) > 1:
-            return message % {"count": _("%s nodes") % count}
-        else:
-            return message % {"count": _("1 compute node")}
+        return message
+#        name = self.context.get('name', 'unknown instance')
+#        count = self.context.get('count', 1)
+#        return ("%s Cluster is launching. Please refresh the page to monitor node status"
+#            " as the cluster servers are initialized.") % message
+#        if int(count) > 1:
+#            return message % {"count": _("%s nodes") % count}
+#        else:
+#            return message % {"count": _("1 compute node")}
 
     def handle(self, request, context):
         custom_script = context.get('customization_script', '')

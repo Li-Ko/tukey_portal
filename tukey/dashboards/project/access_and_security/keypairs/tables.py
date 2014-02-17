@@ -13,7 +13,6 @@ class KeypairsTable(OldKeypairsTable):
     #end modified section mgreenway
 
     def get_object_id(self, keypair):
-        #return get_cloud(keypair).lower() + '-' + keypair.name
         return get_cloud_id(keypair) + '-' + keypair.name
 
     Meta = OldKeypairsTable.Meta
