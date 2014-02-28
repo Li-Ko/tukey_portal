@@ -86,8 +86,8 @@ class OpenIDKeystoneBackend(KeystoneBackend):
         LOG.debug("email %s:", details['email'])
 
         try:
-            user = super(OpenIDKeystoneBackend, self).authenticate(password='openid', 
-                username=details['email'], auth_url=settings.OPENSTACK_KEYSTONE_URL,
+            user = super(OpenIDKeystoneBackend, self).authenticate(password=settings.TUKEY_PASSWORD,
+                username='openid %s' % details['email'], auth_url=settings.OPENSTACK_KEYSTONE_URL,
                 request=kwargs.get('request'))
             user.identifier = details['email']
 
@@ -99,7 +99,7 @@ class OpenIDKeystoneBackend(KeystoneBackend):
 
     def _extract_user_details(self, openid_response):
         return self.openid_backend._extract_user_details(openid_response)
- 
+
 
     def _get_available_username(self, nickname, identity_url):
         return self.openid_backend._get_available_username(nickname, identity_url)
@@ -152,7 +152,7 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
                 #    "urn:mace:incommon:uchicago.edu"
                 #]
          ], key=lambda tup: tup[1]), required=False)
-	
+
 
     def __init__(self, request, *args, **kwargs):
         super(ShibbolethOpenIDLoginForm, self).__init__(*args, **kwargs)
@@ -207,15 +207,15 @@ def login_begin(request, template_name='openid/login.html',
         response.set_cookie("entityid_cookie", request.POST["entityid"])
 
         return response
-    
-    return old_login_begin(request, 
+
+    return old_login_begin(request,
         settings.ROOT_PATH + '/../tukey/templates/osdc/openid_login.html',
         login_complete_view, curry(form_class, request), render_failure,
             redirect_field_name)
 
 
 # replace login complete so that if the user is not
-# authenticated this will send them to the page 
+# authenticated this will send them to the page
 # where they can register
 
 def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
@@ -249,7 +249,7 @@ def login_complete(request, redirect_field_name=REDIRECT_FIELD_NAME,
                 if "next" in request.POST:
                     return HttpResponseRedirect(
                         "/Shibboleth.sso/Login?%s" % urlencode(
-                        	{"entityID": request.POST.get("entityid", ""),
+                                {"entityID": request.POST.get("entityid", ""),
                         "target": request.POST.get("next", default="/project/")}
                         )
                     )

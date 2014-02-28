@@ -34,6 +34,8 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
     name = forms.CharField(initial='none', widget=forms.HiddenInput())
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of compute nodes to launch."))
+    headnode_flavor = forms.ChoiceField(label=_("Headnode Flavor"),
+                               help_text=_("Size of headnode to launch."))
     count = forms.IntegerField(label=_("Compute Node Count"),
                                min_value=1,
                                initial=1,
@@ -51,7 +53,8 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
 
 class SetClusterDetails(SetInstanceDetails):
     action_class = SetClusterDetailsAction
-    contributes = ("source_type", "source_id", "count", "flavor", "cloud")
+    contributes = ("source_type", "source_id", "count", "flavor",
+            "headnode_flavor", "cloud")
 
 
 
@@ -104,7 +107,7 @@ class LaunchInstance(OldLaunchInstance):
 
 
 
-SetInstanceDetails.contributes = ("source_type", "source_id", "name", 
+SetInstanceDetails.contributes = ("source_type", "source_id", "name",
     "count", "flavor", "cloud")
 
 
@@ -183,31 +186,45 @@ def populate_flavor_choices(self, request, context):
     return sorted(flavor_list)
 
 
+def populate_headnode_flavor_choices(self, request, context):
+    ''' Make sure that medium is first '''
+
+    choices = populate_flavor_choices(self, request, context)
+    first = 'm1.medium'
+    return ([f for f in choices if f[1] == first] +
+            [f for f in choices if f[1] != first])
+
+
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
 SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
+SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_headnode_flavor_choices
 
 
 SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
 
 
+def cloud_filter(self, elements, field_name, function, request, context):
+    if 'cloud' in request.GET:
+        context['cloud'] = request.GET['cloud']
+    if 'cloud' in context:
+        if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS[function]:
+            self.fields[field_name].widget = forms.HiddenInput()
+        else:
+            self.fields[field_name].required = True
+        cloud = context['cloud']
+        element_list = [(kp.name, kp.name) for kp in elements
+                if get_cloud(kp) == cloud]
+
+    return element_list
+
+
 def populate_keypair_choices(self, request, context):
-
-
     try:
         keypairs = api.nova.keypair_list(request)
-        if 'cloud' in request.GET:
-            context['cloud'] = request.GET['cloud']
-        if 'cloud' in context:
-            if context['cloud'].lower() not in settings.CLOUD_FUNCTIONS['instance_keys']:
-                self.fields['keypair'].widget = forms.HiddenInput()
-            else:
-                self.fields['keypair'].required = True
-            cloud = context['cloud']
-            keypair_list = [(kp.name, kp.name) for kp in keypairs
-            if get_cloud(kp) == cloud]
-        else:
-            keypair_list = [(kp.name, kp.name) for kp in keypairs]
+        keypair_list = cloud_filter(self, keypairs, 'keypair', 'instance_keys', request,
+            context)
+    # fix this
     except:
         keypair_list = []
         exceptions.handle(request,
@@ -217,16 +234,33 @@ def populate_keypair_choices(self, request, context):
     else:
         keypair_list = (("", _("No keypairs available.")),)
     return keypair_list
-    
+
+
 SetAccessControlsAction.populate_keypair_choices = populate_keypair_choices
+
+
+def populate_groups_choices(self, request, context):
+    try:
+        groups = api.nova.security_group_list(request)
+        security_group_list = cloud_filter(self, groups, 'groups', 'security_groups', request,
+                context)
+    except:
+        exceptions.handle(request,
+                          _('Unable to retrieve list of security groups'))
+        security_group_list = []
+    return security_group_list
+
+
+SetAccessControlsAction.populate_groups_choices = populate_groups_choices
 
 
 class LaunchCluster(workflows.Workflow):
     slug = "launch_cluster"
     name = _("Launch Cluster")
     finalize_button_name = _("Launch Cluster")
-    success_message = _('Launched cluster with %(count)s.')
-    failure_message = _('Unable to launch %(count)s.')
+    success_message = _("Cluster launching. Refresh the page to monitor node "
+                     "status while the cluster servers initialize.")
+    failure_message = _("Unable to launch cluster")
     success_url = "horizon:project:instances:index"
     default_steps = (SelectProjectUser,
                      SetClusterDetails,
@@ -236,12 +270,15 @@ class LaunchCluster(workflows.Workflow):
                      PostCreationStep)
 
     def format_status_message(self, message):
-        name = self.context.get('name', 'unknown instance')
-        count = self.context.get('count', 1)
-        if int(count) > 1:
-            return message % {"count": _("%s nodes") % count}
-        else:
-            return message % {"count": _("1 compute node")}
+        return message
+#        name = self.context.get('name', 'unknown instance')
+#        count = self.context.get('count', 1)
+#        return ("%s Cluster is launching. Please refresh the page to monitor node status"
+#            " as the cluster servers are initialized.") % message
+#        if int(count) > 1:
+#            return message % {"count": _("%s nodes") % count}
+#        else:
+#            return message % {"count": _("1 compute node")}
 
     def handle(self, request, context):
         custom_script = context.get('customization_script', '')
@@ -265,16 +302,19 @@ class LaunchCluster(workflows.Workflow):
         else:
             nics = None
         try:
-            api.nova.server_create(request,
-                                   "cluster" + context['cloud'].lower() + "-none",
-                                   context['source_id'],
-                                   context['flavor'],
-                                   context['keypair_id'],
-                                   normalize_newlines(custom_script),
-                                   context['security_group_ids'],
-                                   dev_mapping,
-                                   nics=nics,
-                                   instance_count=int(context['count']))
+            # note the bottom part doesn't work just wishfull thinking
+            api.nova.novaclient(request).servers.create(
+                    "cluster%s-%s" % (context['cloud'].lower(),
+                        context['headnode_flavor']),
+                    context['source_id'],
+                    context['flavor'],
+                    key_name=context['keypair_id'],
+                    userdata=normalize_newlines(custom_script),
+                    security_groups=context['security_group_ids'],
+                    block_device_mapping=dev_mapping,
+                    nics=nics,
+                    min_count=int(context['count']),
+                    headnode_flavor=context['headnode_flavor'])
             return True
         except:
             exceptions.handle(request)
