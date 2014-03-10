@@ -7,9 +7,14 @@ from django_openid_auth.views import (
 )
 
 from .models import UnregisteredUser
+from django import forms
+from django import shortcuts
 from django.conf import settings
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import HttpResponseRedirect
+from django.utils.functional import curry
+from django.utils.http import urlencode
+from django.views.decorators.csrf import csrf_exempt
 from django_openid_auth import teams
 from django_openid_auth.auth import OpenIDBackend
 from django_openid_auth.exceptions import DjangoOpenIDException
@@ -22,16 +27,10 @@ from openid.consumer.consumer import SUCCESS
 from openid.extensions import pape
 from openstack_auth.backend import KeystoneBackend
 from openstack_auth.exceptions import KeystoneAuthException
-from django import forms
-import requests
-from django.utils.http import urlencode
-from django.utils.functional import curry
-
-from django.views.decorators.csrf import csrf_exempt
-
-
-from django import shortcuts
 from openstack_dashboard.views import get_user_home
+from simplejson.decoder import JSONDecodeError
+
+import requests
 
 LOG = logging.getLogger(__name__)
 
@@ -96,31 +95,24 @@ class OpenIDKeystoneBackend(KeystoneBackend):
 
         return user
 
-
     def _extract_user_details(self, openid_response):
         return self.openid_backend._extract_user_details(openid_response)
-
 
     def _get_available_username(self, nickname, identity_url):
         return self.openid_backend._get_available_username(nickname, identity_url)
 
-
     def create_user_from_openid(self, openid_response):
         return self.openid_backend.create_user_from_openid(openid_response)
 
-
     def associate_openid(self, user, openid_response):
-        return self.openid_backedn.associate_openid(user, openid_response)
-
+        return self.openid_backend.associate_openid(user, openid_response)
 
     def update_user_details(self, user, details, openid_response):
         return self.openid_backend.update_user_details(user, details,
             openid_response)
 
-
     def update_groups_from_teams(self, user, teams_response):
         return self.openid_backend.update_groups_from_teams(user, teams_response)
-
 
     def update_staff_status_from_teams(self, user, teams_response):
         return self.openid_backend.update_staff_status_from_teams(user,
@@ -129,34 +121,34 @@ class OpenIDKeystoneBackend(KeystoneBackend):
 
 class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
 
-#    entityid = forms.ChoiceField(label=_("Institution or Organization"),
-#        choices=[(org["entityID"], org["DisplayNames"][0]["value"]
-#            if "DisplayNames" in org else org["entityID"]) for org in
-#            requests.get(
-#                "https://www.opensciencedatacloud.org/Shibboleth.sso/DiscoFeed"
-#                #request.build_absolute_uri("/Shibboleth.sso/DiscoFeed")
-#            ).json()
-##                if org["entityID"] in [
-##                    "urn:mace:incommon:lbl.gov",
-##                    "urn:mace:incommon:uchicago.edu"
-##                ]
-#         ], required=False)
-
-    entityid = forms.ChoiceField(label="Institution or Organization",
-        choices=[(" ", "--- Select Your Institution ---")] + sorted([(entity, name) for entity, name in
-            requests.get(
-                "https://www.opensciencedatacloud.org/misc/idps.json"
-            ).json().items()
-                #if entity in [
-                #    "urn:mace:incommon:lbl.gov",
-                #    "urn:mace:incommon:uchicago.edu"
-                #]
-         ], key=lambda tup: tup[1]), required=False)
-
-
     def __init__(self, request, *args, **kwargs):
+
         super(ShibbolethOpenIDLoginForm, self).__init__(*args, **kwargs)
         LOG.debug("kwargs %s", kwargs)
+
+        try:
+            id_providers = {r["entityID"]:
+                [n["value"] for n in r.get("DisplayNames",
+                [{"value": r["entityID"], "lang": "en"}])
+                    if n["lang"] == "en"][0]
+                for r in requests.get((
+                    "%s/Shibboleth.sso/DiscoFeed" % settings.SITE_URL)).json()}
+        except JSONDecodeError:
+            id_providers = {" ": "--- Error please refresh page ---"}
+
+        try:
+            extras = requests.get("%s/misc/idps.json" % settings.SITE_URL
+                ).json()
+            id_providers.update(extras)
+        except JSONDecodeError:
+            pass
+
+        self.fields["entityid"] = forms.ChoiceField(
+            label="Institution or Organization",
+            choices=[(" ", "--- Select Your Institution ---")] + sorted(
+                    [(entity, name) for entity, name in
+                id_providers.items()], key=lambda tup: tup[1]), required=False)
+
         if "entityid_cookie" in request.COOKIES:
             LOG.debug("SETTING the entitty id to %s",
                 request.COOKIES["entityid_cookie"])
