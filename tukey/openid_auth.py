@@ -59,7 +59,8 @@ class OpenIDKeystoneBackend(KeystoneBackend):
                 claimed_id__exact=openid_response.identity_url)
         except UserOpenID.DoesNotExist:
             if getattr(settings, 'OPENID_CREATE_USERS', False):
-                user = self.create_user_from_openid(openid_response)
+                user = self.openid_backend.create_user_from_openid(
+                        openid_response)
         else:
             user = user_openid.user
 
@@ -67,8 +68,8 @@ class OpenIDKeystoneBackend(KeystoneBackend):
             return None
 
         #if getattr(settings, 'OPENID_UPDATE_DETAILS_FROM_SREG', False):
-        details = self._extract_user_details(openid_response)
-        self.update_user_details(user, details, openid_response)
+        details = self.openid_backend._extract_user_details(openid_response)
+        self.openid_backend.update_user_details(user, details, openid_response)
 
         if getattr(settings, 'OPENID_PHYSICAL_MULTIFACTOR_REQUIRED', False):
             pape_response = pape.Response.fromSuccessResponse(openid_response)
@@ -79,14 +80,17 @@ class OpenIDKeystoneBackend(KeystoneBackend):
         teams_response = teams.TeamsResponse.fromSuccessResponse(
             openid_response)
         if teams_response:
-            self.update_groups_from_teams(user, teams_response)
-            self.update_staff_status_from_teams(user, teams_response)
+            self.openid_backend.update_groups_from_teams(user, teams_response)
+            self.openid_backend.update_staff_status_from_teams(user,
+                    teams_response)
 
         LOG.debug("email %s:", details['email'])
 
         try:
-            user = super(OpenIDKeystoneBackend, self).authenticate(password=settings.TUKEY_PASSWORD,
-                username='openid %s' % details['email'], auth_url=settings.OPENSTACK_KEYSTONE_URL,
+            user = super(OpenIDKeystoneBackend, self).authenticate(
+                password=settings.TUKEY_PASSWORD,
+                username='openid %s' % details['email'],
+                auth_url=settings.OPENSTACK_KEYSTONE_URL,
                 request=kwargs.get('request'))
             user.identifier = details['email']
 
@@ -94,29 +98,6 @@ class OpenIDKeystoneBackend(KeystoneBackend):
             return UnregisteredUser('OpenID', details['email'])
 
         return user
-
-    def _extract_user_details(self, openid_response):
-        return self.openid_backend._extract_user_details(openid_response)
-
-    def _get_available_username(self, nickname, identity_url):
-        return self.openid_backend._get_available_username(nickname, identity_url)
-
-    def create_user_from_openid(self, openid_response):
-        return self.openid_backend.create_user_from_openid(openid_response)
-
-    def associate_openid(self, user, openid_response):
-        return self.openid_backend.associate_openid(user, openid_response)
-
-    def update_user_details(self, user, details, openid_response):
-        return self.openid_backend.update_user_details(user, details,
-            openid_response)
-
-    def update_groups_from_teams(self, user, teams_response):
-        return self.openid_backend.update_groups_from_teams(user, teams_response)
-
-    def update_staff_status_from_teams(self, user, teams_response):
-        return self.openid_backend.update_staff_status_from_teams(user,
-            teams_response)
 
 
 class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
