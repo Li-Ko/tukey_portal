@@ -209,7 +209,7 @@ def login_begin(request, template_name='openid/login.html',
         return response
 
     return old_login_begin(request,
-        settings.ROOT_PATH + '/../tukey/templates/osdc/openid_login.html',
+        settings.ROOT_PATH + '/../tukey/templates/osdc/login.html',
         login_complete_view, curry(form_class, request), render_failure,
             redirect_field_name)
 

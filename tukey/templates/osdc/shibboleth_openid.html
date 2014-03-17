@@ -1,14 +1,4 @@
-
 {% load i18n %}
-{% comment %}
-{% extends "horizon/common/_modal_footer.html" %}
-{% load i18n %}
-
-{% block modal-header %} {% trans "Select your Organization or Institution:" %} {% endblock %}
-{% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
-
-{% block modal-body %}    
-{% endcomment %}
 
 <div class="container-fluid">
     <form method="post" class="form-inline">
@@ -96,10 +86,3 @@
      });
 </script>
 
-{% comment %}   
-{% endblock %}
-
-{% block modal-footer %}
-{% endblock %}
-
-{% endcomment %}

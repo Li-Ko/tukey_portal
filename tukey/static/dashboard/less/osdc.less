@@ -5,8 +5,13 @@
 @cloudBlue:             #00abc7;
 @cloudLightBlue:        #cbf8ff;
 
-@navbarBackground:                @cloudLightBlue;
-@navbarBackgroundHighlight:       @cloudBlue;
+//PDC Colors
+@pdc:                   #a9b2de;
+@pdcLight:              #e5edef;
+
+@navbarBackground:                @pdcLight;
+@navbarBackgroundHighlight:       @pdc;
+
 
 /* Keep footer at bottom of page. Protection against minimal content pulling footer too high. */
 
@@ -1636,7 +1641,6 @@ p, ul {
 }
 
 .btn-maincontent,
-.btn-mainlogin
 {
    width: 200px;
    /*margin-bottom: 10px; */
@@ -1670,8 +1674,15 @@ p, ul {
   .buttonBackground(darken(@orange, 5%), lighten(@orange, 10%));
 }
 
+.btn-mainlogin,
+.btn-mainlogin:hover
+{
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  color: @white;
+}
+
 .btn-mainlogin {
-  .buttonBackground(darken(@cloudBlue, 5%), lighten(@cloudBlue, 10%));
+  .buttonBackground(darken(@pdc, 10%), lighten(@pdc, 5%));
 }
 
 .mainheader {
