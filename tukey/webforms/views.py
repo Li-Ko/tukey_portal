@@ -23,10 +23,10 @@ def build_message(form):
     msg_list.append(form.cleaned_data['last_name'])
     msg_list.append('\n')
     msg_list.append(form.cleaned_data['email'])
-    msg_list.append('\nIdentifier:\n')
+    msg_list.append('\neRA Commons Username:\n')
+    msg_list.append(form.cleaned_data['eracommons'])
+    msg_list.append('\nidentifier:\n')
     msg_list.append(form.cleaned_data['eppn'])
-    msg_list.append('\nMethod:\n')
-    msg_list.append(form.cleaned_data['method'])
     msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
 
@@ -39,25 +39,6 @@ def build_message(form):
     if form.cleaned_data['address'] != '':
         msg_list.append('\n\nAddress:\n')
         msg_list.append(form.cleaned_data['address'])
-
-    msg_list.append('\n\nAccess Requested:\n')
-    for item in form.cleaned_data['systems']:
-        if item == 'OSDC-Sullivan':
-            msg_list.append('OSDC-Sullivan\n')
-        elif item == 'OSDC-Adler':
-            msg_list.append('OSDC-Adler\n')
-        elif item == 'OSDC-Atwood':
-            msg_list.append('OSDC-Atwood\n')
-        elif item == 'OSDC-Skidmore':
-            msg_list.append('OSDC-Skidmore\n')
-        elif item == 'occ-y':
-            msg_list.append('OCC-Y\n')
-        elif item == 'bionimbus_cc':
-            msg_list.append('Bionimbus Community Cloud\n')
-        elif item == 'bionimbus_uchicago':
-            msg_list.append('UChicago Bionimbus Cloud\n')
-        elif item == 'matsu':
-            msg_list.append('Matsu Testbed\n')
 
     msg_list.append('\n\nProject Name:\n')
     msg_list.append(form.cleaned_data['projectname'])
@@ -84,7 +65,7 @@ def build_message(form):
     if form.cleaned_data['more_storage'] != "":
         msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
 
-    msg_list.append('\n\nHeard about OSDC from:\n')
+    msg_list.append('\n\nHeard about PDC from:\n')
     msg_list.append(form.cleaned_data['referral_source'])
     msg_list.append('\n\n')
     return ''.join(msg_list)
@@ -96,13 +77,13 @@ def osdc_apply(request, user=None):
     if request.method == 'POST': # If the form has been submitted...
         form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            subject = 'OSDC Account Request'
+            subject = 'Bionimbus PDC Account Request'
             message_admin = build_message(form)
             sender_admin = form.cleaned_data['email']
             recipients_admin = [settings.APPLICATION_EMAIL]
 
             # Values for confirmation email to user ('Subject' remains same)
-            message_user = "Thank you for your application to the OSDC. "
+            message_user = "Thank you for your application to the Bionimbus PDC. "
             message_user += "Someone from our team will contact you within one business day.\n\n%s" % message_admin
             sender_user = 'noreply@opensciencedatacloud.org'
             recipients_user = [sender_admin]
@@ -130,17 +111,13 @@ def osdc_apply(request, user=None):
 
     else:
         if request.user.is_authenticated():
-            form = OSDCForm(initial={"eppn": user.username,
+            form = OSDCForm(initial={"eracommons": user.username,
+                    "eppn": user.username,
                     "method": "re-apply"})
         elif hasattr(user, 'identifier'):
-            try:
-                email_value = user.identifier
-                validate_email(email_value)
-            except ValidationError:
-                email_value = ""
-
             form = OSDCForm(initial={"eppn": user.identifier,
-                    "email": email_value, "method": user.method})
+                    "eracommons": user.identifier.split("!")[-1],
+                    "method": user.method})
         else:
             return HttpResponseRedirect('/pre_apply/?next=/apply/')
 

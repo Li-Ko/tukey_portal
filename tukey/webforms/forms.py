@@ -18,16 +18,17 @@ SYSTEM_CHOICES = (
     )
 
 CPU_CHOICES = (
-	('lte16', '16 cores or less'),
-	('16plus', 'More than 16 cores'),
+        ('lte16', '16 cores or less'),
+        ('16plus', 'More than 16 cores'),
 )
 
 STORAGE_CHOICES = (
-	('lte1', '1 terabyte or less'),
-	('1plus', 'More than 1 terabyte'),
+        ('lte1', '1 terabyte or less'),
+        ('1plus', 'More than 1 terabyte'),
 )
 
 class OSDCForm(forms.Form):
+    eracommons = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'readonly': True, 'class' : 'span4'}))
     first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
     last_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
     email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
@@ -57,8 +58,8 @@ class OSDCForm(forms.Form):
 
     # TODO: Conditional validation for more_cpus and more_storage fields
     # def clean(self):
-	# cleaned_data = super(OSDCForm, self).clean()
-	# more code here...
+        # cleaned_data = super(OSDCForm, self).clean()
+        # more code here...
 
 
 class OSDCSupportForm(forms.Form):
