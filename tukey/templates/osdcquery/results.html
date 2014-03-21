@@ -1,0 +1,26 @@
+{% extends "base_web.html" %}
+
+{% block header %}
+<header class="jumbotron">
+    <h1></h1>
+</header>
+{% endblock %}
+
+{% block main %}
+{{ table.render }}
+{% endblock %}
+
+
+{% block js %}
+{% include "horizon/_scripts.html" %}
+
+ <script>
+      $(document).ready(function() {
+
+        var test = $(".multi_select_column").find("input").prop('checked', true);
+        console.log(test);
+
+        });
+
+    </script>
+{% endblock %}
