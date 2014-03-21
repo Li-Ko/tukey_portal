@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_web.html" %}
 
 {% block header %}
     <h1>OSDC Query Builder</h1>
@@ -23,10 +23,10 @@
 
     <div class="container-fluid">
         <form action="" method="post" class="form-horizontal"> {% csrf_token %}
-        <div class="modal-header"> <h3> Query Builder </h3></div>
+        <div class="modal-header"> <h3> Query Builder (beta)</h3></div>
         <div class="modal-body clearfix">
 	<p>Build a query over the TCGA data then launch an instance with links to matching files.</p>
-
+	<p>The query tool is still in a beta phase, we're working on improving it and making it more stable. Please help us by trying it out and letting us know if you have any issues or suggestions for improvements via <a href="mailto:support@opensciencedatacloud.org">support@opensciencedatacloud.org</a>.</p>
 	<p>
               <label for="query_top_dir">Link Directory</label>
 	      {% if form.query_top_dir.errors %}
