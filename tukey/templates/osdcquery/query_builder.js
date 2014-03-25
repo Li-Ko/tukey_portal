@@ -11,13 +11,13 @@ function makeid()
 
 function addChangeHandler(element){
     element.on('change.fortypeahead', function() {
-    // Build a dictionary for the autocomplete    
+    // Build a dictionary for the autocomplete
     var thelement = $(this).parent().find('input')
-    
+
     var autocomplete = thelement.typeahead({ minLength: 0, items: 25 });
 
     thelement.off('focus.fortypeahead');
-    thelement.on('focus.fortypeahead', thelement.typeahead.bind(thelement, 'lookup'));                                                     
+    thelement.on('focus.fortypeahead', thelement.typeahead.bind(thelement, 'lookup'));
 
     autocomplete.data('typeahead').select = function () {
         var val = this.$menu.find('.active').attr('data-value');
@@ -36,7 +36,7 @@ function generateQueryString() {
         function getCludeQuery(clude) {
             var cludeQuery = {};
             $(clude).find(".selection").each(function() {
-                
+
                 var attr = $(this).live('find',
                     '.attrSelect').find(":selected").val();
 
@@ -86,7 +86,7 @@ function generateQueryString() {
         });
 
         var current_query = '';
-        
+
         if (includeString && excludeString) {
             current_query = [includeString, "(" + excludeString + ")"].join(" AND NOT ");
         }
@@ -102,15 +102,29 @@ function generateQueryString() {
     }
 
 
-var includeClone = $('#fieldSelect').clone(true)
+var liveState = $('#fieldSelect').clone(true);
+liveState.find(".queryValue").attr('id', makeid());
+liveState.appendTo($("#include"));
+liveState.append(
+        $("#removeParent").clone(true)
+    ).appendTo($(this).parent().parent().find(".terms"));
+addChangeHandler(liveState.find(".attrSelect"));
+liveState.find('select').val('state');
+liveState.find('input').val('live');
+liveState.trigger("change");
+
+var includeClone = $('#fieldSelect').clone(true);
 includeClone.find(".queryValue").attr('id', makeid());
 includeClone.appendTo($("#include"));
 addChangeHandler(includeClone.find(".attrSelect"));
 
-var excludeClone = $('#fieldSelect').clone(true)
+var excludeClone = $('#fieldSelect').clone(true);
 excludeClone.find(".queryValue").attr('id', makeid());
 excludeClone.appendTo($("#exclude"));
 addChangeHandler(excludeClone.find(".attrSelect"));
+
+generateQueryString();
+
 
 $(".addTerm").live('click', function() {
     var newid = makeid();
@@ -131,5 +145,3 @@ $(".removeParent").live('click', function() {
 
 $(".queryValue").on('keyup', generateQueryString);
 
-
-    

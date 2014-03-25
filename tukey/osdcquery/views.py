@@ -17,7 +17,20 @@ from osdcquery.osdcquery.fs_handler import UnixFsHandler
 from osdcquery.osdcquery.links import TcgaLinks
 from osdcquery.osdcquery.config import tcga
 
+from functools import wraps
+
 import pyelasticsearch
+
+def query_down(fn):
+    ''' print the results of the function before returning it '''
+    @wraps(fn)
+    def decorated(*args, **kwds):
+        try:
+            return fn(*args, **kwds)
+        except Exception:
+            request = args[1] if len(args) != 1 else args[0]
+            return render(request, 'osdcquery/down.html')
+    return decorated
 
 #please forgive me.
 query_url = tcga.es_url
@@ -38,7 +51,7 @@ cdbq = CDBQuery(cdb_url, cdb_osdc, cdb_query, cdb_query_username, cdb_query_pass
 
 sample_types = {
     "01" : "Primary Solid Tumor",
-    "02" : "Recurrent Solid Tumor", 
+    "02" : "Recurrent Solid Tumor",
     "03" : "Primary Blood Derived Cancer - Peripheral Blood",
     "04" : "Recurrent Blood Derived Cancer - Bone Marrow",
     "05" : "Additional - New Primary",
@@ -104,7 +117,7 @@ class TcgaTable(tables.DataTable):
     #platform = tables.Column("platform", verbose_name="Platform")
     sample_name = tables.Column("sample_name", verbose_name="Sample Type")
     last_modified = tables.Column("last_modified", verbose_name="Last Modified")
-    #upload_date = tables.Column("upload_date", verbose_name="Uploaded")    
+    #upload_date = tables.Column("upload_date", verbose_name="Uploaded")
     state = tables.Column("state", verbose_name="State")
     file_size = tables.Column("total_filesize", verbose_name="File Size")
     analysis_id = tables.Column("analysis_id", verbose_name = "Analysis ID")
@@ -166,11 +179,11 @@ class TcgaTableView(tables.DataTableView):
             data.append(TcgaMetadata(source))
         return data
 
-    #    @require_auth
+    @query_down
     def get(self, request, *args, **kwargs):
         return require_auth(super(TcgaTableView, self).get)(request, *args, **kwargs)
 
-#    @require_auth
+    @query_down
     def post(self, request, *args, **kwargs):
         return require_auth(super(TcgaTableView, self).post)(request, *args, **kwargs)
 
@@ -187,7 +200,7 @@ class TestPageView(tables.DataTableView):
 
     def has_more_data(self, table):
         return getattr(self, "_more_%s" % table.name, False)
-    
+
     def get_data(self):
         data = []
         number = range(0, 20)
@@ -195,8 +208,9 @@ class TestPageView(tables.DataTableView):
             name = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(6))
             data.append(NameNum(name, i))
         return data
-        
 
+
+@query_down
 @require_auth
 def query_builder(request):
     ''' Main view displays the running query and allows the user to run an
@@ -223,10 +237,10 @@ def query_builder(request):
 
     #again forgive this.
     es = pyelasticsearch.ElasticSearch(query_url)
-    facet_query = { 
+    facet_query = {
         "fields": ["_id", "analysis_id", "center_name", "files", "upload_date"],
-        "query" : { 
-            "matchAll" : {} 
+        "query" : {
+            "matchAll" : {}
             },
         "facets" : {
             "center_name" : { "terms" : {"field" : "center_name", "size": 50}},
@@ -283,7 +297,7 @@ def query_builder(request):
     qf = QueryFields()
     for field in qf:
         print qf
-    
+
     #print(qf.fields)
     #print("qf type %s" % type(qf))
 

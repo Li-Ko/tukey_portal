@@ -1,4 +1,4 @@
-{% extends "base_web.html" %}
+{% extends "base.html" %}
 
 {% block header %}
     <h1>OSDC Query Builder</h1>
@@ -64,14 +64,14 @@
                         </span>
                     </div>
                     <span class="help-inline">
-                        Name of directory under the above Link Directory that will 
+                        Name of directory under the above Link Directory that will
                         contain generated links.
                     </span>
 
                 {% else %}
                     {{ form.query_name }}
                     <span class="help-inline">
-                        Name of directory under the above Link Directory that will 
+                        Name of directory under the above Link Directory that will
                         contain generated links.
                     </span>
                 {% endif %}
@@ -125,7 +125,7 @@
                 {% endif %}
             </p>
 
-            <div class="modal-footer">    
+            <div class="modal-footer">
                 <input class="btn btn-primary" type="submit" value="Preview Results" />
             </div>
         </form>
