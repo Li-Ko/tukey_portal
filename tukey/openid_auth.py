@@ -143,15 +143,17 @@ class ShibbolethOpenIDLoginForm(OpenIDLoginForm):
 #         ], required=False)
 
     entityid = forms.ChoiceField(label="Institution or Organization",
-        choices=[(" ", "--- Select Your Institution ---")] + sorted([(entity, name) for entity, name in
-            requests.get(
-                "https://www.opensciencedatacloud.org/misc/idps.json"
-            ).json().items()
-                #if entity in [
-                #    "urn:mace:incommon:lbl.gov",
-                #    "urn:mace:incommon:uchicago.edu"
-                #]
-         ], key=lambda tup: tup[1]), required=False)
+        choices=[(" ", "--- Select Your Institution ---")]
+#        + sorted([(entity, name) for entity, name in
+#            requests.get(
+#                "https://www.opensciencedatacloud.org/misc/idps.json"
+#            ).json().items()
+#                #if entity in [
+#                #    "urn:mace:incommon:lbl.gov",
+#                #    "urn:mace:incommon:uchicago.edu"
+#                #]
+#         ], key=lambda tup: tup[1])
+         , required=False)
 
 
     def __init__(self, request, *args, **kwargs):
