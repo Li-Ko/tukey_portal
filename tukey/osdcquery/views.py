@@ -210,8 +210,8 @@ class TestPageView(tables.DataTableView):
         return data
 
 
-@query_down
 @require_auth
+@query_down
 def query_builder(request):
     ''' Main view displays the running query and allows the user to run an
     instance from here '''
