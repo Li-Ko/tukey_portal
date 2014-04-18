@@ -1,6 +1,7 @@
 from django.conf import settings
 
-import memcache
+import json
+import requests
 
 # used for all clouds by monkey-patching the cloud datatables ojects
 # found in tables.py also requires modifications to html templates
@@ -52,17 +53,20 @@ def cloud_details(user):
             if key in active or key.startswith('login')
         and key[5:] in active or key == 'all'}
 
+
 def has_function(function, cloud):
     return cloud in settings.CLOUD_FUNCTIONS[function]
 
+
 def active_clouds(user):
 
-    others = ['openstack', 'fake_tenant', 'fake_endpoint']
+    url = "/".join(settings.OPENSTACK_KEYSTONE_URL.split(
+            '/')[:-1] + ['osdc/v0/clouds'])
 
-    mc = memcache.Client([settings.AUTH_MEMCACHED], debug=0)
-    creds = mc.get(str(user.token.token['id']))
+    res = requests.get(url, headers={"x-auth-token": user.token.token['id'],
+            "accept-encoding": "application/json"})
 
-    if creds is not None:
-        return [key for key in creds.keys() if key not in others]
-    else:
-        return []
+    creds = json.loads(res.text)
+
+    return creds
+
