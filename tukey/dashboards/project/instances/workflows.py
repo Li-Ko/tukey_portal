@@ -14,9 +14,7 @@ from openstack_dashboard.dashboards.project.instances.workflows import(
     PostCreationStep,
     SelectProjectUser,
     SetAccessControls,
-    SetAccessControls,
     SetAccessControlsAction,
-    SetInstanceDetails,
     SetInstanceDetails,
     SetInstanceDetailsAction)
 
@@ -28,14 +26,21 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
     )
     source_type = forms.ChoiceField(label=_("Compute Node Source"),
                                     choices=SOURCE_TYPE_CHOICES)
+
     image_id = forms.ChoiceField(label=_("Image"), required=False)
     instance_snapshot_id = forms.ChoiceField(label=_("Instance Snapshot"),
                                              required=False)
+
     name = forms.CharField(initial='none', widget=forms.HiddenInput())
     flavor = forms.ChoiceField(label=_("Flavor"),
                                help_text=_("Size of compute nodes to launch."))
+
+    headnode_image_id = forms.ChoiceField(label=_("Headnode Image"),
+                               help_text=_("Image for headnode"))
+
     headnode_flavor = forms.ChoiceField(label=_("Headnode Flavor"),
                                help_text=_("Size of headnode to launch."))
+
     count = forms.IntegerField(label=_("Compute Node Count"),
                                min_value=1,
                                initial=1,
@@ -54,8 +59,13 @@ class SetClusterDetailsAction(SetInstanceDetailsAction):
 class SetClusterDetails(SetInstanceDetails):
     action_class = SetClusterDetailsAction
     contributes = ("source_type", "source_id", "count", "flavor",
-            "headnode_flavor", "cloud")
+            "headnode_flavor", "headnode_image_id", "cloud")
 
+    def prepare_action_context(self, request, context):
+        if 'source_type' in context and 'source_id' in context:
+            context[context['source_type']] = context['source_id']
+            context['headnode_image_id'] = context['source_id']
+        return context
 
 
 class LaunchInstance(OldLaunchInstance):
@@ -166,6 +176,29 @@ def populate_instance_snapshot_id_choices(self, request, context):
     return choices
 
 
+def populate_headnode_image_id_choices(self, request, context):
+    images = self._get_available_images(request, context)
+
+    if 'cloud' in request.GET:
+        cloud = request.GET['cloud']
+
+        if cloud.lower() not in settings.CLOUD_FUNCTIONS['launch_multiple']:
+            self.fields['count'].widget.attrs['readonly'] = True
+
+        if cloud.lower() not in settings.CLOUD_FUNCTIONS['namable_servers']:
+            self.fields['name'].widget.attrs['readonly'] = True
+            self.fields['name'].widget.attrs['value'] = 'Feature not supported.'
+
+        choices = [(image.id, image.name) for image in images
+            if (get_cloud(image) == cloud)]
+    else:
+        choices = [(image.id, image.name) for image in images]
+    if choices:
+        choices.insert(0, ("", _("Select Snapshot/Image")))
+    else:
+        choices.insert(0, ("", _("No images available.")))
+    return choices
+
 
 def populate_flavor_choices(self, request, context):
     try:
@@ -194,11 +227,11 @@ def populate_headnode_flavor_choices(self, request, context):
     return ([f for f in choices if f[1] == first] +
             [f for f in choices if f[1] != first])
 
-
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
 SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
 SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_headnode_flavor_choices
+SetInstanceDetails.action_class.populate_headnode_image_id_choices = populate_headnode_image_id_choices
 
 
 SetAccessControls.depends_on = ("project_id", "user_id", "cloud")
@@ -304,8 +337,9 @@ class LaunchCluster(workflows.Workflow):
         try:
             # note the bottom part doesn't work just wishfull thinking
             api.nova.novaclient(request).servers.create(
-                    "cluster%s-%s" % (context['cloud'].lower(),
-                        context['headnode_flavor']),
+                    "cluster%s-%s-%s" % (context['cloud'].lower(),
+                        context['headnode_flavor'],
+                        context['headnode_image_id']),
                     context['source_id'],
                     context['flavor'],
                     key_name=context['keypair_id'],
