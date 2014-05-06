@@ -17,7 +17,7 @@ diff --git a/openstack_dashboard/urls.py b/openstack_dashboard/urls.py
 index 64ef605..c3791ec 100644
 --- a/openstack_dashboard/urls.py
 +++ b/openstack_dashboard/urls.py
-@@ -27,13 +27,32 @@ from django.conf.urls.static import static
+@@ -27,13 +27,33 @@ from django.conf.urls.static import static
  from django.conf import settings
  from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -42,6 +42,7 @@ index 64ef605..c3791ec 100644
 +    url(r'^publicdata/', include('tukey.datasets.urls', namespace='datasets')),
 +    url(r'^keyservice/', include('tukey.keyservice.urls', namespace='keyservice')),
 +    url(r'^osdcquery/', include('tukey.osdcquery.urls', namespace='osdquery')),
++    url(r'^upgrade', 'django.views.generic.simple.direct_to_template', {'template': 'downtime/message.html'}),
 +    url(r'', include('tukey.webforms.urls')),
 +    url(r'', include(horizon.urls)),
 +
