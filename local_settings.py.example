@@ -12,25 +12,10 @@ TUKEY_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'tukey'))
 STATIC_ROOT = os.path.abspath(os.path.join(TUKEY_ROOT, 'static'))
 TEMPLATE_DIRS = ( os.path.abspath(os.path.join(TUKEY_ROOT, 'templates')), )
 
-#FORCE_SCRIPT_NAME = '/demo/'
-#STATIC_URL = '/demo/static/'
-
 TEMPLATE_CONTEXT_PROCESSORS += ( "tukey.context_processors.logout_url", )
 
-# Configure these for your outgoing email host
-# EMAIL_HOST = 'smtp.my-company.com'
-# EMAIL_PORT = 25
-# EMAIL_HOST_USER = 'djangomail'
-# EMAIL_HOST_PASSWORD = 'top-secret!'
-
-# For multiple regions uncomment this configuration, and add (endpoint, title).
-# AVAILABLE_REGIONS = [
-#     ('http://cluster1.example.com:5000/v2.0', 'cluster1'),
-#     ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
-# ]
-
 OPENSTACK_HOST = "127.0.0.1"
-OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST
+OPENSTACK_KEYSTONE_URL = "http://%s:8774/v2.0" % OPENSTACK_HOST
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"
 
 OPENSTACK_KEYSTONE_BACKEND = {
@@ -143,11 +128,11 @@ DATABASES = {
         # DB name or path to database file if using sqlite3.
         'NAME': 'osdcdb',
         # Not used with sqlite3.
-        'USER': 'osdcdb_user',
+        'USER': 'osdc_user',
         # Not used with sqlite3.
         'PASSWORD': 'password',
         # Set to empty string for localhost. Not used with sqlite3.
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         # Set to empty string for default. Not used with sqlite3.
         'PORT': '',
     }
@@ -157,13 +142,14 @@ DATABASES = {
 # certain action on we need to know what resources support that
 # function those functions are currently:
 CLOUD_FUNCTIONS = {
-    'import_keypair': ['sullivan', 'loginatwood', 'logingoldberg','loginadler', 'loginsullivan', 'all'],
-    'create_keypair': ['adler', 'sullivan', 'loginatwood', 'logingoldberg', 'loginadler', 'loginsullivan', 'all'],
+    'import_keypair': ['sullivan', 'loginatwood', 'logingoldberg','loginadler', 'loginsullivan', 'logincobb', 'all'],
+    'create_keypair': ['adler', 'sullivan', 'loginatwood', 'logingoldberg', 'loginadler', 'loginsullivan', 'logincobb', 'all'],
     'associate_ip': [],#['sullivan', 'atwood', 'goldberg'],
-    'edit_instance': ['sullivan', 'atwood', 'goldberg'],
-    'launch_multiple': ['sullivan', 'atwood', 'goldberg'],
-    'namable_servers': ['sullivan', 'atwood', 'goldberg'],
+    'edit_instance': ['sullivan', 'atwood', 'goldberg', 'cobb'],
+    'launch_multiple': ['sullivan', 'atwood', 'goldberg', 'cobb'],
+    'namable_servers': ['sullivan', 'atwood', 'goldberg', 'cobb'],
     'instance_keys': ['adler', 'sullivan'],
+    'security_groups': ['adler', 'sullivan', 'atwood'],
     'launch_cluster': ['sullivan', 'atwood'],
     'osdcquery': []
 }
@@ -177,16 +163,16 @@ CLOUD_DETAILS = {
     'logingoldberg': 'Goldberg login server',
     'adler':    'Adler instances',
     'goldberg':    'Goldberg instances',
+    'cobb':    'Cobb instances',
+    'logincobb':    'Cobb login server',
     'sullivan': 'Sullivan instances',
     'atwood': 'Atwood instances',
     'all': 'All Resources'
 }
 
-AUTH_MEMCACHED = '127.0.0.1:11211'
 
-# Shibboleth headers we want to consume in the order we want to
-# check for them
-SHIB_HEADERS = ('HTTP_EPPN',)
+# Shibboleth headers to consume in order
+SHIB_HEADERS = ('HTTP_EPPN', 'HTTP_PERSISTENT_ID', 'HTTP_TARGETED_ID')
 
 USAGE_ATTRIBUTES = {
     'OCC-Y Hadoop Disk (GB):': 'occ_y_hdfsdu',
@@ -207,11 +193,11 @@ USAGE_ATTRIBUTES = {
     'Adler Cloud Virtual Cores:': 'adler_cores'}
 
 
+APPLICATION_EMAIL = 'accounts@opencloudconsortium.org'
+DEMO_REG_EMAIL = ''
 
-APPLICATION_EMAIL = ''
-
-APPLICATION_INVITE_EMAIL = ''
-SUPPORT_EMAIL = ''
+APPLICATION_INVITE_EMAIL = 'accounts@opencloudconsortium.org'
+SUPPORT_EMAIL = 'support@opensciencedatacloud.org'
 
 SESSION_TIMEOUT = 3000
 
@@ -228,10 +214,10 @@ STATUS = [
         "dashboard": "OSDC-Adler",
         "type": "cloud"
     }),
-    ("Goldberg", {
-        "dashboard": "goldberg",
-        "type": "cloud"
-    }),
+#    ("Goldberg", {
+#        "dashboard": "goldberg",
+#        "type": "cloud"
+#    }),
     ("Bionimbus PDC", {
         "dashboard":"Bionimbus-PDC",
         "type": "cloud"
@@ -240,18 +226,14 @@ STATUS = [
         "dashboard":"atwood",
         "type": "cloud"
     }),
-    ("Skidmore", {
-        "dashboard": "skidmore",
-        "type": "map_reduce"
-    }),
     ("OCC-Y", {
         "dashboard": "OCC-Y",
         "type": "map_reduce"
     }),
-    ("OCC-LVOC", {
-        "dashboard": "OCC-LVOC-HADOOP",
-        "type": "map_reduce"
-    }),
+#    ("OCC-LVOC", {
+#        "dashboard": "OCC-LVOC-HADOOP",
+#        "type": "map_reduce"
+#    }),
     ("OCC-Root", {
         "dashboard": "OCC-Root",
         "type": "storage"
@@ -268,10 +250,16 @@ RECAPTCHA_USE_SSL = True
 SECRET_KEY = ''
 
 API_ENDPOINT_REPLACEMENTS = [
-    ("http://api.opensciencedatacloud.org", "https://api.opensciencedatacloud.org"),
-    ("http://127.0.0.1", "https://api.opensciencedatacloud.org"),
-    ("http://sullivan.127.0.0.1", "http://sullivan.api.opensciencedatacloud.org"),
-    ("http://atwood.127.0.0.1", "http://atwood.api.opensciencedatacloud.org"),
-    ("http://goldberg.127.0.0.1", "http://goldberg.api.opensciencedatacloud.org"),
-    ("http://adler.127.0.0.1", "http://adler.api.opensciencedatacloud.org")
+    #("http://localhost", "https://api.opensciencedatacloud.org"),
+    ("http://localhost:8774/v2.0", "https://api.opensciencedatacloud.org:5000/sullivan/v2.0/"),
+#    ("http://127.0.0.1", "https://api.opensciencedatacloud.org"),
+#    ("http://sullivan.127.0.0.1", "http://sullivan.api.opensciencedatacloud.org"),
+#    ("http://atwood.127.0.0.1", "http://atwood.api.opensciencedatacloud.org"),
+#    ("http://goldberg.127.0.0.1", "http://goldberg.api.opensciencedatacloud.org"),
+#    ("http://adler.127.0.0.1", "http://adler.api.opensciencedatacloud.org")
 ]
+
+TUKEY_PASSWORD = 'password'
+
+SITE_URL = 'https://www.opensciencedatacloud.org'
+
