@@ -42,43 +42,33 @@
 <div class="span12 data-header"><h3>Download Instructions</h3></div>
 <div class="span12">
 <p>
-All public data sets are available on both commodity internet connections and high speed <a href="http://www.startap.net/starlight/">StarLight</a>/<a href="http://www.internet2.edu/">Internet2</a> connections. We recommend using <a href="http://rsync.samba.org/">rsync</a> or <a href="http://github.com/LabAdvComp/UDR">UDR</a> to download the data. The username/password for the download account is guest/guest. 
+All public data sets are available on both commodity internet connections and high speed <a href="http://www.startap.net/starlight/">StarLight</a>/<a href="http://www.internet2.edu/">Internet2</a> connections. We recommend using <a href="http://rsync.samba.org/">rsync</a> or <a href="http://github.com/LabAdvComp/UDR">UDR</a> to download the data.
+
+<!--The username/password for the download account is guest/guest. -->
 
 <h4>Downloading with <a href="http://github.com/LabAdvComp/UDR">UDR</a> (UDT enabled rsync)</h4>
 <p>
-UDR is a wrapper around rsync that enables rsync to use the high performance <a href="http://udt.sourceforge.net/">UDT</a> network protocol, which can greatly improve download speeds, especially over high speed networks. Once installed, the only change is placing the udr command before the same rsync command you typically use to download the data. UDR is open source and under active development, the most recent version is available on <a href="https://github.com/LabAdvComp/UDR">github</a>.
+UDR is a wrapper around rsync that enables rsync to use the high performance <a href="http://udt.sourceforge.net/">UDT</a> network protocol, which can greatly improve download speeds, especially over high speed networks. Once installed, the only change is placing the udr command before the same rsync command you typically use to download the data. UDR is open source and under active development, the most recent version is available on <a href="https://github.com/LabAdvComp/UDR">github</a>. <b>At the moment, UDR is not enabled on the transfer node. The functionality should return shortly. Use rsync in the meantime.</b>
 </p>
 
 {% if dataset.osdc_location %}
 <p>
 <h4>List the contents of {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} </code></li>
-<li>Using udr: <code>udr rsync opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} </code></li>
-{% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} </code></li>
-<li>Using udr (high speed connection): <code>udr rsync 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} </code></li>
-{% endif %}
+<li>Using rsync: <code>rsync globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} </code></li>
+<li>Using udr: <code>udr rsync globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} </code></li>
 </ul>
 
 <h4>Download/synchronize {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-{% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync -avzuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync -avzuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-{% endif %}
+<li>Using rsync: <code>rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
 </ul>
 
 <h4>Download an individual file from {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzuP opensciencedatacloud.org::osdc_public_data/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP opensciencedatacloud.org::osdc_public_data{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
-{% if dataset.osdc_hs_location %}
-<li>Using rsync (high speed connection): <code>rsync -avuP 74.114.99.139::osdc_public_data/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
-<li>Using udr (high speed connection): <code>udr rsync -avuP 74.114.99.139::osdc_public_data/{{dataset.osdcx_folder}}remotefile /path/to/local_copy</code></li>
-{% endif %}
+<li>Using rsync: <code>rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP globus.opensciencedatacloud.org::public/{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
 </ul>
 </p>
 {% else %}
