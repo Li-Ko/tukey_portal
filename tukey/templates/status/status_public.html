@@ -13,7 +13,7 @@
 {% for name in cloud_names %}
 <div class="span12 status-header">
 {% if not name|startswith:"OCC" %}
-<h3>OSDC-{{ name }}</h3>
+<h3>{{ name }}</h3>
 {% else %}
 {% if name == "OCC-Root" %}
 <h3>OSDC-Root</h3>
