@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block header %}
+<header class="jumbotron">
+    <h2>URGENT:   PDC v2.0 - Action Required</h2>
+
+<style>
+p {margin-bottom:0px;}
+p {margin-top:3px;}
+</style>
+</header>
+{% endblock %}
+
+{% block main %}
+<div class="span">
+<p><a href="/console"><strong>&rarr; Continue to Console</strong></a></p>
+<p>
+We opened the Protected Data Cloud Pre-Pilot Project just over a year ago in February 2013 and during this time we have developed a new architecture (PDC v2.0) that we will be rolling out over approximately the next month.
+</p> 
+<p>
+To transition from current architecture (PDC v1.0) to PDC 2.0 will require powering down and re-imaging the hardware, which means unfortunately that all data, virtual machines, and configuration files on the current PDC v1.0 system must be saved on another resource or they will be lost in the transition to the new architecture.
+</p> 
+
+<p>
+The PDC v2.0 architecture will include OpenStack’s Swift object store (which corresponds to Amazon’s S3) and OpenStack’s Cinder block storage (which corresponds to Amazon’s EBS).  Both of these systems have proved stable to the sizes we require (1-20 PB).   An advantage of this approach is that pipelines developed for this architecture can more easily be ported to Amazon’s AWS.
+</p> 
+
+<p>
+The new PDC v2.0 architecture will not use the GlusterFS as the primary file system. We have had a number of tickets that relate directly or indirectly to our use of GlusterFS, and we expect the new PDC 2.0 storage system to have fewer problems.
+</p> 
+
+<p>
+The PDC 1.0 system will be down for approximately two weeks as we rebuild the system as a PDC v2.0 system.  Select Beta testers will be given access to the PDC v2.0 system to help with testing.   The PDC is expected to be available again to all users on June 16, 2014.
+</p> 
+
+<p>
+What follows are next steps that require action on your part.  
+</p> 
+
+
+<h3>
+Action Required:
+</h3>
+<p>
+On May 12, 2014, compute will be turned off on the PDC v1.0 system and it will only be used to transfer files.  On May 19, 2014, PDC v1.0 users will be locked out and the rebuild will begin in full, which means prior to that date all user data must be stored off-site.   We highly recommend you back up your data, programs and configuration files off site using your own storage devices.   For users unable to provide backup themselves, we can provide space for users that require it, but ask that you specifically contact us at <a href="mailto:support@opensciencedatacloud.org">support@opensciencedatacloud.org</a> by May 12, 2014.  PDC users should take the following steps for each object type:
+</p> 
+
+<p>
+Files:
+<ul>
+    <li>
+        Review and identify any files you need.
+    </li>
+    <li>
+        Back up files to your own backup environment outside the PDC.
+    </li>
+</ul>
+</p> 
+
+<p>
+Instances:
+<ul>
+    <li>
+        Current instances from the PDC will not be transferrable.
+    </li>
+    <li>
+        We recommend that you create brand new instances in the new PDC environment using the base images that will be provided. 
+    </li>
+    <li>
+        We will be creating a standard Bioinformatics image using the software packages in regular use.   If you have suggestions about particular packages you'd like installed please contact us at <a href="mailto:support@opensciencedatacloud.org">support@opensciencedatacloud.org</a>  
+    </li>
+</ul>
+</p> 
+
+<h3>
+General Timeline Estimates:
+</h3>
+
+<ul>
+    <li>
+        PDC v1.0 System Compute off:  May 12, 2014
+    </li>
+    <li>
+        PDC v1.0 System Closed: May 19, 2014
+    </li>
+    <li>
+        PDC v1.0 System Rebuild Complete:  June 2, 2014
+    </li>
+    <li>
+        BETA Users given access to PDC v2.0 System:  June 2, 2014
+    </li>
+    <li>
+        PDC v2.0 System Reopened to all users: June 16, 2014
+    </li>
+</ul>
+<p>
+Thank you for your continued patience during this upgrade.   If you have any questions about these changes or instructions, please contact <a href="mailto:support@opensciencedatacloud.org">support@opensciencedatacloud.org</a>.
+</p> 
+
+<p><a href="/console"><strong>&rarr; Continue to Console</strong></a></p>
+
+
+</div>
+{% endblock %}
