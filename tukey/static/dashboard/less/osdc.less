@@ -12,31 +12,6 @@
 @navbarBackground:                @pdcLight;
 @navbarBackgroundHighlight:       @pdc;
 
-
-/* Keep footer at bottom of page. Protection against minimal content pulling footer too high. */
-
-* {
-   margin: 0;
-}
-
-html, body {
-   height: 100%;
-}
-
-.wrapper {
-   min-height: 83%;
-   height: auto;
-   margin: 0 auto;
-}
-
-.push {
-   height: 1em;
-}
-
-#main-footer {
-   height: 3em;
-}
-
 /* new clearfix */
 .clearfix:after {
     visibility: hidden;
@@ -124,7 +99,7 @@ dt {
 
 .row-header {
   margin-top: 85px;
-//  margin: 45px 0 0 0;
+//  margin: 45px 0 0 0;	     
 //  padding: 0;
 //  border: 0;
 }
@@ -137,7 +112,7 @@ dt {
   padding-bottom: 0;
   margin-bottom: 0;
 }
-
+		
 .row-content{
   margin-left: 10px;
 }
@@ -145,10 +120,6 @@ dt {
 body {
   background-color: #fff;
   min-width: 890px;
-}
-
-a {
-  color: #0197b0;
 }
 
 /* Login Splash Page */
@@ -168,7 +139,7 @@ a {
   left: 50%;
   margin: 70px auto 0 auto;
   /*margin: 0 0 0 275px;*/
-  padding-top: 170px;
+  padding-top: 120px;
   width: 450px;
   border: 1px solid #e1e1e1;
   max-height: none;
@@ -183,18 +154,11 @@ a {
   background-clip: padding-box;
 }
 
-#splash .login .modal-header {
-  padding-top: 0px;
-}
-
-/*
 #splash .login input {
   width: 350px;
 }
-*/
-
 #splash .login select {
-  width: 270px;
+  width: 360px;
 }
 
 #splash .help-block {
@@ -518,38 +482,6 @@ table form {
     width: 1px;
 }
 
-/* --- SYSTEMS PAGE STYLES --- */
-.systems {
-  text-align: center;
-  border-collapse: collapse;
-}
-
-.systems tr:nth-child {
-  background-color: #DDDDDD;
-}
-
-.systems th {
-  background: #F7BF71;
-  background: -moz-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(4%, #F7BF71), color-stop(96%, #F9AE40));
-  background: -webkit-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
-  background: -o-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
-  background: -ms-linear-gradient(top, #F7BF71 4%, #F9AE40 96%);
-  background: linear-gradient(to bottom, #F7BF71 4%, #F9AE40 96%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#F7BF1", endColorstr="#F9AE40", GradientType=0 );
-  border: 1px solid black;
-  padding: 20px 10px 20px 10px;
-  color: #3B598A;
-}
-
-.systems td {
-  padding: 15px 10px 15px 10px;
-  border: 1px solid black;
-  text-align: center;
-}
-
-/* --- END SYSTEMS PAGE STYLES --- */
-
 .messages {
   position: absolute;
   z-index: 9999;
@@ -712,7 +644,6 @@ form label {
     text-align: left;
     color: #555;
     font-weight: bold;
-    margin-top: 5px;
 }
 
 .modal {
@@ -770,7 +701,7 @@ form.horizontal fieldset {
   margin-bottom: 0;
 }
 
-#main-footer > .modal-footer {
+#main-footer > .modal-footer{
   margin-top: 40px;
 }
 
@@ -786,7 +717,7 @@ form.horizontal fieldset {
 
 .left {
     float: left;
-    /*width: 347px;*/
+    width: 347px;
     margin-right: 15px;
 }
 
@@ -796,7 +727,7 @@ form.horizontal fieldset {
 
 .right {
     float: left;
-    /*width: 308px;*/
+    width: 308px;
 }
 
 .workflow ul.nav-tabs {
@@ -903,34 +834,6 @@ form.horizontal fieldset {
 #images #actions {
     width: 100px;
 }
-
-/* --- BEGIN IMAGES TABLE BG COLORS --- */
-
-#images .adler {
-    background-color: #DBB0AD;
-}
-
-#images .atwood {
-    background-color: #F5CB90;
-}
-
-#images .bionimbus-pdc {
-    background-color: #DBBADB;
-}
-
-#images .goldberg {
-    background-color: #EDE8A6;
-}
-
-#images .skidmore {
-    background-color: #B9D9B8;
-}
-
-#images .sullivan {
-    background-color: #CBF8FF;
-}
-
-/* --- END IMAGES TABLE BG COLORS --- */
 
 /*New List Patches*/
 .details-modal .modal-body {
@@ -1481,42 +1384,43 @@ label.log-length {
             border-radius: 0;
   }
 
-.status-label {
+.status-label{
     font-size: 13px;
     font-weight: bold;
     }
 
-.status-row {
+.status-row{
     line-height: 24px;
-    margin: 10px 0 10px 25px;
+    margin: 10px 0;
     }
 
-.status-used {
+.status-used{
     float: left;
     background-color: #faa732;
     text-align: right;
 }
 
-.status-bound {
+.status-bound{
     border: 1px solid #777777;
 }
 
-.status-total {
+.status-total{
     padding-left: 2px;
     float: left;
 }
 
 .status-header {
   padding-bottom: 5px;
-  margin: 10px 0 10px 25px;
+  margin: 10px 0;
   border-bottom: 1px solid #eeeeee;
 }
 
 
 
-/* Jumbotrons
+/* Jumbotrons                                                                                                                                
 -------------------------------------------------- */
 .jumbotron {
+  margin-top: 60px;
   position: relative;
 }
 .jumbotron h1 {
@@ -1531,7 +1435,7 @@ label.log-length {
   font-weight: 300;
 }
 
-/* Specific jumbotrons
+/* Specific jumbotrons                                                                                                                       
 ------------------------- */
 /* supporting docs pages */
 .subhead {
@@ -1546,15 +1450,6 @@ label.log-length {
     display: inline-block;
     margin-top: 5px;
     width: 500px;
-}
-
-.form-horizontal input[type="checkbox"]{
-  margin-bottom: 7px;
-  margin-right: 3px;
-}
-
-.form-horizontal .controls{
-  margin-top: 7px;
 }
 
 .osdc-footer{
@@ -1574,8 +1469,7 @@ p, ul {
 
 .sub-topic{
     border-bottom: 1px solid #dddddd;
-    padding-bottom: 2px;
-    margin-bottom: 5px;
+    padding-bottom: 7px;
 }
 
 .btn-block {
@@ -1585,16 +1479,9 @@ p, ul {
 }
 
 /* For the Public Data Pages */
-
-.data-entry, .data-faint {
-  margin-left: 35px;
-}
-
 .data-header {
   padding-bottom: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 25px;
+  margin: 10px 0;
   border-bottom: 1px solid #eeeeee;
 }
 
@@ -1605,13 +1492,13 @@ p, ul {
 
 .data-entry{
     margin-bottom: 8px;
-}
+    }
 
 .data-faint{
     color: #777777;
     font-size: 11px;
     font-style: italic;
-}
+    }
 
 .data-label{
     margin-top: 8px;
@@ -1623,56 +1510,10 @@ p, ul {
    margin-top: 25px;
 }
 
-.maincontent {
-    margin-bottom: 10px;
-    /*border: 1px solid #999999;*/
-    padding-top: 15px;
-    text-align: center;
-}
-
-.maincontent h1 {
-    margin-bottom: 10px;
-}
-
-.maincontent h3 {
-    line-height: 1.2em;
-    font-weight: normal;
-    margin-bottom: 15px;
-}
-
-.btn-maincontent,
-{
-   width: 200px;
-   /*margin-bottom: 10px; */
-   margin: 10px 10px 15px 10px;
-   font-size: 18px;
-   font-weight: bold;
-}
-
-.maincontent-left{
-    padding-right: 50px;
-}
-
-.maincontent-right{
-    padding-left: 50px;
-}
-
-.btn-maincontent,
-.btn-maincontent:hover,
-.btn-mainlogin,
-.btn-mainlogin:hover
- {
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
-  color: @white;
-}
-
-.btn-maincontent.active {
-  color: rgba(255,255,255,.75);
-}
-
-.btn-maincontent {
-  .buttonBackground(darken(@orange, 5%), lighten(@orange, 10%));
-}
+//There is something weird going on with the bionimbus apply page, that's subtracting 10px from the height this is just a temp fix
+/*input, select, .uneditable-input {
+   height: 28px;
+}*/
 
 .btn-mainlogin,
 .btn-mainlogin:hover
@@ -1684,52 +1525,4 @@ p, ul {
 .btn-mainlogin {
   .buttonBackground(darken(@pdc, 10%), lighten(@pdc, 5%));
 }
-
-.mainheader {
-  padding: 0px 10px 0px 10px;
-}
-
-.mainheader, .cms {
-  margin-top: 67px;
-}
-
-.help-block-apply {
-    display: block;
-    margin-bottom: 0;
-    margin-top: 5px;
-    width: 550px;
-}
-
-.news-byline{
-  font-style: italic;
-  color: #666666;
-}
-
-/* Keeping some wordpress css */
-
-.news-story .alignright {
-  display: inline;
-  float: right;
-  margin-left: 24px;
-  margin-top: 4px;
-}
-
-.news-story .alignleft {
-  display: inline;
-  float: left;
-  margin-right: 24px;
-  margin-top: 4px;
-}
-
-.carousel-caption{
-  position: relative;
-  display: block;
-  height: 75px;
-  font-size: 12px;
-  padding: 10px;
-}
-
-.carousel-caption a{
-  color: #fff;
-  font-style: italic;
-}
+ 
