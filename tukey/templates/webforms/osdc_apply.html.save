@@ -3,7 +3,7 @@
 {% block meta_title %}OSDC Application{% endblock %}
 
 {% block header %}
-<header class="jumbotron subhead">
+<header class="subhead">
   <h2>Apply for a OSDC Account</h2>
 </header>
 {% endblock %}
