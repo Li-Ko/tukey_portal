@@ -11,7 +11,7 @@
 
 {% block main %}
 {% for name in cloud_names %}
-<div class="span12 status-header">
+<div class="span11 status-header">
 {% if not name|startswith:"OCC" %}
 <h3>OSDC-{{ name }}</h3>
 {% else %}
@@ -32,7 +32,7 @@
 {% for v in status_data|getvalue:name %}
 <div class="row status-row">
   <div class="span2 status-label">{{ v.0 }}</div>
-  <div class="span11 status-bound" id="{{ v.1 }}-bound">
+  <div class="span8 status-bound" id="{{ v.1 }}-bound">
     <div class="status-used" id="{{ v.1 }}">&nbsp;</div>
     <div class="status-total">{{ v.2|floatformat:0 }} / {{ v.3|floatformat:0 }} ({{ v.4|multiply:100|floatformat:0 }}%)</div>
   </div>

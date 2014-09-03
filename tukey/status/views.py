@@ -54,12 +54,11 @@ def status_public(request):
     status_attrs = {
         "cloud": [
             ('Storage Used (GB): ', 'cluster'),
-            ('Active Users: ', 'users'), ('VM Instances: ', 'vms'),
-            ('VM Cores: ', 'cores'), ('VM RAM (GB): ', 'ram'),
-            ('VM Instance Storage (GB): ', 'ldisk')],
+            ('Active Users: ', 'users'),
+	    ('VM Cores: ', 'cores'), ('VM RAM (GB): ', 'ram')],
         "map_reduce": [
             ('HDFS Storage (GB): ', 'hdfsdu'),
-            ('Active Jobs: ', 'jobs'), ('Active Users: ', 'users')],
+            ('Active Jobs: ', 'jobs')],
         "storage" : [
             ('Storage Used (GB): ', 'disk')]
         }
