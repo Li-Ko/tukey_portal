@@ -96,14 +96,18 @@ def osdc_apply(request, user=None):
     if request.method == 'POST': # If the form has been submitted...
         form = OSDCForm(request.POST, request.FILES) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            subject = 'OSDC Account Request'
+            subject = '%s %s OSDC Account Request' % (form.cleaned_data['first_name'],
+                    form.cleaned_data['last_name'])
             message_admin = build_message(form)
             sender_admin = form.cleaned_data['email']
             recipients_admin = [settings.APPLICATION_EMAIL]
 
             # Values for confirmation email to user ('Subject' remains same)
-            message_user = "Thank you for your application to the OSDC. "
-            message_user += "Someone from our team will contact you within one business day.\n\n%s" % message_admin
+            message_user = (
+                    "Thank you for your application to the OSDC. "
+                    "Someone from our team will contact you within "
+                    "one business day.\n\n%s" % message_admin)
+
             sender_user = 'noreply@opensciencedatacloud.org'
             recipients_user = [sender_admin]
 
