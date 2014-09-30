@@ -1,0 +1,291 @@
+@light-gray: #fafafa;
+@row-width: 70%;
+@dark-gray: #6B6B6B;
+@blue:#0197b0;
+@mid-gray: #CECECE;
+@block-gray:#efeff0;
+@font-face {
+    font-family: "Open Sans";
+    src: url("/static/dashboard/fonts/OpenSans-Light.ttf");
+    font-weight: 300;
+}
+@font-face {
+    font-family: "Open Sans";
+    src: url("/static/dashboard/fonts/OpenSans-Regular.ttf");
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Open Sans";
+    src: url("/static/dashboard/fonts/OpenSans-Semibold.ttf");
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Open Sans";
+    src: url("/static/dashboard/fonts/OpenSans-Bold.ttf");
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Open Sans";
+    src: url("/static/dashboard/fonts/OpenSans-ExtraBold.ttf");
+    font-weight: 800;
+}
+* {
+    font-family: 'Open Sans', monospace !important;
+    box-sizing: border-box;
+    overflow:scroll;
+}
+
+.header-wrapper{
+    position:fixed;
+    width:100%;
+    z-index:100;
+}
+.navbar-fixed-top{
+    position:relative;
+    background-color: @light-gray;
+    background-image:none;
+    padding: 25px 5px;
+    margin:0px;
+    text-align:center;
+    .navbar-inner {
+        display: block;
+        margin:auto;
+        width: @row-width;
+        box-shadow: none;
+        background: none;
+        ul.nav{
+            width:100%;
+            overflow:hidden;
+            li:not(:first-child){
+                margin: 10px 10px;
+                float:right;
+                a{  
+                    padding:0;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    font-size: 1em;
+                    border-bottom:1px solid @light-gray;
+                    transition:0.5s;
+                }
+                a:hover{
+                    color:@dark-gray;
+                    border-bottom:1px solid @dark-gray;
+                }
+
+            }
+        }
+    }
+}
+
+.subnav-fixed {
+    position:relative;
+    top:0px;
+    padding: 0 70px;
+    box-shadow:none;
+    
+}
+.container {
+    width: 100%;
+    .top-header{
+        background-image:url("/static/dashboard/img/home/chicago-light.jpg");
+        background-size:100%;
+        padding:100px 0px 80px 0px;
+        line-height:50px;
+        color:white;
+        text-align:center;
+        header {
+            padding-bottom:3em;
+            p{
+                font-size:2em;
+                vertical-align:middle;
+                display:inline;
+            }
+            .brand {
+                font-weight:700;
+                font-size:5em;
+                line-height:50px;
+                color:@blue;
+            }
+            .bold{
+                font-weight:500;
+            }
+        }
+        h1,h3{
+            color: @light-gray;
+            font-weight:300;
+        }
+        h1 {
+            font-size:22px;
+        }
+        .btn-group {
+            width:75%;
+            display:block;
+            margin: auto;
+            margin-top: 2.5em;
+         }
+        .btn-maincontent, .btn-mainlogin{
+            width: 30%;
+            line-height: 28px;
+            font-weight:300;
+            padding: 10px 18px;
+            text-shadow: none;
+            text-transform: uppercase;
+        }
+        .btn-maincontent{
+            float: left;
+            background-image:none;
+            background-color:@blue;
+            border-radius: 0;
+            border:none;
+        }
+        .btn-mainlogin{
+            float:right;
+             background-image:none;
+             background-color:@dark-gray;
+             border-radius: 0;
+             border:none;
+        }
+
+    }        
+    .mainheader{
+        width: 100%;
+        margin-top:0px;
+        box-sizing: border-box;
+        img{
+            display: block;
+            margin: auto;
+        }
+    }
+    .row{
+        margin:0px;
+        .maincontent {
+            margin:auto;
+            float:none;
+        }
+    }
+}
+
+.row.intro-info{
+    width:100%;
+    diplay:block;
+    margin:auto;
+    .block.white{
+        background-color: white;
+        .maincontent{
+            .sub-topic {
+                margin-bottom: 1.5em;
+            }
+        }
+     }
+    .block{
+    background-color: @block-gray;
+        width:100%;
+        display:block;
+        margin:auto;
+        overflow:hidden;
+        float:none;
+        .maincontent{
+            padding: 4em 0em;
+            width:@row-width;
+            text-align: left;
+        }
+        .sub-topic {
+            font-weight: 500;
+        }
+        section{
+            margin:0;
+            padding-top:2em;
+            width:50%;
+            float:left;
+            display:block;
+        }
+        section.left{
+            padding-right:2em;
+        }
+        section.right{
+            padding-left:2em;
+        }
+        .item{
+            margin-bottom:2em;
+            height: 220px;
+            transition:0.5s;
+            >a{
+                overflow:hidden;
+                display:block;
+                float:left;
+                width:75%;
+                height:100%;
+                img{
+                    filter: grayscale(100%);
+                    -webkit-filter: brightness(0.7) grayscale(1);
+                    transition:0.5s;
+                    height:100%;
+                    width:100%;
+                }
+            }
+            a {
+                color: @dark-gray;
+            }
+            .carousel-caption{
+                display:block;
+                transition:0.5s;
+                padding:1.5em;
+                background: darken(@light-gray, 5%);
+                p{
+                    color:@dark-gray;
+                    font-size: 0.9em;
+                }
+                .title{
+                    margin-bottom:10px;
+                    border-bottom:1px solid @mid-gray;
+                }
+                .title a{
+                    font-style:inherit;
+                    font-size: 1.5em;
+                    
+                }
+                float:left;
+                width:25%;
+                height:100%;
+            }
+        }
+        .item:hover {
+            img{
+                    filter: inherit;
+                    -webkit-filter: inherit;
+            }
+            .carousel-caption {
+                background:@light-gray;
+            }
+        }
+
+
+    }
+}
+
+
+
+
+
+/********** footer **********/
+#main-footer {
+    height: initial;
+    .modal-footer {
+        border-top:none;
+        padding: 0px;
+        background: none;
+        .container{
+            width: 80%;
+            span {
+                color: @dark-gray;
+            }
+            img {
+                padding: 0px 10px;
+            }
+            margin:auto;
+            padding: 2em;
+            border-top:1px solid #ddd;
+            text-align: center;
+        }
+    }
+}
