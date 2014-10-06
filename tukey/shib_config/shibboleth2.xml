@@ -215,6 +215,7 @@
                 <MetadataFilter type="Whitelist">
                     <Include>https://registry.shibboleth.ox.ac.uk/idp</Include>
                     <Include>https://athensla.uwe.ac.uk/oala/metadata</Include>
+		    <Include>https://shib-idp.ucl.ac.uk/shibboleth</Include>
                 </MetadataFilter>
                 <!-- suggested by the federation -->
                 <!--<MetadataFilter type="Signature" certificate="ukfederation.pem"/> -->
