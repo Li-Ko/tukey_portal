@@ -6,7 +6,42 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
+# use_wordpress = True
+use_wordpress = False
+
 register = template.Library()
+
+import cgi, string
+
+# convert text to html (for use with rss content)
+# https://djangosnippets.org/snippets/19/
+re_string = re.compile(r'(?P<htmlchars>[<&>])|(?P<space>^[ \t]+)|(?P<lineend>\r\n|\r|\n)|(?P<protocal>(^|\s)((http|ftp|https)://.*?))(\s|$)', re.S|re.M|re.I)
+def plaintext2html(text, tabstop=4):
+    def do_sub(m):
+        c = m.groupdict()
+        if c['htmlchars']:
+            return cgi.escape(c['htmlchars'])
+        if c['lineend']:
+            return '<br>'
+        elif c['space']:
+            t = m.group().replace('\t', '&nbsp;'*tabstop)
+            t = t.replace(' ', '&nbsp;')
+            return t
+        elif c['space'] == '\t':
+            return ' '*tabstop;
+        else:
+            url = m.group('protocal')
+            if url.startswith(' '):
+                prefix = ' '
+                url = url[1:]
+            else:
+                prefix = ''
+            last = m.groups()[-1]
+            if last in ['\n', '\r', '\r\n']:
+                last = '<br>'
+            return '%s<a href="%s">%s</a>%s' % (prefix, url, url, last)
+    return re.sub(re_string, do_sub, text)
+
 
 @register.tag(name='wordpress_rss')
 def do_rss_latest(parser, token):
@@ -45,7 +80,6 @@ def do_rss_latest(parser, token):
     print("about to GetRSSLategest")
     return GetRSSLatest(category, number_of_items, var_name)
 
-
 class GetRSSLatest(template.Node):
     def __init__(self, category, number_of_items, var_name):
         self.category = template.Variable(category)
@@ -62,34 +96,81 @@ class GetRSSLatest(template.Node):
         except template.VariableDoesNotExist:
             return ''
         context[self.var_name] = []
-        feed_url = getattr(
-            settings,
-            'WORDPRESS_RSS_BASE_URL', 
-            'http://news.opensciencedatacloud.org'
-        )
+
+        if use_wordpress:
+            base_url = getattr(
+                settings,
+                'WORDPRESS_RSS_BASE_URL', 
+                'http://news.opensciencedatacloud.org'
+                )
+        else:
+            base_url = getattr(
+                settings,
+                'WORDPRESS_RSS_BASE_URL', 
+                'http://opencloudconsortium.org'
+                )
+            
+        feed_url = base_url + '/feed/'
+
         print("feed_url: %s" % feed_url)
 
         if actual_category is not None:
             feed_url += '/category/'
             feed_url += str(actual_category)
-
-        feed_url += '/feed/'
         
         print("feed_url: %s" % feed_url)
         d = feedparser.parse(feed_url)
-        for item in d.entries[:self.number_of_items]:
-            try:
-                publish_datetime = item.published_parsed
 
-                rss_item = {
-                    'title': item.title_detail['value'],
-                    'href': item.link,
-                    'content': mark_safe(item.content[0]['value']),
-                    'published': "%s/%s/%s" % (publish_datetime[0], publish_datetime[1], publish_datetime[2]),
-                    'author': item.author
-                }
+        for item in d.entries[:self.number_of_items]:
+
+            try:
+                # Use the wordpress feed entries
+                if use_wordpress:
+                    publish_datetime = item['published_parsed']
+
+                    rss_item = {
+                        'title': item.title_detail['value'],
+                        'href': item.link,
+                        'content': mark_safe(item.content[0]['value']),
+                        'published': "%s/%s/%s" % 
+                        (publish_datetime[0], publish_datetime[1], publish_datetime[2]),
+                        'author': item.author
+                        }
+                    
+                # Use rss feed entries
+                else:
+
+                    published = " ".join(item['published'].split()[:4])
+                    
+                    N_CONTENT_LINES = 10
+
+                    # format the content and add images
+                    content = item.summary.splitlines()
+                    content = ' '.join(content[:N_CONTENT_LINES])
+                    content = plaintext2html(content)
+                    url = item.title_detail                    
+                    print "URL: ", url
+                    if isinstance(url, basestring) and url != "":
+                        if "http" not in url:
+                            url = base_url + url
+                        style = "max-height: 170px; max-width: 190px; float:left; margin: 10px;"
+                        style += "padding: 5px; border-right:solid #00abc7; border-right-width:2px;"
+                        image = """<img style='%s' src='%s'>""" % (style, url)
+                        content = image+content
+                    content += """<a href="%s"><b> ... more ...</b></a>""" % item.id
+                    
+                    rss_item = {
+                        'title': item.title,
+                        'href': item.id,
+                        'content': mark_safe(content),
+                        'published': published,
+                        }
+                
                 context[self.var_name].append(rss_item)
+
             except AttributeError:
                 pass
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
         return ''
 

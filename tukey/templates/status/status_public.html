@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block meta_title %}Status{% endblock %}
-
 {% load util_tags %}
-{% block header %}
+{% block content %}
+<div class="maincontent">
 <header class="jumbotron subhead">
   <h1>OSDC Status</h1>
 </header>
 
-{% endblock %}
 
-{% block main %}
 {% for name in cloud_names %}
+<div id="{{name.split|join:"-"}}" class="cloud-section">
 <div class="span12 status-header">
 {% if not name|startswith:"OCC" %}
 <h3>OSDC-{{ name }}</h3>
@@ -25,20 +24,12 @@
 {% if update_times|getvalue:name == "None" %}
 <em>Status Unavailable</em>
 {% else %}
-<em>Status at {{ update_times|getvalue:name }} (CST)</em>
+<em>Status at {{ update_times|getvalue:name }} (CST) </em>
 {% endif %}
 </div>
 
-{% for v in status_data|getvalue:name %}
-<div class="row status-row">
-  <div class="span2 status-label">{{ v.0 }}</div>
-  <div class="span8 status-bound" id="{{ v.1 }}-bound">
-    <div class="status-used" id="{{ v.1 }}">&nbsp;</div>
-    <div class="status-total">{{ v.2|floatformat:0 }} / {{ v.3|floatformat:0 }} ({{ v.4|multiply:100|floatformat:0 }}%)</div>
-  </div>
-</div>
-{% endfor %}
 
+</div>
 {% endfor %}
 
 {% endblock %}
@@ -52,7 +43,24 @@ var statuswidth = $(boundselector).width() * percent;
 $(selector).width(statuswidth + "px");
 
 }
-
+function getData(){
+    $(".row.status-row").css("display","none");
+    var index=0;
+    var sections=$(".cloud-section")
+    {% for name in cloud_names %}
+        var data=[]
+    {% for v in status_data|getvalue:name %}
+        data.push({"key":"{{v.0}}", "value":"{{v.4}}" , "text":"{{v.2|floatformat:0}}/{{v.3|floatformat:0}} ({{v.4|multiply:100|floatformat:0}}%)"});
+    {% endfor %}
+        var element=$(sections[index]);
+        index++;
+        console.log(element);
+        chart=new BarChart(element,data);
+        chart.addText();
+        chart.addColor();
+    {% endfor %}
+}
+   
 $(document).ready(function() {
 
 $("#nav-status").attr('class', 'active')
@@ -62,7 +70,7 @@ $("#nav-status").attr('class', 'active')
 setstatuswidth("#{{ v.1 }}", "#{{ v.1 }}-bound", {{ v.4 }});
 {% endfor %}
 {% endfor %}
-
+    getData();
 });
 
 $(window).bind('resize', function() {
@@ -79,3 +87,4 @@ setstatuswidth("#{{ v.1 }}", "#{{ v.1 }}-bound", {{ v.4 }});
 
 </script>
 {% endblock %}
+</div>

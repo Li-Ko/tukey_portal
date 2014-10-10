@@ -1,6 +1,12 @@
-<div class="top-header">
-  <header class="jumbotron mainheader">
-    <p class="brand"> OSDC </p>
+{% load wordpress_rss %}
+{% wordpress_rss rss_category 10 as rss_results %}
+
+<div class="top-header" style="padding-top: 100px">
+    <div class='image-wrapper'>
+
+    </div>
+    <header class="jumbotron mainheader">
+    <img src='{{STATIC_URL}}dashboard/img/blue-logo.png' style="display:inline; height:80px"  class="brand" alt="OSDC"> </img>
     <p class="bold">OPEN SCIENCE </p>
     <p> DATA CLOUD</p>
   </header>
@@ -19,30 +25,43 @@
 </div>
 <div class="container">
   <div class="row intro-info ">
-   
-    <section class="block">
+    <section class="block intro white">
       <div class="maincontent">
-        <h2 class="sub-topic">How can I get involved?</h2>
-        <section class="left">
-          <h3><a href="/apply">Apply</a></h3>
-          <p>Fill out a short application for an OSDC resource allocation.   Allocations start at 16 dedicated cores and 1TB of storage, but scale depending on the project needs and level of organizational partnership.          </p>
-        </section>
-        <section class="right">
-          <h3><a href="http://opencloudconsortium.org/">Partner</a></h3>
-          <p>Partner with us and add your own racks to the OSDC (we will manage            them for you). Organizations can also join the <a href="http://opencloudconsortium.org/">Open Cloud Consortium (OCC)</a>            which is made up of working groups, including the OSDC.          </p>
-        </section>
-        <section class="left">
-          <h3><a href="https://github.com/opencloudconsortium/">Develop</a></h3>
-          <p>
-            All of the software developed as part of the OSDC is open source and hosted on GitHub.
-            You can directly help the scientific cloud computing community by contributing to the open source OSDC software stack.
-          </p>
-        </section>
-        <section class="right">
-          <h3><a href="mailto:info@opencloudconsortium.org">Contact Us</a></h3>
-          <p>Questions? Comments? Suggestions? Contact us at <a href="mailto:info@opencloudconsortium.org">info@opencloudconsortium.org.</a>
-        </section>
-      </section>
+        <h2 class="sub-topic">What is OSDC?
+          <a href="https://www.youtube.com/watch?v=LHbsS6znPOE">>> Watch a Video</a>
+        </h2>
+        <div class="content">
+        <p>The Open Science Data Cloud is one of the world's largest general purpose science clouds. It is designed to serve medium to large sized research projects by managing and operating a secure cloud computing infrastructure that can be shared across a project. This Science as a Service approach to research saves scientists and their funders valuable time and money. Medium to large sized research groups can rely on the OSDC team's expertise to build, manage, and operate their computing infrastructure in an easily scalable way. </p>
+        <p>The OSDC also has 1PB of <a href="https://www.opensciencedatacloud.org/publicdata/">public data</a> in a wide variety of disciplines,
+customizable and sharable user-driven images and snapshots for computing, connections to fast research networks, a user-friendly <a href="https://www.opensciencedatacloud.org/support/">support</a> page with
+video tutorials, and a friendly and fast support ticketing response system.        </p>
+       <p>Using the OSDC lets your team focus on what's important - <i>Research</i> and <i>Results!</i>  If your team is interested in learning more about purchasing a rack in the OSDC or using one of our existing resources, contact us
+at <a href="mailto:accounts@opensciencedatacloud.org">accounts@opensciencedatacloud.org</a>
+      </p> 
+      </div>
+      </div>
+    </section>
+    <section class="block news">
+      <h2 class="sub-topic">News </h2>
+      <table>
+        <tr>
+        {% for item in rss_results %}
+          <td class="news-item">
+            <div class="section-wrapper">
+              <div class="left-arrow"> <div><</div> </div>
+
+              <div class="news-box">
+                <h3><a href={{item.href}}>{{item.title}}</a></h3>
+                <div class="news-byline">{{item.published}}</div>
+                <p>{{item.content}}</p>
+              </div>
+              <div class="right-arrow"><div> ></div> </div>
+            </div>
+          </td>
+        {% endfor %}
+        </tr>
+      </table>
+    </section>
      <section class="block white">
        <div class="maincontent">
          <h2 class="sub-topic">Featured on the OSDC</h2>
@@ -97,6 +116,60 @@
           </div>
         </div>
       </section>
+      <section class="block">
+      <div class="maincontent">
+        <h2 class="sub-topic">How can I get involved?</h2>
+        <section class="left">
+          <h3><a href="/apply">Apply</a></h3>
+          <p>Fill out a short application for an OSDC resource allocation.   Allocations start at 16 dedicated cores and 1TB of storage, but scale depending on the project needs and level of organizational partnership.          </p>
+        </section>
+        <section class="right">
+          <h3><a href="http://opencloudconsortium.org/">Partner</a></h3>
+          <p>Partner with us and add your own racks to the OSDC (we will manage            them for you). Organizations can also join the <a href="http://opencloudconsortium.org/">Open Cloud Consortium (OCC)</a>            which is made up of working groups, including the OSDC.          </p>
+        </section>
+        <section class="left">
+          <h3><a href="https://github.com/opencloudconsortium/">Develop</a></h3>
+          <p>
+            All of the software developed as part of the OSDC is open source and hosted on GitHub.
+            You can directly help the scientific cloud computing community by contributing to the open source OSDC software stack.
+          </p>
+        </section>
+        <section class="right">
+          <h3><a href="mailto:info@opencloudconsortium.org">Contact Us</a></h3>
+          <p>Questions? Comments? Suggestions? Contact us at <a href="mailto:info@opencloudconsortium.org">info@opencloudconsortium.org.</a>
+        </section>
+      </section>
+
     </div>
   </div>
 </div>
+{% block additionalJs %}
+<script>
+window.onload=function(){
+    $(".brand").css("display","inline");
+    $(".top-header").css("background-position-y",$(".wrapper").css("margin-top"));
+    resizeNews();
+    $(".news table").offset({"left":0});
+    $(window).resize(resizeNews);
+    $(".left-arrow div").click(function(){
+        var news_table=$(".news table");
+        if (news_table.position().left<0){
+            var newLeft=news_table.position().left+$("body").width();
+            news_table.offset({"left":newLeft});
+        }
+    });
+    $(".right-arrow div").click(function(){
+        var news_table=$(".news table");
+        if (news_table.position().left+news_table.width()>$("body").width()+50){
+            var newLeft=news_table.position().left-$("body").width();
+            news_table.offset({"left":newLeft});
+        }
+    });
+};
+function resizeNews(){
+    var width=$("body").width();
+    $(".news").find("td").css("width",width);
+    $(".news").find("table").css("width",$(this).find("td").length*width);
+}
+</script>
+{% endblock %}

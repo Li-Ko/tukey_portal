@@ -11,10 +11,15 @@ from .forms import PageForm
 
 def page(request, slug=''):
     #slug can either be blank or contain \w and -, safe because from urls.py regex
+    #test index page
+    #nav_pages = Page.objects.order_by('nav_order')
+    if slug=="":
+        return render(request,'newIndex.html',{'rss_category': None})
+
     p = get_object_or_404(Page, pk=slug)
-    nav_pages = Page.objects.order_by('nav_order')
-    template = os.path.abspath(os.path.join(settings.ROOT_PATH, '..', 'tukey/templates/page.html'))
-    return render(request, 'content/page.html', {'content' : p, 'nav_pages' : nav_pages})
+    p=""
+    page = slug+".html"
+    return render(request, 'content/page.html', {'content' : p, 'page':page})
 
 @require_auth
 def content_admin(request):

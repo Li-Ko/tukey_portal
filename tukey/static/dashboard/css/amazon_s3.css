@@ -10,7 +10,9 @@
 }
 .amazon-info {
     position:relative;
+    height: 130px;
     z-index:100;
+    line-height: 25px;
 }
 .s3-wrapper a{
     background: #0197b0;

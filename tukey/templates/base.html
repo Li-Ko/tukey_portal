@@ -5,11 +5,13 @@
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
     <title>{% block title %}{% endblock %} - {% site_branding %}</title>
     {% include "horizon/_conf.html" %}
-    {% include "_stylesheets.html" %}
     {% include "horizon/client_side/_script_loader.html" %}
+    <link href='{{ STATIC_URL }}dashboard/css/osdc.css' type='text/css' rel='stylesheet' />  
     <link href='{{ STATIC_URL }}dashboard/css/custom.css' type='text/css' rel='stylesheet' />  
     {% block css %}
     {% endblock %}
+    <script type="text/javascript" src="{{STATIC_URL}}dashboard/js/jquery-2.1.0.min.js" charset="utf-8"></script>
+
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-34483848-1']);
@@ -76,10 +78,16 @@
         if (contains == true) {
           $("#nav-console").attr("class", "active");
         }
+        /*
         var height=$(".header-wrapper").height();
-        $(".wrapper").css("margin-top",height);
+        $(".wrapper").css("margin-top",height-1);
+        */
       });
     </script>
+    <script src="{{STATIC_URL}}dashboard/js/d3.min.js" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}dashboard/js/angular.min.js" charset="utf-8"></script>
+    <script src="{{STATIC_URL}}dashboard/js/chart.js" charset="utf-8"></script>
+
     {% block additionalJs %}
     {% endblock %}
    <div id="modal_wrapper"></div>

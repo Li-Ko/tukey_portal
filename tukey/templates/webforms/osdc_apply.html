@@ -6,7 +6,7 @@
 
 {% block header %}
 <header class="jumbotron subhead">
-  <h1>Apply for a OSDC Account</h1>
+  <h1>Apply for an OSDC Allocation</h1>
 </header>
 {% endblock %}
 
@@ -126,7 +126,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectname.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectname">Project Name*</label>
+      <label class="control-label" for="id_projectname">Title for Your Research*</label>
       <div class="controls">
         {{ form.projectname }}
         <span class="help-inline">{{form.projectname.errors}}</span>
@@ -134,7 +134,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectlead.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead">Project Lead*</label>
+      <label class="control-label" for="id_projectlead">Research Group Lead*</label>
       <div class="controls">
         {{ form.projectlead }}
         <span class="help-inline">{{form.projectlead.errors}}</span>
@@ -142,7 +142,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectlead_email.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead_email">Project Lead E-mail*</label>
+      <label class="control-label" for="id_projectlead_email">Research Group Lead E-mail*</label>
       <div class="controls">
         {{ form.projectlead_email }}
         <span class="help-inline">{{form.projectlead_email.errors}}</span>
@@ -150,7 +150,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectdescr.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectdescr">Brief Project Description*</label>
+      <label class="control-label" for="id_projectdescr">Description of Your Research (500 words of less - Public Abstract)*</label>
       <div class="controls">
         {{ form.projectdescr }}
         <span class="help-inline">{{form.projectdescr.errors}}</span>
@@ -158,8 +158,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.sharing.errors %}error{% endif %}">
-      <label class="control-label" for="id_sharing">If project requires sharing files or directories,
-        please list names of individuals needing access.</label>
+      <label class="control-label" for="id_sharing">Do you anticipate other new members of your group will need allocations</label>
       <div class="controls">
         {{ form.sharing }}
         <span class="help-inline">{{ form.sharing.errors }}</span>
@@ -203,7 +202,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 <!-- end if 1+ -->
 
     <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
-      <label class="control-label" for="id_referral_source">How did you hear about the OSDC?*</label>
+      <label class="control-label" for="id_referral_source">Specifically, How did you hear about the OSDC?*</label>
       <div class="controls">
         {{ form.referral_source }}
         <span class="help-inline">{{ form.referral_source.errors }}</span>

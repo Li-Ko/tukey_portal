@@ -4,19 +4,57 @@
     <div class="container">
       <div class="nav-collapse collapse">
         <ul class="nav">
-        {% for page in nav_pages %}
-        {% if not page.img and page.slug == curr_page %}
-        <li id="nav-{{ page.slug }}" class="active">
-        {% else %}
-        <li id="nav-{{ page.slug }}">
-        {% endif %}
-          {% if page.img %}
-          <a href="/{{ page.slug }}" id="nav-overview-a"><img src="{% get_static_prefix %}{{ page.img }}"></a>
-          {% else %}
-          <a href="/{{ page.slug }}">{{ page.nav_name }}</a>
-          {% endif %}
-        </li>
-        {% endfor %}
+          <li id = "nav-">
+            <a href="/" id ="nav-overview-a"><img src="{% get_static_prefix %}logo_sm.png"></a>
+          </li>
+          <li id = "nav-help">
+            <a href="#" id="help">help</a>
+            <ul> 
+              <li id="nav-support">
+                <a href="/support">documentation</a>
+              </li>
+              <li id="nav-ticket">
+                <a href="https://support.opensciencedatacloud.org/">ticketing system</a>
+              </li>
+            </ul>
+          </li>
+          <li id = "nav-pire">
+            <a href="/pire" id="pire">pire</a>
+          </li>
+          <li id = "nav-publicdata">
+            <a href="/publicdata" id="publicdata">public data</a>
+          </li>
+          <li id = "nav-clouds">
+            <a href="#" id="clouds">clouds</a>
+            <ul>
+              <li id ="nav-resources">
+                <a href="/systems">resources</a>
+              </li>
+              <li id="nav-status">
+                <a href="/status">Realtime Status</a>
+              </li>
+            </ul>
+          </li>
+          <li id = "nav-research">
+            <a href="#" id="research">research</a>
+            <ul>
+            <li id ="nav-publications">
+              <a href="/publications" id="publications">publications</a>
+            </li>
+            <li id="nav-projects">
+              <a href="/projects" id ="projects">large projects</a>
+            </li>
+            </ul>
+          </li>
+          <li id = "nav-apply">
+            <a href="/apply" id="apply">apply</a>
+          </li>
+
+          <li id = "nav-login">
+            <a href="/console" id="login">login</a>
+          </li>
+
+
         </ul>
       </div>
     </div>

@@ -17,14 +17,19 @@ News
 <div class="container">
 {% for item in rss_results %}
 <div class="span12 news-story">
-    <h2 style="text-decoration: underline">{{ item.title }}</h2>
-    <div class="news-byline">Posted on {{ item.published }} by {{ item.author }}</div>
+    <h2 style="text-decoration: underline">
+      <a href={{ item.href }}>
+	{{ item.title }}
+      </a>
+    </h2> 
+    <!-- <div class="news-byline">Posted on {{ item.published }} by {{ item.author }}</div> -->
+    <div class="news-byline">Posted on {{ item.published }}</div><br>
     <p>{{ item.content }}</p>
 </div>
 {% endfor %}
 </div>
 
-<h2><a href="http://news.opensciencedatacloud.org">News Archive</a></h2>
+<!-- <h2><a href="http://news.opensciencedatacloud.org">News Archive</a></h2> -->
 </div>
 
 {% endblock %}
