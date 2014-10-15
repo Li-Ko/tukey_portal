@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %} Amazon S3 {% endblock %}
+{% block css %}
+    <link href='{{ STATIC_URL }}dashboard/css/amazon_s3.css' type='text/css' media='screen' rel='stylesheet' />
+{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Amazon_s3") %}
+{% endblock %}
+{% block main %}
+<div class="s3-wrapper">
+<!--<div class="amazon-info" style="display: {%if userArn%} block{%else%} none {%endif%}"> -->
+  <div class="amazon-info" style="display:none">
+    <div class="title"> You are granted S3 bucket permission with following user:
+    </div>
+    <div class="user-arn">
+    {% if userArn %}
+        {{userArn}}
+    {% endif %}
+    </div>
+    <a href="#" class= "show-form"> Change to another amazon user </a>
+</div>
+<section class="token-session">
+  <div class="token-header">
+    <p> access key id </p>
+    <p> valid until </p>
+  </div>
+  {% for token in tokens %}
+
+  <div class="token-table">
+    <div>
+      <p class="temp-access-key">{{token.access_key}}</p>
+    </div>
+    <div style="display:none">
+      <p class="temp-secret-key">{{token.secret_key}}</p>
+    </div>
+    <div style="display:none">
+      <p class='session-token'>{{token.session_token}}</p>
+    </div>
+    <div>
+      <p class="valid-until">{{token.expiration}}</p>
+    </div>
+    <a class='download'>Download</a>
+  </div>
+  {% endfor %}
+  <div class="new token-table">
+    <div>
+      <p class="temp-access-key"></p>
+    </div>
+    <div style='display:none'>
+      <p class="temp-secret-key"></p>
+    </div>
+    <div style='display:none'>
+      <p class='session-token'></p>
+    </div>
+    <div>
+      <p class="valid-until"></p>
+    </div>
+    <a class='download'>Download</a>
+  </div>
+  <div class="role-token">
+    <a href="#" class="request-token">Get New Temporary Access Key </a>
+  </div>
+
+</section>
+<!--
+{% if not userArn %}
+<div class = "request-title">
+    Request permission to S3 bucket by supplying following information:
+</div>
+{% endif %}
+<form class="s3-request" method="post" action = "grantPermission"
+ {% if userArn %} style="display: none;opacity:0;margin-top:-12em"{%endif%}>
+    <div class="list">
+        <p class="form-label">access key id: </p>
+        <input type="text" name="accessKeyId">
+    </div>
+    <div class="list">
+        <p class="form-label">secret access key:  </p>
+        <input type="password" name="secretAccessKey">
+    </div>
+    <div class="list">
+        <p class="error-log"></p>
+        <a class = "label submit_S3_request" href="#">submit</a>
+    </div>
+{% csrf_token %}
+</form>
+-->
+</div>
+{% endblock %}
+
+
+{% block additionalJs %}
+<script id = 's3-request' type ='text/javascript' src= '{{STATIC_URL}}dashboard/js/aws.js'></script>
+<script id = "s3-request" type="text/javascript">
+$(".request-token").click(function(){
+    $.ajax({
+        type: "GET",
+        url:"getTempToken",
+        success:function(msg){
+            console.log("success");
+            console.log(msg);
+            if (msg.success){
+                $(".new.token-table .temp-access-key").text(msg.access_key);
+                $(".new.token-table .temp-secret-key").text(msg.secret_key);
+                $(".new.token-table .session-token").text(msg.session_token);
+                var time = parseTime(msg.expiration)
+                $(".valid-until").text(time.toString());
+                $("div.new.token-table").css("display","block");
+             }
+        },
+        error:function(msg){
+            console.log("error");
+            console.log(msg);
+        }
+    })
+});
+$(".submit_S3_request").click(function(){
+    $.ajax({
+        type: "POST",
+        url: "grantPermission",
+        data: $(".s3-request").serialize(),
+        success: function(msg){
+            console.log(msg);
+            console.log(msg.success);
+            if (msg.success == "False"){
+                $(".list").find(".error-log").text(msg.error);
+            }
+            else{
+                $(".amazon-info").css("display","block");
+                $(".request-title").css("display","none");
+                $(".s3-request").css({"opacity":"0", "margin-top":"-12em"});
+                $(".user-arn").text(msg.userArn);
+            }
+        },
+        error:function(msg){
+            console.log("fail");
+            console.log(msg);
+        }
+    });
+});
+       // $(".s3-request").submit();
+
+$(".show-form").click(function(){
+    $(".s3-request").css({"opacity":"1", "margin-top":"1.5em"});
+});
+</script>
+{% endblock %}
