@@ -10,6 +10,14 @@
 {% endblock %}
 {% block main %}
 <div class="s3-wrapper">
+{% if forbidden %}
+{{forbidden}}
+{{identifier}}
+{{meta}}
+<div class="forbidden message">
+You don't have access to the S3 bucket
+</div>
+{% else %}
 <!--<div class="amazon-info" style="display: {%if userArn%} block{%else%} none {%endif%}"> -->
   <div class="amazon-info" style="display:none">
     <div class="title"> You are granted S3 bucket permission with following user:
@@ -26,41 +34,21 @@
     <p> access key id </p>
     <p> valid until </p>
   </div>
+  <div class="token-tables">
   {% for token in tokens %}
 
   <div class="token-table">
-    <div>
       <p class="temp-access-key">{{token.access_key}}</p>
-    </div>
-    <div style="display:none">
-      <p class="temp-secret-key">{{token.secret_key}}</p>
-    </div>
-    <div style="display:none">
-      <p class='session-token'>{{token.session_token}}</p>
-    </div>
-    <div>
+      <p style= "display:none" class="temp-secret-key">{{token.secret_key}}</p>
+      <p style= "display:none" class='session-token'>{{token.session_token}}</p>
       <p class="valid-until">{{token.expiration}}</p>
-    </div>
     <a class='download'>Download</a>
   </div>
   {% endfor %}
-  <div class="new token-table">
-    <div>
-      <p class="temp-access-key"></p>
-    </div>
-    <div style='display:none'>
-      <p class="temp-secret-key"></p>
-    </div>
-    <div style='display:none'>
-      <p class='session-token'></p>
-    </div>
-    <div>
-      <p class="valid-until"></p>
-    </div>
-    <a class='download'>Download</a>
   </div>
   <div class="role-token">
     <a href="#" class="request-token">Get New Temporary Access Key </a>
+    <p class="error"></p>
   </div>
 
 </section>
@@ -87,6 +75,7 @@
 {% csrf_token %}
 </form>
 -->
+{% endif %}
 </div>
 {% endblock %}
 
@@ -100,14 +89,21 @@ $(".request-token").click(function(){
         url:"getTempToken",
         success:function(msg){
             console.log("success");
+            console.log(msg.success);
             console.log(msg);
-            if (msg.success){
-                $(".new.token-table .temp-access-key").text(msg.access_key);
-                $(".new.token-table .temp-secret-key").text(msg.secret_key);
-                $(".new.token-table .session-token").text(msg.session_token);
+            if (msg.success=="True"){
+                var table= $("<div>").addClass("token-table");
+                var tempKey = $("<p>").addClass("temp-access-key").text(msg.access_key);
+                var tempSecret =$("<p>").addClass("temp-secret-key").text(msg.secret_key);
+                var session = $("<p>").addClass("session-token").text(msg.session_token);
                 var time = parseTime(msg.expiration)
-                $(".valid-until").text(time.toString());
+                var expiration = $("<p>").addClass(".valid-until").text(time.toString());
+                table.append(tempKey).append(tempSecret).append(session).append(expiration);
+                $(".token-tables").append(table);
                 $("div.new.token-table").css("display","block");
+             }
+             else {
+                $(".error").text(msg.error);
              }
         },
         error:function(msg){

@@ -34,6 +34,18 @@
 }
 .role-token{
     margin-top:2em;
+    overflow:hidden;
+}
+.role-token p{
+    color: #C13232;
+    display:block;
+    float:right;
+    padding-right: 15px;
+}
+.role-token .request-token {
+    display:block;
+    float:right;
+    padding: 2px 15px;
 }
 a.request-token{
     line-height:30px;
@@ -51,16 +63,13 @@ a.request-token:hover{
     float:left;
     width:40%;
 }
-.new.token-table {
-    display:none;
-}
 .token-table {
     overflow: hidden;
 }
-.token-table div{
+.token-table p{
     color: gray;
 }
-.token-table>div{
+.token-table>p{
     display:block;
     float:left;
     width:40%;
