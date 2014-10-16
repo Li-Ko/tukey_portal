@@ -113,6 +113,14 @@ a:hover {
                     cursor:pointer;
                     padding:10px 5px;
                     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafafa), color-stop(100%,#f1f1f1)); 
+                    background: #fafafa; /* Old browsers */
+                    background: -moz-linear-gradient(top,  #fafafa 0%, #f1f1f1 100%); /* FF3.6+ */
+                    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafafa), color-stop(100%,#f1f1f1)); /* Chrome,Safari4+ */
+                    background: -webkit-linear-gradient(top,  #fafafa 0%,#f1f1f1 100%); /* Chrome10+,Safari5.1+ */
+                    background: -o-linear-gradient(top,  #fafafa 0%,#f1f1f1 100%); /* Opera 11.10+ */
+                    background: -ms-linear-gradient(top,  #fafafa 0%,#f1f1f1 100%); /* IE10+ */
+                    background: linear-gradient(to bottom,  #fafafa 0%,#f1f1f1 100%); /* W3C */
+
                     a{
                         border-bottom:0px !important;
                     }
@@ -135,8 +143,8 @@ a:hover {
                 }
             }
             .active a{
-                color: @dark-gray;
-                border-bottom: 1px solid @dark-gray !important;
+                color: black !important;
+                border-bottom: none !important;
                 background: none;
             }
             
@@ -163,7 +171,7 @@ a:hover {
     .top-header{
         position:relative;
         background-attachment: fixed;
-        background-size:1500px 500px;
+        background-size:1500px 571px;
         background-image:url("/static/dashboard/img/home/chicago-light.jpg");
         padding:80px 0px 80px 0px;
         color:white;
@@ -275,7 +283,7 @@ a:hover {
         width:100%;
         display:block;
         margin:auto;
-        overflow:scroll;
+        overflow:hidden;
         float:none;
         .maincontent{
             width:@row-width;
@@ -450,14 +458,17 @@ a:hover {
 #main-footer {
     height: initial;
     .modal-footer {
+        border-radius: 0px;
         margin-top:0px;
-        background:white;
+        //background:#353a4a;
+        background:#2F2F2F;
+        
         border-top:none;
         padding: 0px;
         .container{
             width: 80%;
             span {
-                color: @dark-gray;
+                color: @mid-gray;
             }
             img {
                 padding: 0px 10px;
@@ -465,6 +476,26 @@ a:hover {
             margin:auto;
             padding: 2em;
             text-align: center;
+            .links {
+                border-bottom: 1px dashed #4c4c4c;
+                padding-bottom: 2em;
+                >a{
+                    padding:0px 20px;
+                    color:@mid-gray;
+                }
+                >a:hover {
+                    color:white;
+                }
+            }
+            .visually-hidden{
+                display:none;
+            }
+            .footer-desc{
+                padding-top:2em;
+                a{
+                    color: #8BBCC4;
+                }
+            }
         }
     }
 }
@@ -490,6 +521,7 @@ a:hover {
     text-align:left;
     width:@row-width;
     margin:auto;
+    margin-top: 25px;
     .span12 {
         width:100%;
     }
@@ -508,5 +540,6 @@ a:hover {
     margin-left: 0px;
 }
 section {
-    overflow: scroll;
+    overflow: hidden;
 }
+
