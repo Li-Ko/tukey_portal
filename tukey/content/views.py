@@ -21,6 +21,10 @@ def page(request, slug=''):
     page = slug+".html"
     return render(request, 'content/page.html', {'content' : p, 'page':page})
 
+def publications(request):
+    page='publications.html'
+    return render(request,'content/page.html',{'content':'','page':page})
+
 @require_auth
 def content_admin(request):
     if request.user.has_perm("openstack.roles.tukeycontentadmin"):

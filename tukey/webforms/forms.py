@@ -7,9 +7,9 @@ class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         return mark_safe(html.replace('<ul>', '<ul class="foobar">'))
 
 SYSTEM_CHOICES = (
-    ('OSDC-Sullivan', 'Public OpenStack Cloud'),
+    ('OSDC-Sullivan', 'General Compute Cloud'),
    # ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud)'),
-   ('OSDC-Atwood', 'Protected OpenStack Cloud'),
+   ('OSDC-Atwood', 'Protected Compute Cloud'),
    # ('bionimbus_web', 'Bionimbus Web Portal'),
    # ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
     ('occ-y', 'Hadoop Cluster'),
@@ -52,6 +52,8 @@ class OSDCForm(forms.Form):
     storage = forms.ChoiceField(widget=forms.Select(attrs={'class' : 'span4'}), choices=STORAGE_CHOICES)
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
     pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
+    datadescr = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
+    agreeform=forms.BooleanField()
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
     #captcha = ReCaptchaField()
 

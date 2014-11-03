@@ -22,7 +22,7 @@ function BarChart(element, data){
 
     var yAxis = d3.svg.axis()
         .scale(y).orient("left");
-    var titleWidth=width/5;
+    var titleWidth=width/5+20;
     this.bars= this.svg.selectAll("g").data(data).enter().append("g")
                .attr("transform", function(d, i){return "translate("
                  +titleWidth +"," + i* barHeight + ")";});
@@ -35,6 +35,7 @@ function BarChart(element, data){
         attr("class","y axis").call(yAxis)
         .attr("transform", "translate(10,0)")
         .selectAll("text").style("text-anchor","inherit");
+    $(".y.axis .tick").css("width",titleWidth);
     $(this.svg[0]).find("path").css("display","none");
 
     this.addText=function(){

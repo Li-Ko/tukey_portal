@@ -52,17 +52,17 @@ def status_public(request):
     status_data = {}
 
     status_attrs = {
-        "cloud": [
-            ('Storage Used (GB): ', 'cluster'),
-            ('Active Users: ', 'users'), ('VM Instances: ', 'vms'),
-            ('VM Cores: ', 'cores'), ('VM RAM (GB): ', 'ram'),
-            ('VM Instance Storage (GB): ', 'ldisk')],
-        "map_reduce": [
-            ('HDFS Storage (GB): ', 'hdfsdu'),
-            ('Active Jobs: ', 'jobs'), ('Active Users: ', 'users')],
-        "storage" : [
-            ('Storage Used (GB): ', 'disk')]
-        }
+         "cloud": [
+         ('Storage Used/Available (GB): ', 'cluster'),
+         ('Total Active/Granted Allocations: ', 'users'),
+         ('VM Cores Used/Available: ', 'cores'), ('VM RAM Used/Available(GB): ', 'ram')],
+         "map_reduce": [
+            ('HDFS Storage Used/Available(GB): ', 'hdfsdu'),
+            ('Active/Available Jobs : ', 'jobs')],
+         "storage" : [
+                    ('Storage Used/Available (GB): ', 'disk')]
+}
+
 
     for cloud_name, cloud in settings.STATUS:
         if cloud["type"] == "storage":

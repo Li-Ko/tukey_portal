@@ -1,16 +1,6 @@
-{% extends "base.html" %}
-
-{% load i18n %}
-
-{% block meta_title %}{% trans "Sponsors" %}{% endblock %}
-
-{% block header %}
 <header class="jumbotron subhead">
   <h1>Sponsors</h1>
 </header>
-{% endblock %}
-
-{% block main %}
 <div class="span12">
 <p>
 Major funding and support for the Open Science Data Cloud is provided
@@ -48,14 +38,11 @@ OSDC (2008-2010).
 The OSDC is managed by the Open Cloud Consortium, a 501(c)(3)
 not-for-profit corporation. If you are interested in providing funding
 or donating equipment or services, please contact us at 
-<SCRIPT TYPE="text/javascript"> document.write('info' + '@' + 'opensciencedatacloud.org') </SCRIPT>.
+<a href="mailto:info@opencloudconsortium.org">info@opensciencedatacloud.org</a>
 </p>
 </div>
 
-{% endblock %}
-{% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
 $("#nav-overview").attr('class', 'active')
 </script>
-{% endblock %}

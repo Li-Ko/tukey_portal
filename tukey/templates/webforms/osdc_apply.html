@@ -4,14 +4,13 @@
 
 {% block meta_title %}OSDC Application{% endblock %}
 
-{% block header %}
+{% block content %}
+<div class='maincontent'>
 <header class="jumbotron subhead">
   <h1>Apply for an OSDC Allocation</h1>
 </header>
-{% endblock %}
 
-{% block main %}
-<div class="span10">
+<div class="span12">
 <p>
 Please fill out the form below for access to the Open Science Data Cloud. Once your application is submitted, a member of our team will be in touch regarding your application as soon as possible.
 </p>
@@ -60,7 +59,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 
 
     <div class="control-group {% if form.organization.errors %}error{% endif %}">
-      <label class="control-label" for="id_organization">Organization/University*</label>
+      <label class="control-label" for="id_organization">Organization /University*</label>
       <div class="controls">
         {{ form.organization }}
         <span class="help-inline">{{form.organization.errors}}</span>
@@ -94,6 +93,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     <div class="control-group control-group-min {% if form.systems.errors %}error{% endif %}">
       <label class="control-label" for="id_system">Access Requested*</label>
       <div class="controls">
+      <a href='/systems/#availableResources' target='_blank'>Which Resource is Right For Me?</a>
         {{ form.systems }}
         <span class="help-inline"><a href="https://bionimbus-pdc.opensciencedatacloud.org/apply">Apply for access to Bionimbus-PDC (requires dbGaP access to TCGA)</a>{{form.system.errors}}</span>
       </div>
@@ -150,7 +150,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectdescr.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectdescr">Description of Your Research (500 words of less - Public Abstract)*</label>
+      <label class="control-label" for="id_projectdescr">Description of Your Research (500 words or less - Public Abstract)*</label>
       <div class="controls">
         {{ form.projectdescr }}
         <span class="help-inline">{{form.projectdescr.errors}}</span>
@@ -200,11 +200,34 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       </div>
     </div>
 <!-- end if 1+ -->
+    <div class="control-group {% if form.datadescr.errors %}error{% endif %}">
+      <label class="control-label" for="id_datadescr">Please give us a little more information on how data intensive this project is and how, specifically, it would benefit from the compute and storage requested above* </label>
+      <div class="controls">
+        {{ form.datadescr }}
+        <span class="help-inline">{{ form.datadescr.errors }}</span>
+      </div>
+    </div>
 
     <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
       <label class="control-label" for="id_referral_source">Specifically, How did you hear about the OSDC?*</label>
       <div class="controls">
         {{ form.referral_source }}
+        <span class="help-inline">{{ form.referral_source.errors }}</span>
+      </div>
+    </div>
+    
+    <div class="control-group {% if form.agreeform.errors %}error{% endif %}">
+      <label class="control-label" for="id_agreeform">If my request for an OSDC resource allocation is approved, I agree to*</label>
+      <div class="controls">
+        <ul style='list-style:inherit; padding-left:18px;'>
+          <li>Make appropriate use of OSDC resources and use good social behavior (ie - terminating VMs when not in use).</li>
+          <li>Do not share ssh keys or login information - One user per resource allocation.</li>
+          <li><a href="https://www.opensciencedatacloud.org/support/citation.html" target="_blank">Cite</a> the OSDC in any papers and publications</li>
+          <li>Regularly respond to quarterly OSDC allocation surveys</li>
+          <li><span>Submit tickets to the <a href="https://support.opensciencedatacloud.org/index.php?/Core/Default/Index" target="_blank">OSDC support ticketing system</a></span> when encountering technical issues not covered by the <a href="https://www.opensciencedatacloud.org/support/" target="_blank">OSDC support documentation</a></li>
+        
+        </ul>
+        <p>{{ form.agreeform }}&nbsp; I agree to fulfill these expectations.&nbsp;</p>
         <span class="help-inline">{{ form.referral_source.errors }}</span>
       </div>
     </div>
@@ -216,6 +239,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
   </fieldset>
 </form>
+</div>
 </div>
 {% endblock %}
 

@@ -1,7 +1,7 @@
 {% load wordpress_rss %}
 {% wordpress_rss rss_category 10 as rss_results %}
 
-<div class="top-header" style="padding-top: 100px">
+<div class="top-header">
     <div class='image-wrapper'>
 
     </div>
@@ -12,37 +12,95 @@
   </header>
   <div class="row">
     <div class="span12 maincontent">
-      <h1>Cloud Services for the Scientific Community</h1>
+      <h1>A Petabyte-scale Scientific Community Cloud</h1>
       <h3>
-        The OSDC provides petabyte-scale cloud resources that let you easily analyze, manage, and share data.
+      The OSDC enables scientific researchers to easily manage, share, and analyze large datasets.
       </h3>
       <div class="btn-group">
-        <a href="/apply" class="btn-maincontent">Get Started Now</a>
-        <a href="/console" class="btn-mainlogin">Console Login</a>
+        <a href="/apply" class="btn-maincontent">New Users</a>
+        <a href="/console" class="btn-mainlogin">Returning Users</a>
       </div>
     </div>
   </div>
 </div>
 <div class="container">
   <div class="row intro-info ">
-    <section class="block intro white">
+    <section class="block intro">
       <div class="maincontent">
-        <h2 class="sub-topic">What is OSDC?
-          <a href="https://www.youtube.com/watch?v=LHbsS6znPOE">>> Watch a Video</a>
+        <h2 class="sub-topic">What is the OSDC?
+          <a href="https://www.youtube.com/watch?v=LHbsS6znPOE" target="_blank">>> Watch a Video</a>
         </h2>
         <div class="content">
-        <p>The Open Science Data Cloud is one of the world's largest general purpose science clouds. It is designed to serve medium to large sized research projects by managing and operating a secure cloud computing infrastructure that can be shared across a project. This Science as a Service approach to research saves scientists and their funders valuable time and money. Medium to large sized research groups can rely on the OSDC team's expertise to build, manage, and operate their computing infrastructure in an easily scalable way. </p>
-        <p>The OSDC also has 1PB of <a href="https://www.opensciencedatacloud.org/publicdata/">public data</a> in a wide variety of disciplines,
-customizable and sharable user-driven images and snapshots for computing, connections to fast research networks, a user-friendly <a href="https://www.opensciencedatacloud.org/support/">support</a> page with
-video tutorials, and a friendly and fast support ticketing response system.        </p>
-       <p>Using the OSDC lets your team focus on what's important - <i>Research</i> and <i>Results!</i>  If your team is interested in learning more about purchasing a rack in the OSDC or using one of our existing resources, contact us
-at <a href="mailto:accounts@opensciencedatacloud.org">accounts@opensciencedatacloud.org</a>
-      </p> 
+        <div class='left'>
+          <h3>OSDC in brief</h3>
+          <p>The Open Science Data Cloud provides the scientific community with resources for storing, sharing, and analyzing terabyte and petabyte-scale scientific datasets. The OSDC is a data science ecosystem in which researchers can house and share their own scientific data, access complementary public datasets, build and share customized virtual machines with whatever tools necessary to analyze their data, and perform the analysis to answer their research questions. It is a one-stop shop for making scientific research faster and easier.     </p> 
+        </div>
+        <div class='right'>
+          <h3> Why is there a need?</h3>
+        <p >With datasets growing larger and larger, researchers are finding that the bottleneck to discovery is no longer a lack of data but an inability to manage, analyze, and share their large datasets. Individual researchers can no longer download and analyze the important datasets in their scientific fields on their own computers. The goal of the Open Science Data Cloud is to remove the bottleneck to discovery by providing researchers with access to a variety of key datasets across scientific disciplines and the computing infrastructure to allow scientists to easily manage and share their data and analysis.<a href='/systems'>>> read more</a> </p>
       </div>
       </div>
     </section>
-    <section class="block news">
+    
+     <section class="block white">
+       <div class="maincontent">
+         <h2 class="sub-topic">Featured on the OSDC</h2>
+
+          <div class="item">
+            <a href="http://bionimbus.opensciencedatacloud.org" target="_blank">
+                <img src="/static/dashboard/img/home/genomic-cropped.jpeg" alt="Bionimbus">
+            </a>
+            <div class="carousel-caption">
+              <div class="title">
+                <a href="http://bionimbus.opensciencedatacloud.org" target="_blank">Bionimbus</a>
+              </div>
+              <p>
+                A cloud-based system for genomic data, developed in collaboration with the <a href="http://www.igsb.anl.gov/" target="_blank">Institute for Genomics and Systems Biology</a> at the <a href="http://www.uchicago.edu" target="_blank">University of Chicago</a>. Bionimbus is used by members of the NIH-funded <a href="http://www.modencode.org/" target="_blank">modENCODE Consortium</a> to analyze data produced by the project.</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <a href="http://matsu.opensciencedatacloud.org" target="_blank">
+                <img src="/static/dashboard/img/home/world-map-2-crop.png" alt="Project Matsu">
+            </a>
+            <div class="carousel-caption">
+              <div class="title">
+                <a href="http://matsu.opensciencedatacloud.org" target="_blank">Project Matsu</a>
+              </div>
+              <p> A collaboration with NASA to process <a href="http://eo1.gsfc.nasa.gov/" target="_blank">Earth Observing 1 (EO-1)</a> satellite imagery to detect fires and floods and provide relevant information to first responders. The data is freely available from the OSDC to interested users.</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <a href="http://github.com/LabAdvComp/" target="_blank">
+                <img src="/static/dashboard/img/home/john-tukey-crop.jpg" alt="Tukey">
+            </a>
+            <div class="carousel-caption">
+              <div class="title">
+              <a href="http://github.com/LabAdvComp/" target="_blank">Tukey</a>
+              </div>
+              <p>The open source software that drives the OSDC console, named after John Tukey, an American mathematician. Tukey has a number of features not found in other cloud console applications.</p>
+            </div>
+          </div>
+
+          <div class="item">
+            <a href="https://www.youtube.com/watch?v=LHbsS6znPOE" target="_blank">
+                <img src="/static/dashboard/img/home/center-crop.jpeg" alt="What is the OSDC?">
+            </a>
+            <div class="carousel-caption">
+              <div class="title">
+                <a href="https://www.youtube.com/watch?v=LHbsS6znPOE" target="_blank">OSDC Demo</a>
+              </div>
+              <p>Learn more about the OSDC in this short video featuring OSDC Founders and Partners at the 2013 Supercomputing Conference in Denver, Colorado.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    <div class='block news-wrapper'>
+      <div class="topic-wrapper">
       <h2 class="sub-topic">News </h2>
+      </div>
+    <section class="block news">
       <table>
         <tr>
         {% for item in rss_results %}
@@ -51,7 +109,7 @@ at <a href="mailto:accounts@opensciencedatacloud.org">accounts@opensciencedatacl
               <div class="left-arrow"> <div><</div> </div>
 
               <div class="news-box">
-                <h3><a href={{item.href}}>{{item.title}}</a></h3>
+                <h3><a href={{item.href}} target="_blank">{{item.title}}</a></h3>
                 <div class="news-byline">{{item.published}}</div>
                 <p>{{item.content}}</p>
               </div>
@@ -62,81 +120,48 @@ at <a href="mailto:accounts@opensciencedatacloud.org">accounts@opensciencedatacl
         </tr>
       </table>
     </section>
-     <section class="block white">
-       <div class="maincontent">
-         <h2 class="sub-topic">Featured on the OSDC</h2>
-
-          <div class="item">
-            <a href="http://bionimbus.opensciencedatacloud.org">
-                <img src="/static/dashboard/img/home/cloud-center-crop.jpg" alt="Bionimbus">
-            </a>
-            <div class="carousel-caption">
-              <div class="title">
-                <a href="http://bionimbus.opensciencedatacloud.org">Bionimbus</a>
-              </div>
-              <p>
-                A cloud-based system for genomic data, developed in collaboration with the <a href="http://www.igsb.anl.gov/">Institute for Genomics and Systems Biology</a> at the <a href="http://www.uchicago.edu">University of Chicago</a>. Bionimbus is used by members of the NIH-funded <a href="http://www.modencode.org/">modENCODE Consortium</a> to analyze data produced by the project.</p>
-            </div>
-          </div>
-
-          <div class="item">
-            <a href="http://matsu.opensciencedatacloud.org">
-                <img src="/static/dashboard/img/home/matsu-crop.jpg" alt="Project Matsu">
-            </a>
-            <div class="carousel-caption">
-              <div class="title">
-                <a href="http://matsu.opensciencedatacloud.org">Project Matsu</a>
-              </div>
-              <p> A collaboration with NASA to process <a href="http://eo1.gsfc.nasa.gov/">Earth Observing 1 (EO-1)</a> satellite imagery to detect fires and floods and provide relevant information to first responders. The data is freely available from the OSDC to interested users.</p>
-            </div>
-          </div>
-
-          <div class="item">
-            <a href="https://github.com/opencloudconsortium/">
-                <img src="/static/dashboard/img/home/john-tukey-crop.jpg" alt="Tukey">
-            </a>
-            <div class="carousel-caption">
-              <div class="title">
-              <a href="https://github.com/opencloudconsortium/">Tukey</a>
-              </div>
-              <p>The open source software that drives the OSDC console, named after John Tukey, an American mathematician. Tukey has a number of features not found in other cloud console applications.</p>
-            </div>
-          </div>
-
-          <div class="item">
-            <a href="https://www.youtube.com/watch?v=LHbsS6znPOE">
-                <img src="/static/dashboard/img/home/genomic-data-crop.jpg" alt="What is the OSDC?">
-            </a>
-            <div class="carousel-caption">
-              <div class="title">
-                <a href="https://www.youtube.com/watch?v=LHbsS6znPOE">OSDC Demo</a>
-              </div>
-              <p>Learn more about the OSDC in this short video featuring OSDC Founders and Partners at the 2013 Supercomputing Conference in Denver, Colorado.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="block">
+    </div>
+      <section class="block involved white">
       <div class="maincontent">
         <h2 class="sub-topic">How can I get involved?</h2>
+        <div class='row'>
         <section class="left">
-          <h3><a href="/apply">Apply</a></h3>
-          <p>Fill out a short application for an OSDC resource allocation.   Allocations start at 16 dedicated cores and 1TB of storage, but scale depending on the project needs and level of organizational partnership.          </p>
+          <h3>Use OSDC</h3>
+          <div>
+            <h3><a href='/publicdata' >Access the Public Data Commons</a></h3>
+            <p>The OSDC has 1 PB of publicly accessible data in a wide variety of disciplines.  Interested researchers can freely access and download these data to their own machines or apply for resources to compute over the data within the cloud.</p>
+          </div>
         </section>
         <section class="right">
-          <h3><a href="http://opencloudconsortium.org/">Partner</a></h3>
-          <p>Partner with us and add your own racks to the OSDC (we will manage            them for you). Organizations can also join the <a href="http://opencloudconsortium.org/">Open Cloud Consortium (OCC)</a>            which is made up of working groups, including the OSDC.          </p>
+          <h3>Contribute to OSDC</h3>
+          <div>
+            <h3><a href="https://github.com/LabAdvComp/" target="_blank">Develop</a></h3>
+            <p>
+              All of the software developed as part of the OSDC is open source and hosted on GitHub.
+              You can directly help the scientific cloud computing community by contributing to the open source OSDC software stack.
+            </p>
+          </div>
         </section>
-        <section class="left">
-          <h3><a href="https://github.com/opencloudconsortium/">Develop</a></h3>
-          <p>
-            All of the software developed as part of the OSDC is open source and hosted on GitHub.
-            You can directly help the scientific cloud computing community by contributing to the open source OSDC software stack.
-          </p>
+        </div>
+        <div class='row'>
+        <section class='left'>
+          <div>
+            <h3><a href="/apply" >Apply for Compute and Storage</a></h3>
+            <p>Fill out a short proposal for an OSDC resource allocation.   Allocations start at 16 dedicated cores and 1TB of storage, but scale depending on the project needs and level of organizational partnership.          </p>
+          </div>
         </section>
-        <section class="right">
-          <h3><a href="mailto:info@opencloudconsortium.org">Contact Us</a></h3>
-          <p>Questions? Comments? Suggestions? Contact us at <a href="mailto:info@opencloudconsortium.org">info@opencloudconsortium.org.</a>
+        <section class='right'>
+          <div>
+            <h3><a href="http://opencloudconsortium.org/" target="_blank">Partner</a></h3>
+            <p>Partner with us and add your own racks to the OSDC (we will manage            them for you). Organizations can also join the <a href="http://opencloudconsortium.org/" target="_blank">Open Cloud Consortium (OCC)</a>            which is made up of working groups, including the OSDC.          </p>
+          </div>
+        </section>
+        </div>
+        <section class='full'>
+          <div>
+            <h3>Contact Us</h3>
+            <p>Questions? Comments? Suggestions? Contact us at <a href="mailto:info@opencloudconsortium.org" target="_blank">info@opencloudconsortium.org.</a>
+          </div>
         </section>
       </section>
 
@@ -170,6 +195,8 @@ function resizeNews(){
     var width=$("body").width();
     $(".news").find("td").css("width",width);
     $(".news").find("table").css("width",$(this).find("td").length*width);
+    $(".top-header").css("background-size","1375px "+($(".header-wrapper").outerHeight()+$(".top-header").outerHeight()).toString()+"px");
+    
 }
 </script>
 {% endblock %}
