@@ -6,7 +6,7 @@
 
     </div>
     <header class="jumbotron mainheader">
-    <img src='{{STATIC_URL}}dashboard/img/blue-logo.png' style="display:inline; height:80px"  class="brand" alt="OSDC"> </img>
+    <img src='{{STATIC_URL}}dashboard/img/blue-logo.png'  class="brand" alt="OSDC"> </img>
     <p class="bold">OPEN SCIENCE </p>
     <p> DATA CLOUD</p>
   </header>
@@ -17,8 +17,8 @@
       The OSDC enables scientific researchers to easily manage, share, and analyze large datasets.
       </h3>
       <div class="btn-group">
-        <a href="/apply" class="btn-maincontent">New Users</a>
-        <a href="/console" class="btn-mainlogin">Returning Users</a>
+        <div><a href="/apply" class="btn-maincontent">New Users</a></div>
+        <div><a href="/console" class="btn-mainlogin">Returning Users</a></div>
       </div>
     </div>
   </div>
@@ -47,7 +47,7 @@
          <h2 class="sub-topic">Featured on the OSDC</h2>
 
           <div class="item">
-            <a href="http://bionimbus.opensciencedatacloud.org" target="_blank">
+            <a style="background-image:url('/static/dashboard/img/home/genomic-cropped.jpeg')"  href="http://bionimbus.opensciencedatacloud.org" target="_blank">
                 <img src="/static/dashboard/img/home/genomic-cropped.jpeg" alt="Bionimbus">
             </a>
             <div class="carousel-caption">
@@ -60,7 +60,7 @@
           </div>
 
           <div class="item">
-            <a href="http://matsu.opensciencedatacloud.org" target="_blank">
+            <a href="http://matsu.opensciencedatacloud.org" target="_blank" style='background-image:url("/static/dashboard/img/home/world-map-2-crop.png")'>
                 <img src="/static/dashboard/img/home/world-map-2-crop.png" alt="Project Matsu">
             </a>
             <div class="carousel-caption">
@@ -72,7 +72,7 @@
           </div>
 
           <div class="item">
-            <a href="http://github.com/LabAdvComp/" target="_blank">
+            <a class='tukey' href="http://github.com/LabAdvComp/" target="_blank" style="background-image:url('/static/dashboard/img/home/john-tukey-crop.jpg')">
                 <img src="/static/dashboard/img/home/john-tukey-crop.jpg" alt="Tukey">
             </a>
             <div class="carousel-caption">
@@ -84,7 +84,7 @@
           </div>
 
           <div class="item">
-            <a href="https://www.youtube.com/watch?v=LHbsS6znPOE" target="_blank">
+            <a href="https://www.youtube.com/watch?v=LHbsS6znPOE" target="_blank" style="background-image:url('static/dashboard/img/home/center-crop.jpeg')">
                 <img src="/static/dashboard/img/home/center-crop.jpeg" alt="What is the OSDC?">
             </a>
             <div class="carousel-caption">
@@ -100,20 +100,26 @@
       <div class="topic-wrapper">
       <h2 class="sub-topic">News </h2>
       </div>
+      <div class="left-arrow"> <div><</div> </div>
+      <div class="right-arrow"><div> ></div> </div>
+      <ul class='bullets'>
+        {% for item in rss_results %}
+        <li></li>
+        {% endfor %}
+      </ul>
+      
     <section class="block news">
       <table>
         <tr>
         {% for item in rss_results %}
           <td class="news-item">
             <div class="section-wrapper">
-              <div class="left-arrow"> <div><</div> </div>
 
               <div class="news-box">
                 <h3><a href={{item.href}} target="_blank">{{item.title}}</a></h3>
                 <div class="news-byline">{{item.published}}</div>
                 <p>{{item.content}}</p>
               </div>
-              <div class="right-arrow"><div> ></div> </div>
             </div>
           </td>
         {% endfor %}
@@ -169,34 +175,62 @@
   </div>
 </div>
 {% block additionalJs %}
+<script type='text/javascript' src='{{STATIC_URL}}dashboard/js/jquery.mobile.custom.min.js' charset='utf-8'></script>
 <script>
-window.onload=function(){
+$(window).ready(function(){
     $(".brand").css("display","inline");
     $(".top-header").css("background-position-y",$(".wrapper").css("margin-top"));
+    $(".news-wrapper").on("swipeleft",function(){
+        console.log("swipedleft");
+        $(".left-arrow div").click();
+    });
+    $(".news-wrapper").on("swiperight",function(){
+        console.log("swipedright");
+        $(".right-arrow div").click();
+    });
+    /** index of targeted news box ***/
+    index=0;
     resizeNews();
     $(".news table").offset({"left":0});
     $(window).resize(resizeNews);
     $(".left-arrow div").click(function(){
         var news_table=$(".news table");
         if (news_table.position().left<0){
+            index-=1;
+            resizeNewsHeight();
             var newLeft=news_table.position().left+$("body").width();
             news_table.offset({"left":newLeft});
         }
     });
     $(".right-arrow div").click(function(){
         var news_table=$(".news table");
-        if (news_table.position().left+news_table.width()>$("body").width()+50){
+        console.log(index);
+        if (index<{{rss_results|length}}-1){
+            index+=1;
+            resizeNewsHeight();
             var newLeft=news_table.position().left-$("body").width();
             news_table.offset({"left":newLeft});
         }
     });
-};
+});
+function resizeNewsHeight(){
+    targetBox=$($(".news-item")[index]).find(".section-wrapper");
+    console.log(targetBox);
+    $(".block.news").height(targetBox.innerHeight()+50);
+    /** highlight focused bullet **/
+    $(".focus").removeClass("focus");
+    $($(".bullets li")[index]).addClass("focus");
+
+}
 function resizeNews(){
-    var width=$("body").width();
-    $(".news").find("td").css("width",width);
-    $(".news").find("table").css("width",$(this).find("td").length*width);
+    var width=window.innerWidth;
+    $(".news-item").css("width",width);
+    var p =$("<p/>").text(parseInt($(".news").find("td").width())+" "+width);
+    var outerWidth=$(".news-item").length*width;
+    $(".news").find("table").css("width",outerWidth);
     $(".top-header").css("background-size","1375px "+($(".header-wrapper").outerHeight()+$(".top-header").outerHeight()).toString()+"px");
-    
+    setTimeout(resizeNewsHeight,500); 
+    //resizeNewsHeight();
 }
 </script>
 {% endblock %}

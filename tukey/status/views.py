@@ -55,9 +55,9 @@ def status_public(request):
          "cloud": [
          ('Storage Used/Available (GB): ', 'cluster'),
          ('Total Active/Granted Allocations: ', 'users'),
-         ('VM Cores Used/Available: ', 'cores'), ('VM RAM Used/Available(GB): ', 'ram')],
+         ('VM Cores Used/Available: ', 'cores'), ('VM RAM Used/Available (GB): ', 'ram')],
          "map_reduce": [
-            ('HDFS Storage Used/Available(GB): ', 'hdfsdu'),
+            ('HDFS Storage Used/Available (GB): ', 'hdfsdu'),
             ('Active/Available Jobs : ', 'jobs')],
          "storage" : [
                     ('Storage Used/Available (GB): ', 'disk')]

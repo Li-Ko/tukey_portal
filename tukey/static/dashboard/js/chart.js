@@ -22,7 +22,7 @@ function BarChart(element, data){
 
     var yAxis = d3.svg.axis()
         .scale(y).orient("left");
-    var titleWidth=width/5+20;
+    var titleWidth=width/5+60;
     this.bars= this.svg.selectAll("g").data(data).enter().append("g")
                .attr("transform", function(d, i){return "translate("
                  +titleWidth +"," + i* barHeight + ")";});

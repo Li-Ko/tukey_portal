@@ -3,15 +3,13 @@
 News
 {% endblock %}
 
-{% block header %}
+{% block content %}
 
-<div class="container">
+<div class="maincontent">
 <header class="jumbotron subhead">
     <h1>OSDC News</h1>
 </header>
-{% endblock %}
 
-{% block main %}
 {% load wordpress_rss %}
 {% wordpress_rss rss_category 10 as rss_results %}
 <div class="container">

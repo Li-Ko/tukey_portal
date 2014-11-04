@@ -3,6 +3,7 @@
 <html>
   <head>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}{% endblock %} - {% site_branding %}</title>
     {% include "horizon/_conf.html" %}
     {% include "horizon/client_side/_script_loader.html" %}
@@ -12,6 +13,7 @@
     {% block css %}
     {% endblock %}
     <script type="text/javascript" src="{{STATIC_URL}}dashboard/js/jquery-2.1.0.min.js" charset="utf-8"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}dashboard/js/jquery.mobile.custom.min.js' charset='utf-8'></script>
 
     <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -77,12 +79,32 @@
         var contains = regEx.test(url);
 
         if (contains == true) {
-          $("#nav-console").attr("class", "active");
+          $("#nav-console").addClass("active");
         }
-        /*
-        var height=$(".header-wrapper").height();
-        $(".wrapper").css("margin-top",height-1);
-        */
+        // click event of nav triggers openning of subnav
+        $(".first-level").click(function(){
+            var ul=$(this).find("ul");
+            if (ul.length>0){
+                if (ul.css("display")=='none'){
+                    ul.css("display","block");
+                }
+                else {ul.removeAttr("style");}
+            }
+        });
+        if ($(".nav-bars").css("display")=="block"){
+            var ul = $('.navs'); // reverse the order of navs
+            ul.children().each(function(i,li){ul.prepend(li)})
+        }
+        $(".nav-bars").click(function(){
+            var ul=$(".navs");
+            if (ul.length>0){
+                if (ul.css("display")=='none'){
+                    ul.css("display","block");
+                }
+                else {ul.removeAttr("style");}
+            }
+        });
+
       });
     </script>
     <script src="{{STATIC_URL}}dashboard/js/d3.min.js" charset="utf-8"></script>
