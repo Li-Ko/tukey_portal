@@ -29,6 +29,8 @@ def build_message(form):
     msg_list.append(form.cleaned_data['method'])
     msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
+    msg_list.append('\n\nStatus:\n')
+    msg_list.append(form.cleaned_data['status'])
 
     if form.cleaned_data['webpage'] != '':
         msg_list.append('\n\nWeb page:\n')
@@ -43,21 +45,28 @@ def build_message(form):
     msg_list.append('\n\nAccess Requested:\n')
     for item in form.cleaned_data['systems']:
         if item == 'OSDC-Sullivan':
-            msg_list.append('OSDC-Sullivan\n')
+            msg_list.append('General Compute Cloud\n')
         elif item == 'OSDC-Adler':
             msg_list.append('OSDC-Adler\n')
         elif item == 'OSDC-Atwood':
-            msg_list.append('OSDC-Atwood\n')
+            msg_list.append('Protected Compute Cloud\n')
         elif item == 'OSDC-Skidmore':
             msg_list.append('OSDC-Skidmore\n')
         elif item == 'occ-y':
-            msg_list.append('OCC-Y\n')
+            msg_list.append('Hadoop Cluster\n')
         elif item == 'bionimbus_cc':
             msg_list.append('Bionimbus Community Cloud\n')
         elif item == 'bionimbus_uchicago':
             msg_list.append('UChicago Bionimbus Cloud\n')
         elif item == 'matsu':
             msg_list.append('Matsu Testbed\n')
+
+        
+
+
+
+
+
 
     msg_list.append('\n\nProject Name:\n')
     msg_list.append(form.cleaned_data['projectname'])
@@ -84,9 +93,22 @@ def build_message(form):
     if form.cleaned_data['more_storage'] != "":
         msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
 
+    msg_list.append('\n\nInformation about how data intensive the project is:\n')
+    msg_list.append(form.cleaned_data['datadescr'])
+    msg_list.append('\n\n')
+    
     msg_list.append('\n\nHeard about OSDC from:\n')
     msg_list.append(form.cleaned_data['referral_source'])
     msg_list.append('\n\n')
+    
+    #agreement
+    msg_list.append('\nIf my request for an OSDC resource allocation is approved, I agree to:\n\n')
+    msg_list.append('    - Make appropriate use of OSDC resources and use good social behavior (ie - terminating VMs when not in use).\n')
+    msg_list.append('    - Do not share ssh keys or login information - One user per resource allocation.\n')
+    msg_list.append('    - Cite the OSDC in any papers and publications.\n')
+    msg_list.append('    - Regularly respond to quarterly OSDC allocation surveys.\n')
+    msg_list.append('    - Submit tickets to the OSDC support ticketing system when encountering technical issues not covered by the OSDC support documentation.\n\n')	 
+    
     return ''.join(msg_list)
 
 def osdc_apply(request, user=None):

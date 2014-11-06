@@ -190,11 +190,13 @@ $(window).ready(function(){
     index=0;
     resizeNews();
     setTimeout(resizeBanner,100); 
-    setTimeout(resizeNewsHeight,500); 
+    if ($(".nav-bars").css("display")=="block"){
+    	setTimeout(resizeNewsHeight,500); 
+    }
     $(".news table").offset({"left":0});
     $(window).resize(resizeNews);
-    var lastScrollLeft=$(".news").scrollLeft();
-    /*$(".news").on("scroll", function(){
+    /*var lastScrollLeft=$(".news").scrollLeft();
+    $(".news").on("scroll", function(){
       var difference=$(".news").scrollLeft()-lastScrollLeft;
       if (difference>10){
         $(".right-arrow div").click();
@@ -210,7 +212,9 @@ $(window).ready(function(){
         var news_table=$(".news table");
         if (news_table.position().left<0){
             index-=1;
-            resizeNewsHeight();
+            if ($(".nav-bars").css("display")=="block"){
+                resizeNewsHeight();
+	    }
             var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
         }
@@ -219,7 +223,9 @@ $(window).ready(function(){
         var news_table=$(".news table");
         if (index<{{rss_results|length}}-1){
             index+=1;
-            resizeNewsHeight();
+	    if ($(".nav-bars").css("display")=="block"){
+                resizeNewsHeight();
+	    }
             var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
         }
@@ -243,7 +249,9 @@ function resizeNews(){
     var p =$("<p/>").text(parseInt($(".news").find("td").width())+" "+width);
     var outerWidth=$(".news-item").length*width;
     $(".news").find("table").css("width",outerWidth);
+    if ($(".nav-bars").css("display")=="block"){
     resizeNewsHeight();
+    }
 }
 </script>
 {% endblock %}
