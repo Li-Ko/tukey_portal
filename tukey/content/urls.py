@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r'^content-admin/delete/(?P<slug>[-\w]*)/(?P<confirm>YES)/$', 'tukey.content.views.page_delete', name ="content-admin-delete"),
     url(r'^content-admin/delete/(?P<slug>[-\w]*)$', 'tukey.content.views.page_delete', name ="content-admin-delete"),
     url(r'^(?P<slug>[-\w]*)/$', 'tukey.content.views.page'),
-    #url(r'^(?P<slug>[-\w]*)$', 'tukey.content.views.page'),
+    #temp url for dev tukey
+    url(r'^publications$', 'tukey.content.views.publications'),
 )

@@ -1,37 +1,44 @@
 {% extends "base.html" %}
 
-{% block meta_title %}Public Data Sets{% endblock %}
+{% block meta_title %}Public Data Commons{% endblock %}
 
 {% load util_tags %}
 
-{% block header %}
+{% block content %}
+<div class="maincontent">
 <header class="jumbotron subhead">
-  <h1>Public Data Sets</h1>
+  <h1>Public Data Commons</h1>
   <div class="lead">
     Repository for public data sets of scientific interest, hosted on the OSDC.
     </div>
 <div class="data-lead">
-  The data sets below can downloaded over the internet or high performance networks such as Internet2, as well as computed over directly on the OSDC. Currently, the OSDC hosts about 700 TB of data and the plan is to steadily increase this to the petabyte level. If you have suggestions about data that should be included, please let us know at info@opencloudconsortium.org. 
+<div>
+  The OSDC has 1PB of <a href="https://www.opensciencedatacloud.org/publicdata/">public data</a>
+   in a wide variety of disciplines.&nbsp;&nbsp; These data sets are freely 
+   available and can be downloaded over the internet or high performance 
+   networks for analysis locally.&nbsp;&nbsp; Information on how to download can be found at the links below for each individual dataset.&nbsp;&nbsp; All recipients of OSDC resource 
+   allocations can also compute directly over the data in the Public Data 
+   Commons directly, without having to download them locally.&nbsp; Datasets hosted in the OSDC Public Data Commons are reviewed periodically as part of our <a href="https://www.opensciencedatacloud.org/support/intro.html#osdc-resource-allocations" target='_blank' >resource allocation process</a>.&nbsp;&nbsp; If you 
+   have suggestions about data that should be included, please let us know 
+   at <a href="mailto:info@opencloudconsortium.org" target="_blank">info@opencloudconsortium.org</a>.&nbsp;<wbr>&nbsp;
 </div>
 </header>
-{% endblock %}
 
 {% load tz %}
 
-{% block main %}
 
 {% if category_filter %}
-<h3>Viewing data sets in category: {{ category_filter }} (<a href="{% url datasets:datasets_list_index %}">View All</a>)</h3>
+<h3>Viewing data sets in category: {{ category_filter }} (<a href="{% url datasets:datasets_list_index %}" >View All</a>)</h3>
 {% endif %}
 
 {% if datasets %}
     {% for dataset in datasets %}
-      <div class="span12 data-header"><h3><a href="{% url datasets:datasets_list_index %}{{ dataset.slug }}">{{ titles|getvalue:dataset.slug }}</a></h3></div>
+      <div class="span12 data-header"><h3><a href="{% url datasets:datasets_list_index %}{{ dataset.slug }}" >{{ titles|getvalue:dataset.slug }}</a></h3></div>
       <div class="span12 data-entry">{{ short_descripts|getvalue:dataset.slug }}</div>
       <div class="span12 data-entry">Total Size: {{ sizes|getvalue:dataset.slug }}</div>
       <div class="span12 data-entry">Categories: 
 	   {% for category in categories|getvalue:dataset.slug %}
-        <a href="{% url datasets:datasets_category category %}">{{ category }}</a>{% if forloop.last %}{% else %}, {% endif %}
+        <a href="{% url datasets:datasets_category category %}" >{{ category }}</a>{% if forloop.last %}{% else %}, {% endif %}
 	   {% endfor %}
       </div>
       <div class="span12 data-faint">Last Modified: {% timezone "UTC" %} {{ modified_times|getvalue:dataset.slug }} {% endtimezone %}UTC </div>
@@ -44,6 +51,7 @@
 {% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-$("#nav-publicdata").attr('class', 'active')
+$("#nav-publicdata").addClass('active')
 </script> 
+</div>
 {% endblock %}

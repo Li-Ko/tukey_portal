@@ -1,11 +1,157 @@
-diff --git a/openstack_dashboard/dashboards/project/instances/workflows.py b/openstack_dashboard/dashboards/project/instances/workflows.py
-index d3a327b..9982599 100644
---- a/openstack_dashboard/dashboards/project/instances/workflows.py
-+++ b/openstack_dashboard/dashboards/project/instances/workflows.py
-@@ -183,6 +183,10 @@ class SetInstanceDetailsAction(workflows.Action):
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/panel.py openstack_dashboard/dashboards/project/amazon_s3/panel.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/panel.py	1969-12-31 18:00:00.000000000 -0600
++++ openstack_dashboard/dashboards/project/amazon_s3/panel.py	2014-09-19 12:15:43.747782966 -0500
+@@ -0,0 +1,13 @@
++from django.utils.translation import ugettext_lazy as _
++
++import horizon
++
++from openstack_dashboard.dashboards.project import dashboard
++
++
++class AmazonS3(horizon.Panel):
++    name = _("Amazon_s3")
++    slug = 'amazon_s3'
++
++
++dashboard.Project.register(AmazonS3)
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html	1969-12-31 18:00:00.000000000 -0600
++++ openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html	2014-09-19 12:15:43.747782966 -0500
+@@ -0,0 +1,13 @@
++{%extends 'base.html'%}
++{%load i18n %}
++{% block title %} Amazon S3 {% endblock %}
++
++{%block page_header %}
++    {%include "horizon/common/_page_header.html" with title=_("Amazon_s3") %}
++{% endblock page_header %}
++
++
++
++
++
++
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/urls.py openstack_dashboard/dashboards/project/amazon_s3/urls.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/urls.py	1969-12-31 18:00:00.000000000 -0600
++++ openstack_dashboard/dashboards/project/amazon_s3/urls.py	2014-09-19 12:15:43.747782966 -0500
+@@ -0,0 +1,27 @@
++# Copyright 2012 United States Government as represented by the
++# Administrator of the National Aeronautics and Space Administration.
++# All Rights Reserved.
++#
++# Copyright 2012 Nebula, Inc.
++#
++#    Licensed under the Apache License, Version 2.0 (the "License"); you may
++#    not use this file except in compliance with the License. You may obtain
++#    a copy of the License at
++#
++#         http://www.apache.org/licenses/LICENSE-2.0
++#
++#    Unless required by applicable law or agreed to in writing, software
++#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++#    License for the specific language governing permissions and limitations
++#    under the License.
++
++
++from django.conf.urls.defaults import url, patterns
++
++from . import views
++
++urlpatterns = patterns('openstack_dashboard.dashboards.project.overview.views',
++    url(r'^$',views.index , name='index'),
++    url(r'^grantPermission', views.grantPermission, name='grantPermission'),
++)
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/views.py openstack_dashboard/dashboards/project/amazon_s3/views.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/views.py	1969-12-31 18:00:00.000000000 -0600
++++ openstack_dashboard/dashboards/project/amazon_s3/views.py	2014-09-19 12:15:43.747782966 -0500
+@@ -0,0 +1,45 @@
++# vim: tabstop=4 shiftwidth=4 softtabstop=4
++
++# Copyright 2012 United States Government as represented by the
++# Administrator of the National Aeronautics and Space Administration.
++# All Rights Reserved.
++#
++# Copyright 2012 Nebula, Inc.
++#
++#    Licensed under the Apache License, Version 2.0 (the "License"); you may
++#    not use this file except in compliance with the License. You may obtain
++#    a copy of the License at
++#
++#         http://www.apache.org/licenses/LICENSE-2.0
++#
++#    Unless required by applicable law or agreed to in writing, software
++#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++#    License for the specific language governing permissions and limitations
++#    under the License.
++
++from django.http import HttpResponse
++import datetime
++from django.shortcuts import  render, render_to_response
++import json, requests
++from django.conf import settings
++def index(request):
++    identifier = request.META.get("REMOTE_USER")
++    data = json.dumps({"identifier": identifier})
++    headers = {'content-type':'application/json'}
++    r=requests.post('http://0.0.0.0:8774/aws/v0/isGranted', data=data, headers= headers)
++    response= json.loads(r.text) 
++    return render(request, "project/amazon_s3/s3.html",\
++        response)
++        
++        
++
++def grantPermission(request):
++    secreteAccessKey = request.POST['secreteAccessKey']
++    accessKeyId = request.POST['accessKeyId']
++    
++    data=json.dumps({"accessKeyId":accessKeyId, "secreteAccessKey":secreteAccessKey,\
++                     "identifier":request.META.get("REMOTE_USER")})
++    headers={'content-type':'application/json'}
++    r=requests.post("http://0.0.0.0:8774/aws/v0/", data=data, headers=headers)
++    return HttpResponse(r.text, content_type="application/json")
+Binary files /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/.views.py.swp and openstack_dashboard/dashboards/project/amazon_s3/.views.py.swp differ
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/dashboard.py openstack_dashboard/dashboards/project/dashboard.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/dashboard.py	2014-09-30 10:36:53.275385669 -0500
++++ openstack_dashboard/dashboards/project/dashboard.py	2014-09-17 13:44:10.935487684 -0500
+@@ -28,7 +28,8 @@ class BasePanels(horizon.PanelGroup):
+               'images_and_snapshots',
+               'access_and_security',
+               'networks',
+-              'routers')
++              'routers',
++              'amazon_s3')
+ 
+ 
+ class ObjectStorePanels(horizon.PanelGroup):
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py openstack_dashboard/dashboards/project/instances/urls.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py	2014-09-30 10:36:53.279385618 -0500
++++ openstack_dashboard/dashboards/project/instances/urls.py	2014-08-29 11:22:09.836970677 -0500
+@@ -21,6 +21,7 @@
+ from django.conf.urls.defaults import patterns, url
+ 
+ from .views import IndexView, UpdateView, DetailView, LaunchInstanceView
++from tukey.dashboards.project.instances.views import LaunchClusterView
+ 
+ 
+ INSTANCES = r'^(?P<instance_id>[^/]+)/%s$'
+@@ -30,6 +31,7 @@ VIEW_MOD = 'openstack_dashboard.dashboar
+ urlpatterns = patterns(VIEW_MOD,
+     url(r'^$', IndexView.as_view(), name='index'),
+     url(r'^launch$', LaunchInstanceView.as_view(), name='launch'),
++    url(r'^launch_cluster$', LaunchClusterView.as_view(), name='launch_cluster'),
+     url(r'^(?P<instance_id>[^/]+)/$', DetailView.as_view(), name='detail'),
+     url(INSTANCES % 'update', UpdateView.as_view(), name='update'),
+     url(INSTANCES % 'console', 'console', name='console'),
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py openstack_dashboard/dashboards/project/instances/workflows.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py	2014-09-30 10:36:53.279385618 -0500
++++ openstack_dashboard/dashboards/project/instances/workflows.py	2014-08-29 11:22:09.816970915 -0500
+@@ -183,6 +183,10 @@ class SetInstanceDetailsAction(workflows
                                 initial=1,
                                 help_text=_("Number of instances to launch."))
-
+ 
 +    cloud = forms.CharField(max_length=80, label=_("Cloud Name"))
 +    cloud.widget.attrs['readonly'] = True
 +
@@ -13,23 +159,36 @@ index d3a327b..9982599 100644
      class Meta:
          name = _("Details")
          help_text_template = ("project/instances/"
-diff --git a/openstack_dashboard/urls.py b/openstack_dashboard/urls.py
-index 64ef605..c3791ec 100644
---- a/openstack_dashboard/urls.py
-+++ b/openstack_dashboard/urls.py
-@@ -27,13 +27,32 @@ from django.conf.urls.static import static
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/test/.secret_key_store openstack_dashboard/test/.secret_key_store
+--- /home/ubuntu/horizon/openstack_dashboard/test/.secret_key_store	1969-12-31 18:00:00.000000000 -0600
++++ openstack_dashboard/test/.secret_key_store	2014-08-29 16:16:40.464326601 -0500
+@@ -0,0 +1 @@
++t16Z2IjAGMtmhlZA9miWXi8EEMjhG1T9u3ONRufL02nL3ZtreO5btzfutWxwVgyK
+\ No newline at end of file
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/urls.py openstack_dashboard/urls.py
+--- /home/ubuntu/horizon/openstack_dashboard/urls.py	2014-09-30 10:36:53.311385211 -0500
++++ openstack_dashboard/urls.py	2014-09-02 16:56:34.349847155 -0500
+@@ -21,19 +21,39 @@
+ """
+ URL patterns for the OpenStack Dashboard.
+ """
+-
++#django.conf.urls.defaults has been removed in Django 1.6
+ from django.conf.urls.defaults import patterns, url, include
++
+ from django.conf.urls.static import static
  from django.conf import settings
  from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+ 
 -import horizon
-
+ 
 +# do some monkey patching
 +from tukey.shibboleth_auth import patch_openstack_middleware_get_user
 +
 +patch_openstack_middleware_get_user()
 +
 +import horizon
-
+ 
  urlpatterns = patterns('',
 +
 +    url(r'^$', 'tukey.content.views.page', name='home'),
@@ -50,12 +209,12 @@ index 64ef605..c3791ec 100644
 -    url(r'', include(horizon.urls))
 +
  )
-
+ 
  # Development static app and project media serving using the staticfiles app.
-@@ -44,7 +63,16 @@ urlpatterns += staticfiles_urlpatterns()
+@@ -44,7 +64,16 @@ urlpatterns += staticfiles_urlpatterns()
  # path. Production media should NOT be served by Django.
  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+ 
 +
 +# content has to be last
 +
@@ -70,3 +229,29 @@ index 64ef605..c3791ec 100644
 +        url(r'', include('tukey.content.urls', namespace='content'))
 +    )
 +
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/views.py openstack_dashboard/views.py
+--- /home/ubuntu/horizon/openstack_dashboard/views.py	2014-09-30 10:36:53.311385211 -0500
++++ openstack_dashboard/views.py	2014-09-02 16:29:10.834731662 -0500
+@@ -19,7 +19,8 @@ from django.views.decorators import vary
+ 
+ import horizon
+ 
+-from openstack_auth.views import Login
++#Login changed to login
++from openstack_auth.views import login as Login
+ 
+ 
+ def get_user_home(user):
+diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi openstack_dashboard/wsgi/django.wsgi
+--- /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi	2014-09-30 10:36:20.947797107 -0500
++++ openstack_dashboard/wsgi/django.wsgi	2014-09-17 16:32:42.134801019 -0500
+@@ -8,6 +8,9 @@ from django.conf import settings
+ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
+ os.environ['DJANGO_SETTINGS_MODULE'] = 'openstack_dashboard.settings'
+ sys.stdout = sys.stderr
++activate_this = '/var/www/tukey/tukey-portal/.venv/bin/activate_this.py'
++execfile(activate_this, dict(__file__=activate_this))
++
+ 
+ DEBUG = False
+ 

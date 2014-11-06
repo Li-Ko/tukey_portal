@@ -7,14 +7,14 @@
 
 {% block content %}
 <div class="container">
-#   {% include 'osdc/shibboleth_openid_box.html' %}
+{% include 'osdc/shibboleth_openid_box.html' %}
 </div>
 {% endblock %}
 
 {% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-$("#nav-console").attr('class', 'active')
+$("#nav-console").addClass('active')
 </script>
 {% endblock %}
 

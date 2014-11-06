@@ -153,8 +153,8 @@ class GetRSSLatest(template.Node):
                     if isinstance(url, basestring) and url != "":
                         if "http" not in url:
                             url = base_url + url
-                        style = "max-height: 170px; max-width: 190px; float:left; margin: 10px;"
-                        style += "padding: 5px; border-right:solid #00abc7; border-right-width:2px;"
+                        style = "max-height: 170px; max-width: 190px; float:left; margin: 0px;"
+                        style += "padding-right: 15px; "
                         image = """<img style='%s' src='%s'>""" % (style, url)
                         content = image+content
                     content += """<a href="%s"><b> ... more ...</b></a>""" % item.id

@@ -2,7 +2,8 @@
 
 {% block meta_title %}Public Data Sets{% endblock %}
 
-{% block header %}
+{% block content %}
+<div class='maincontent'>
 <header class="jumbotron subhead">
   <h1>{{dataset.title}}</h1>
  
@@ -10,11 +11,9 @@
 {{dataset.description|safe}}
 </div>
 </header>
-{% endblock %}
 
 {% load tz %}
 
-{% block main %}
 
 <div class="span12 data-label"><strong>Source: </strong>
 {% if dataset.source %}
@@ -98,12 +97,12 @@ The public data sets are mounted on the starlight node under <code>/mnt/pubdata<
 <div class="span12">
 {{dataset.license|safe}}
 </div>
-
+</div>
 {% endblock %}
 
 {% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-$("#nav-publicdata").attr('class', 'active')
+$("#nav-publicdata").addClass('active')
 </script> 
 {% endblock %}

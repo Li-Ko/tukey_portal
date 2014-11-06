@@ -4,37 +4,13 @@
 
 {% block meta_title %}OSDC Application{% endblock %}
 
-
-{% block header %}
-{% endblock %}
-
-{% block main %}
-
-<div class="span10">
+{% block content %}
+<div class='maincontent'>
 <header class="jumbotron subhead">
-  <h3>OSDC Resource Availability and Allocation</h3>
-</header>
-<p>
-The Open Science Data Cloud has a very active community of BETA users and demand for OSDC services are growing. To help keep up with the demand for computing resources, we review active resource allocations on a quarterly basis and make sure that allocations are adequately distributed among projects based on scientific merit and/or established partnership status with the OSDC. This is done through a process of surveys to active recipients of OSDC resource allocations. 
-</p>
-<p>
-Resource allocation periods are generally for 3 months at a time and begin on January 1, April 1, July 1, October 1. All incoming applications for resources will be reviewed near one of these terms and are due on the 15th of the month prior (e.g., December 15th for the allocation period starting January 1st). During the survey process, a resource allocation extension can be requested if your research is not yet complete. 
-</p>
-<p>
-Recipients of OSDC resource allocations are expected to
-<ul>
-<li>Make appropriate use of OSDC resources and use good social behavior (ie - terminating VMs when not in use)</li>
-<li><a href="https://www.opensciencedatacloud.org/support/citation.html" target="_blank">Cite</a> the OSDC in any papers describing research</li>
-<li>Let us know about papers published when asked in surveys</li>
-</ul>
-</p>
-<header class="jumbotron subhead">
-  <h3>Apply for an OSDC Account</h3>
+  <h1>Apply for an OSDC Allocation</h1>
 </header>
 
-</div>
-
-<div class="span10">
+<div class="span12">
 <p>
 Please fill out the form below for access to the Open Science Data Cloud. Once your application is submitted, a member of our team will be in touch regarding your application as soon as possible.
 </p>
@@ -83,13 +59,21 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
 
 
     <div class="control-group {% if form.organization.errors %}error{% endif %}">
-      <label class="control-label" for="id_organization">Organization/University*</label>
+      <label class="control-label" for="id_organization">Organization /University*</label>
       <div class="controls">
         {{ form.organization }}
         <span class="help-inline">{{form.organization.errors}}</span>
       </div>
     </div>
-
+    
+    <div class="control-group {% if form.status.errors %}error{% endif %}">
+      <label class="control-label" for="id_status">Please select your status:*</label>
+      <div class="controls">
+        {{ form.status }}
+        <span class="help-inline">{{form.status.errors}}</span>
+      </div>
+    </div>
+    
     <div class="control-group {% if form.webpage.errors %}error{% endif %}">
       <label class="control-label" for="id_webpage">Web Page</label>
       <div class="controls">
@@ -117,6 +101,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     <div class="control-group control-group-min {% if form.systems.errors %}error{% endif %}">
       <label class="control-label" for="id_system">Access Requested*</label>
       <div class="controls">
+      <a href='/systems/#availableResources' target='_blank'>Which Resource is Right For Me?</a>
         {{ form.systems }}
         <span class="help-inline"><a href="https://bionimbus-pdc.opensciencedatacloud.org/apply">Apply for access to Bionimbus-PDC (requires dbGaP access to TCGA)</a>{{form.system.errors}}</span>
       </div>
@@ -149,7 +134,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectname.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectname">Project Name*</label>
+      <label class="control-label" for="id_projectname">Title for Your Research*</label>
       <div class="controls">
         {{ form.projectname }}
         <span class="help-inline">{{form.projectname.errors}}</span>
@@ -157,7 +142,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectlead.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead">Project Lead*</label>
+      <label class="control-label" for="id_projectlead">Research Group Lead*</label>
       <div class="controls">
         {{ form.projectlead }}
         <span class="help-inline">{{form.projectlead.errors}}</span>
@@ -165,7 +150,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectlead_email.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead_email">Project Lead E-mail*</label>
+      <label class="control-label" for="id_projectlead_email">Research Group Lead E-mail*</label>
       <div class="controls">
         {{ form.projectlead_email }}
         <span class="help-inline">{{form.projectlead_email.errors}}</span>
@@ -173,7 +158,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.projectdescr.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectdescr">Brief Project Description*</label>
+      <label class="control-label" for="id_projectdescr">Description of Your Research (500 words or less - Public Abstract)*</label>
       <div class="controls">
         {{ form.projectdescr }}
         <span class="help-inline">{{form.projectdescr.errors}}</span>
@@ -181,8 +166,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
 
     <div class="control-group {% if form.sharing.errors %}error{% endif %}">
-      <label class="control-label" for="id_sharing">If project requires sharing files or directories,
-        please list names of individuals needing access.</label>
+      <label class="control-label" for="id_sharing">Do you anticipate other new members of your group will need allocations</label>
       <div class="controls">
         {{ form.sharing }}
         <span class="help-inline">{{ form.sharing.errors }}</span>
@@ -224,11 +208,34 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       </div>
     </div>
 <!-- end if 1+ -->
+    <div class="control-group {% if form.datadescr.errors %}error{% endif %}">
+      <label class="control-label" for="id_datadescr">Please give us a little more information on how data intensive this project is and how, specifically, it would benefit from the compute and storage requested above* </label>
+      <div class="controls">
+        {{ form.datadescr }}
+        <span class="help-inline">{{ form.datadescr.errors }}</span>
+      </div>
+    </div>
 
     <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
-      <label class="control-label" for="id_referral_source">How did you hear about the OSDC?*</label>
+      <label class="control-label" for="id_referral_source">Specifically, How did you hear about the OSDC?*</label>
       <div class="controls">
         {{ form.referral_source }}
+        <span class="help-inline">{{ form.referral_source.errors }}</span>
+      </div>
+    </div>
+    
+    <div class="control-group {% if form.agreeform.errors %}error{% endif %}">
+      <label class="control-label" for="id_agreeform">If my request for an OSDC resource allocation is approved, I agree to*</label>
+      <div class="controls">
+        <ul style='list-style:inherit; padding-left:18px;'>
+          <li>Make appropriate use of OSDC resources and use good social behavior (ie - terminating VMs when not in use).</li>
+          <li>Do not share ssh keys or login information - One user per resource allocation.</li>
+          <li><a href="https://www.opensciencedatacloud.org/support/citation.html" target="_blank">Cite</a> the OSDC in any papers and publications</li>
+          <li>Regularly respond to quarterly OSDC allocation surveys</li>
+          <li><span>Submit tickets to the <a href="https://support.opensciencedatacloud.org/index.php?/Core/Default/Index" target="_blank">OSDC support ticketing system</a></span> when encountering technical issues not covered by the <a href="https://www.opensciencedatacloud.org/support/" target="_blank">OSDC support documentation</a></li>
+        
+        </ul>
+        <p>{{ form.agreeform }}&nbsp; I agree to fulfill these expectations.&nbsp;</p>
         <span class="help-inline">{{ form.referral_source.errors }}</span>
       </div>
     </div>
@@ -240,6 +247,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
     </div>
   </fieldset>
 </form>
+</div>
 </div>
 {% endblock %}
 
@@ -258,7 +266,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       }
     }
 
-    $("#nav-apply").attr('class', 'active');
+    $("#nav-apply").addClass('active');
     $("#id_systems_2").change(function() {
       true_toggle(".extra_occy", this.checked);
       true_toggle(".extra_pubkey", this.checked);
