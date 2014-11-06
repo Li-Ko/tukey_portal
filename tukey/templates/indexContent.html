@@ -1,12 +1,11 @@
 {% load wordpress_rss %}
 {% wordpress_rss rss_category 10 as rss_results %}
 
-<div class="top-header" title='banner-image' >
+<div class="top-header"  >
   <img class='background' src='{{STATIC_URL}}dashboard/img/home/chicago-dark.jpg'></img>
   <header class="jumbotron mainheader">
-    <img src='{{STATIC_URL}}dashboard/img/blue-logo.png'  class="brand" alt="OSDC"> </img>
-    <p class="bold">OPEN SCIENCE </p>
-    <p> DATA CLOUD</p>
+    <img src='{{STATIC_URL}}dashboard/img/OSDC_RGB_Horiz.svg'  class="brand" alt="OSDC"> </img>
+
   </header>
   <div class="row">
     <div class="span12 maincontent">
@@ -192,9 +191,11 @@ $(window).ready(function(){
     setTimeout(resizeBanner,100); 
     if ($(".nav-bars").css("display")=="block"){
     	setTimeout(resizeNewsHeight,500); 
+        $(".brand").attr("src","/static/dashboard/img/OSDC_RGB_Vert.svg");
     }
     $(".news table").offset({"left":0});
     $(window).resize(resizeNews);
+    highLight();
     /*var lastScrollLeft=$(".news").scrollLeft();
     $(".news").on("scroll", function(){
       var difference=$(".news").scrollLeft()-lastScrollLeft;
@@ -217,6 +218,7 @@ $(window).ready(function(){
 	    }
             var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
+            highLight();
         }
     });
     $(".right-arrow div").click(function(){
@@ -228,6 +230,7 @@ $(window).ready(function(){
 	    }
             var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
+            highLight();
         }
     });
 });
@@ -238,7 +241,10 @@ function resizeBanner(){
 function resizeNewsHeight(){
     targetBox=$($(".news-item")[index]).find(".section-wrapper");
     $(".block.news").height(targetBox.innerHeight()+50);
-    /** highlight focused bullet **/
+   
+}
+/** highlight focused bullet **/
+function highLight(){
     $(".focus").removeClass("focus");
     $($(".bullets li")[index]).addClass("focus");
 
