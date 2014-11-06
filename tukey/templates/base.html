@@ -13,6 +13,7 @@
     {% block css %}
     {% endblock %}
     <script type="text/javascript" src="{{STATIC_URL}}dashboard/js/jquery-2.1.0.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}dashboard/js/jquery.ba-throttle-debounce.min.js" ></script>
     <script type='text/javascript' src='{{STATIC_URL}}dashboard/js/jquery.mobile.custom.min.js' charset='utf-8'></script>
 
     <script type="text/javascript">
@@ -92,8 +93,19 @@
             }
         });
         if ($(".nav-bars").css("display")=="block"){
+            $(".first-level").off("hover");
             var ul = $('.navs'); // reverse the order of navs
             ul.children().each(function(i,li){ul.prepend(li)})
+            $(".first-level").click(function(){
+                var ul=$(this).find("ul");
+                if (ul.length>0){
+                    if (ul.hasClass("hide")){
+                        ul.removeClass("hide");
+                    }
+                    else {ul.addClass("hide")}
+                }
+        });
+
         }
         $(".nav-bars").click(function(){
             var ul=$(".navs");
@@ -101,7 +113,9 @@
                 if (ul.css("display")=='none'){
                     ul.css("display","block");
                 }
-                else {ul.removeAttr("style");}
+                else {
+                ul.css('display',"none");
+                }
             }
         });
 

@@ -1,11 +1,9 @@
 {% load wordpress_rss %}
 {% wordpress_rss rss_category 10 as rss_results %}
 
-<div class="top-header">
-    <div class='image-wrapper'>
-
-    </div>
-    <header class="jumbotron mainheader">
+<div class="top-header" title='banner-image' >
+  <img class='background' src='{{STATIC_URL}}dashboard/img/home/chicago-dark.jpg'></img>
+  <header class="jumbotron mainheader">
     <img src='{{STATIC_URL}}dashboard/img/blue-logo.png'  class="brand" alt="OSDC"> </img>
     <p class="bold">OPEN SCIENCE </p>
     <p> DATA CLOUD</p>
@@ -191,31 +189,48 @@ $(window).ready(function(){
     /** index of targeted news box ***/
     index=0;
     resizeNews();
+    setTimeout(resizeBanner,100); 
+    setTimeout(resizeNewsHeight,500); 
     $(".news table").offset({"left":0});
     $(window).resize(resizeNews);
+    var lastScrollLeft=$(".news").scrollLeft();
+    /*$(".news").on("scroll", function(){
+      var difference=$(".news").scrollLeft()-lastScrollLeft;
+      if (difference>10){
+        $(".right-arrow div").click();
+        lastScrollLeft=$(".news").scrollLeft();
+
+      }
+      else if (difference<-10){
+        $(".left-arrow div").click();
+        lastScrollLeft=$(".news").scrollLeft();
+      }
+    });*/
     $(".left-arrow div").click(function(){
         var news_table=$(".news table");
         if (news_table.position().left<0){
             index-=1;
             resizeNewsHeight();
-            var newLeft=news_table.position().left+$("body").width();
+            var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
         }
     });
     $(".right-arrow div").click(function(){
         var news_table=$(".news table");
-        console.log(index);
         if (index<{{rss_results|length}}-1){
             index+=1;
             resizeNewsHeight();
-            var newLeft=news_table.position().left-$("body").width();
+            var newLeft=-index*$("body").width();
             news_table.offset({"left":newLeft});
         }
     });
 });
+function resizeBanner(){
+    $(".top-header").css("background-size","1375px "+($(".header-wrapper").outerHeight()+$(".top-header").outerHeight()).toString()+"px");
+
+}
 function resizeNewsHeight(){
     targetBox=$($(".news-item")[index]).find(".section-wrapper");
-    console.log(targetBox);
     $(".block.news").height(targetBox.innerHeight()+50);
     /** highlight focused bullet **/
     $(".focus").removeClass("focus");
@@ -228,9 +243,7 @@ function resizeNews(){
     var p =$("<p/>").text(parseInt($(".news").find("td").width())+" "+width);
     var outerWidth=$(".news-item").length*width;
     $(".news").find("table").css("width",outerWidth);
-    $(".top-header").css("background-size","1375px "+($(".header-wrapper").outerHeight()+$(".top-header").outerHeight()).toString()+"px");
-    setTimeout(resizeNewsHeight,500); 
-    //resizeNewsHeight();
+    resizeNewsHeight();
 }
 </script>
 {% endblock %}

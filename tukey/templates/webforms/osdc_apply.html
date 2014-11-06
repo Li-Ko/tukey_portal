@@ -65,7 +65,15 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
         <span class="help-inline">{{form.organization.errors}}</span>
       </div>
     </div>
-
+    
+    <div class="control-group {% if form.status.errors %}error{% endif %}">
+      <label class="control-label" for="id_status">Please select your status:*</label>
+      <div class="controls">
+        {{ form.status }}
+        <span class="help-inline">{{form.status.errors}}</span>
+      </div>
+    </div>
+    
     <div class="control-group {% if form.webpage.errors %}error{% endif %}">
       <label class="control-label" for="id_webpage">Web Page</label>
       <div class="controls">

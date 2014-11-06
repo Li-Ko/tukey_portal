@@ -26,7 +26,16 @@ STORAGE_CHOICES = (
 	('lte1', '1 terabyte or less'),
 	('1plus', 'More than 1 terabyte'),
 )
+STATUS_CHOICE = (
+    ('undergraduate','Undergraduate student'),
+    ('graduate','Graduate student'),
+    ('postdoc','Postdoc'),
+    ('faculty','Faculty'),
+    ('otherAcademic','Other academic staff'),
+    ('privateSector','Private sector'),
+    ('other','Other'),
 
+)
 class OSDCForm(forms.Form):
     first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
     last_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
@@ -39,6 +48,7 @@ class OSDCForm(forms.Form):
     webpage = forms.CharField(max_length=200,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     phonenumber = forms.CharField(max_length=100,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     address = forms.CharField(required=False,widget=forms.Textarea(attrs={'class' : 'span4', 'rows' : '4'}))
+    status = forms.ChoiceField(widget=forms.Select(attrs={'class':'span4'}),choices=STATUS_CHOICE) 
     projectname = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
     projectlead = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
     projectlead_email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
