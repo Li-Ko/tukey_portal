@@ -478,7 +478,7 @@ a:hover {
     }
     .left-arrow, .right-arrow{
             position:absolute;
-            top:150px;
+            top:170px;
             z-index:100;
             div {
             text-align:center;
@@ -724,10 +724,13 @@ section {
     }
     .row.intro-info .right-arrow div,.row.intro-info .left-arrow div{
         color:white;
-        background:#ccc;
+        background:fade(#ccc,50%);
         width:50px;
         height:50px;
         padding-top:13px;
+    }
+    .row.intro-info .right-arrow div:hover,.row.intro-info .left-arrow div:hover{
+        background:fade(#ccc,50%);
     }
     .row.intro-info .block .item{
         position:relative;
