@@ -7,7 +7,7 @@
   <h1>OSDC Status</h1>
 </header>
 
-
+<div class='cloud-wrapper'>
 {% for name in cloud_names %}
 <div id="{{name.split|join:"-"}}" class="cloud-section">
 <div class="span12 status-header">
@@ -31,7 +31,7 @@
 
 </div>
 {% endfor %}
-
+</div>
 {% endblock %}
 
 {% block js %}
