@@ -1,4 +1,4 @@
-import re, os
+import re, os,requests
 from tukey.content.models import Page
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,7 +15,6 @@ def page(request, slug=''):
     #nav_pages = Page.objects.order_by('nav_order')
     if slug=="":
         return render(request,'newIndex.html',{'rss_category': None})
-
     p = get_object_or_404(Page, pk=slug)
     p=""
     page = slug+".html"
@@ -23,7 +22,13 @@ def page(request, slug=''):
 
 def publications(request):
     page='publications.html'
-    return render(request,'content/page.html',{'content':'','page':page})
+    try:
+        response=requests.get(settings.PUBLICATION_URL)
+        text=u'<ul' + response.text.split(u'<ul')[1]  
+        text=text.replace(u'</body></html>','')
+    except Exception as e:
+        text=str(e)
+    return render(request,'content/page.html',{'content':text,'page':page})
 
 @require_auth
 def content_admin(request):
