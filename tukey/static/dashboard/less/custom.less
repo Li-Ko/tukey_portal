@@ -354,13 +354,27 @@ a:hover {
                 background-size:cover;
                 background-position:center center;
                 height:100%;
+                position:relative;
                 img{
-                    filter: grayscale(100%);
-                    -webkit-filter: brightness(0.7) grayscale(1);
-                    transition:0.5s;
                     height:100%;
                     width:100%;
                 }
+                .mask{
+                    filter: grayscale(100%);
+                    filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='grayscale'><feColorMatrix type='matrix' values='0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0'/></filter><filter id='brightness'><feComponentTransfer><feFuncR type='linear' slope='0.70'/><feFuncG type='linear' slope='0.70'/><feFuncB type='linear' slope='0.70'/></feComponentTransfer></filter></svg>#grayscale");
+                    -webkit-filter:  grayscale(1);
+                    transition:0.5s;
+                    position: absolute;
+                    opacity:1;
+                    left: 0px;
+                    top: 0px;
+                }
+                .gray{
+                    background-color:rgba(0,0,0,0.2);
+                    height:100%;
+                    width:100%;
+                }
+
             }
             .tukey {
                 background-position-x:left;
@@ -393,9 +407,8 @@ a:hover {
         }
         
         .item:hover {
-            img{
-                    filter: inherit;
-                    -webkit-filter: inherit;
+            .mask{
+                opacity:0;    
             }
             .carousel-caption {
                 background:@light-gray;
