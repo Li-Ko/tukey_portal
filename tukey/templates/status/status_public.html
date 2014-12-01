@@ -43,6 +43,15 @@ var statuswidth = $(boundselector).width() * percent;
 $(selector).width(statuswidth + "px");
 
 }
+function intToString (value) {
+     suffixes = ["", "k", "m", "b","t"];
+     console.log(value);
+     suffixNum = Math.floor(((""+value).length-1)/3);
+     shortValue = parseFloat((suffixNum != 0 ? (value / Math.pow(1000,suffixNum)) : value).toPrecision(2));
+    if (shortValue % 1 != 0)  shortNum = shortValue.toFixed(1);
+    return shortValue+suffixes[suffixNum];
+}
+
 function getData(){
     $(".row.status-row").css("display","none");
     var index=0;
@@ -50,7 +59,7 @@ function getData(){
     {% for name in cloud_names %}
         var data=[]
     {% for v in status_data|getvalue:name %}
-        data.push({"key":"{{v.0}}", "value":"{{v.4}}" , "text":"{{v.2|floatformat:0}}/{{v.3|floatformat:0}} ({{v.4|multiply:100|floatformat:0}}%)"});
+        data.push({"key":"{{v.0}}", "value":"{{v.4}}" , "text":intToString({{v.2|floatformat:0}})+"/"+intToString({{v.3|floatformat:0}})+" ({{v.4|multiply:100|floatformat:0}}%)"});
     {% endfor %}
         var element=$(sections[index]);
         index++;

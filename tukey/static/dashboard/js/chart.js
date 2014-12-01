@@ -13,7 +13,7 @@ function BarChart(element, data){
     this.height=barHeight* data.length;
     this.svg=this.parent.append("svg").attr("width", width)
               .attr("height", this.height);
-    var padding=200; 
+    var padding=300; 
     var x = d3.scale.linear().domain([0, 1])
             .range([5,width-padding]);
 
