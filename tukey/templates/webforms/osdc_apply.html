@@ -67,6 +67,14 @@ For more in-depth instructions on getting the right access credentials, please r
       </div>
     </div>
 
+    <div class="control-group {% if form.status.errors %}error{% endif %}">
+      <label class="control-label" for="id_status">Please select your status:*</label>
+      <div class="controls">
+        {{ form.status }}
+        <span class="help-inline">{{form.status.errors}}</span>
+      </div>
+    </div>
+
     <div class="control-group {% if form.webpage.errors %}error{% endif %}">
       <label class="control-label" for="id_webpage">Web Page</label>
       <div class="controls">
@@ -92,7 +100,7 @@ For more in-depth instructions on getting the right access credentials, please r
     </div>
 
     <div class="control-group {% if form.projectname.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectname">Project Name*</label>
+      <label class="control-label" for="id_projectname">Title for Your Research*</label>
       <div class="controls">
         {{ form.projectname }}
         <span class="help-inline">{{form.projectname.errors}}</span>
@@ -100,7 +108,7 @@ For more in-depth instructions on getting the right access credentials, please r
     </div>
 
     <div class="control-group {% if form.projectlead.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead">Project Lead*</label>
+      <label class="control-label" for="id_projectlead">Research Group Lead*</label>
       <div class="controls">
         {{ form.projectlead }}
         <span class="help-inline">{{form.projectlead.errors}}</span>
@@ -108,7 +116,7 @@ For more in-depth instructions on getting the right access credentials, please r
     </div>
 
     <div class="control-group {% if form.projectlead_email.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectlead_email">Project Lead E-mail*</label>
+      <label class="control-label" for="id_projectlead_email">Research Group Lead E-mail*</label>
       <div class="controls">
         {{ form.projectlead_email }}
         <span class="help-inline">{{form.projectlead_email.errors}}</span>
@@ -116,7 +124,7 @@ For more in-depth instructions on getting the right access credentials, please r
     </div>
 
     <div class="control-group {% if form.projectdescr.errors %}error{% endif %}">
-      <label class="control-label" for="id_projectdescr">Brief Project Description*</label>
+      <label class="control-label" for="id_projectdescr">Description of Your Research (500 words or less - Public Abstract)*</label>
       <div class="controls">
         {{ form.projectdescr }}
         <span class="help-inline">{{form.projectdescr.errors}}</span>
@@ -124,13 +132,13 @@ For more in-depth instructions on getting the right access credentials, please r
     </div>
 
     <div class="control-group {% if form.sharing.errors %}error{% endif %}">
-      <label class="control-label" for="id_sharing">If project requires sharing files or directories,
-        please list names of individuals needing access.</label>
+      <label class="control-label" for="id_sharing">Do you anticipate other new members of your group will need allocations</label>
       <div class="controls">
         {{ form.sharing }}
         <span class="help-inline">{{ form.sharing.errors }}</span>
       </div>
     </div>
+
 
     <div class="control-group cpus {% if form.cpus.errors %}error{% endif %}">
       <label class="control-label" for="id_cpus">Estimate of CPUs required*</label>
@@ -167,14 +175,38 @@ For more in-depth instructions on getting the right access credentials, please r
       </div>
     </div>
 <!-- end if 1+ -->
+    <div class="control-group {% if form.datadescr.errors %}error{% endif %}">
+      <label class="control-label" for="id_datadescr">Please give us a little more information on how data intensive this project is and how, specifically, it would benefit from the compute and storage requested above* </label>
+      <div class="controls">
+        {{ form.datadescr }}
+        <span class="help-inline">{{ form.datadescr.errors }}</span>
+      </div>
+    </div>
 
     <div class="control-group {% if form.referral_source.errors %}error{% endif %}">
-      <label class="control-label" for="id_referral_source">How did you hear about the Bionimbus PDC?*</label>
+      <label class="control-label" for="id_referral_source">Specifically, How did you hear about the Bionimbus PDC?*</label>
       <div class="controls">
         {{ form.referral_source }}
         <span class="help-inline">{{ form.referral_source.errors }}</span>
       </div>
     </div>
+
+    <div class="control-group {% if form.agreeform.errors %}error{% endif %}">
+      <label class="control-label" for="id_agreeform">If my request for an PDC resource allocation is approved, I agree to*</label>
+      <div class="controls">
+        <ul style='list-style:inherit; padding-left:18px;'>
+          <li>Make appropriate use of PDC resources and use good social behavior (ie - terminating VMs when not in use).</li>
+          <li>Do not share ssh keys or login information - One user per resource allocation.</li>
+          <li><a href="https://www.opensciencedatacloud.org/support/citation.html" target="_blank">Cite</a> the PDC in any papers and publications</li>
+          <li>Regularly respond to quarterly PDC allocation surveys</li>
+          <li><span>Submit tickets to the <a href="https://support.opensciencedatacloud.org/index.php?/Core/Default/Index" target="_blank">support ticketing system</a></span> when encountering technical issues not covered by the <a href="https://www.opensciencedatacloud.org/support/pdc.html" target="_blank">PDC support documentation</a></li>
+
+        </ul>
+        <p>{{ form.agreeform }}&nbsp; I agree to fulfill these expectations.&nbsp;</p>
+        <span class="help-inline">{{ form.referral_source.errors }}</span>
+      </div>
+    </div>
+
 
     <div class="control-group">
       <div class="controls">

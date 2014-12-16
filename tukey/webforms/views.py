@@ -65,9 +65,22 @@ def build_message(form):
     if form.cleaned_data['more_storage'] != "":
         msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
 
+    msg_list.append('\n\nInformation about how data intensive the project is:\n')
+    msg_list.append(form.cleaned_data['datadescr'])
+    msg_list.append('\n\n')
+
     msg_list.append('\n\nHeard about PDC from:\n')
     msg_list.append(form.cleaned_data['referral_source'])
     msg_list.append('\n\n')
+
+    #agreement
+    msg_list.append('\nIf my request for an PDC resource allocation is approved, I agree to:\n\n')
+    msg_list.append('    - Make appropriate use of PDC resources and use good social behavior (ie - terminating VMs when not in use).\n')
+    msg_list.append('    - Do not share ssh keys or login information - One user per resource allocation.\n')
+    msg_list.append('    - Cite the PDC in any papers and publications.\n')
+    msg_list.append('    - Regularly respond to quarterly PDC allocation surveys.\n')
+    msg_list.append('    - Submit tickets to the PDC support ticketing system when encountering technical issues not covered by the PDC support documentation.\n\n')
+
     return ''.join(msg_list)
 
 def osdc_apply(request, user=None):

@@ -7,9 +7,9 @@ class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         return mark_safe(html.replace('<ul>', '<ul class="foobar">'))
 
 SYSTEM_CHOICES = (
-    ('OSDC-Sullivan', 'Public OpenStack Cloud'),
+    ('OSDC-Sullivan', 'General Compute Cloud'),
    # ('OSDC-Adler', 'OSDC-Adler (Eucalyptus based cloud)'),
-   ('OSDC-Atwood', 'Protected OpenStack Cloud'),
+   ('OSDC-Atwood', 'Protected Compute Cloud'),
    # ('bionimbus_web', 'Bionimbus Web Portal'),
    # ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
     ('occ-y', 'Hadoop Cluster'),
@@ -27,6 +27,17 @@ STORAGE_CHOICES = (
         ('1plus', 'More than 1 terabyte'),
 )
 
+STATUS_CHOICE = (
+    ('undergraduate','Undergraduate student'),
+    ('graduate','Graduate student'),
+    ('postdoc','Postdoc'),
+    ('faculty','Faculty'),
+    ('otherAcademic','Other academic staff'),
+    ('privateSector','Private sector'),
+    ('other','Other'),
+
+)
+
 class OSDCForm(forms.Form):
     eracommons = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'readonly': True, 'class' : 'span4'}))
     first_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class' : 'span4'}))
@@ -40,6 +51,8 @@ class OSDCForm(forms.Form):
     webpage = forms.CharField(max_length=200,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     phonenumber = forms.CharField(max_length=100,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     address = forms.CharField(required=False,widget=forms.Textarea(attrs={'class' : 'span4', 'rows' : '4'}))
+    status = forms.ChoiceField(widget=forms.Select(attrs={'class':'span4'}),choices=STATUS_CHOICE)
+
     projectname = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
     projectlead = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
     projectlead_email = forms.EmailField(widget=forms.TextInput(attrs={'class' : 'span4'}))
@@ -53,6 +66,9 @@ class OSDCForm(forms.Form):
     storage = forms.ChoiceField(widget=forms.Select(attrs={'class' : 'span4'}), choices=STORAGE_CHOICES)
     more_storage = forms.CharField(widget=forms.TextInput(attrs={'id' : 'more_storage', 'class' : 'span4'}), required=False)
     pubkey = forms.FileField(widget=forms.ClearableFileInput(attrs={'class' : 'span4'}), required=False)
+    datadescr = forms.CharField(widget=forms.Textarea(attrs={'class' : 'span5'}))
+    agreeform=forms.BooleanField()
+
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
     #captcha = ReCaptchaField()
 
