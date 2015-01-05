@@ -1,0 +1,51 @@
+#gnos {
+    background:#F4F4F4;
+    padding:0em 0em;
+    margin-top:10em;
+}
+#gnos .title{
+    border-bottom:1px solid #fff;
+    text-align:right;
+    margin:0em 2em;
+    padding:1.2em 1em 0.5em 1em;
+}
+#gnos .logout{
+    float:right;
+    padding:0px 10px;
+    margin-left:2em;
+    background:none;
+    border:0px;
+}
+#gnos i{
+    font-size:1.5em;
+    color:#555;
+}
+#gnos .logout:hover i{
+    color:#000;
+    border:0px;
+}
+#gnos >div{
+    padding:50px 0px;
+    margin:0px;
+    font-size:1.1em;
+    text-align:center;
+}
+#gnos p{
+    padding:0px;
+    margin:0px;
+}
+#gnos .error{
+    color:#000;
+}
+#gnos a{
+    color:black;
+    padding: 9px 24px 9px 25px;
+    border-radius:50px;
+    background:white;
+    border:1px solid white;
+    transition:0.2s;
+}
+#gnos .buttom:hover{
+    text-decoration:none;
+    border:1px solid #888;
+}
