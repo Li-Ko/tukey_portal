@@ -30,7 +30,6 @@ def gnos(request):
 
 def gnos_key(request):
     user=request.META.get(settings.SHIB_HEADERS[0]).split("!")[-1]
-    user='allisonheath'
     if user!='':
         if is_authenticated(user):
             os.system("/var/www/tukey/sync.sh keygen "+user)
@@ -43,21 +42,15 @@ def gnos_key(request):
     return HttpResponse(status=204)
 
 def is_authenticated(user):
-    user='allisonheath'
-    result=True
     for filename in settings.GNOS_CHECK_LIST:
         authenticated=False
         with open(filename,'rb') as csvfile:
             lines=csvfile.readlines()
             for line in lines:
                 row=re.split(",\s*",line)
-                if len(row)>0:
-                    print row[-3]
                 if len(row)>0 and row[1] not in ['email','login']  and row[1].upper()==user.upper():
-                    authenticated=True
-        if authenticated==False:
-            result=False
-    return result
+                    return True
+    return False
 
 
 @require_auth
