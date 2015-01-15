@@ -1,133 +1,5 @@
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/panel.py openstack_dashboard/dashboards/project/amazon_s3/panel.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/panel.py	1969-12-31 18:00:00.000000000 -0600
-+++ openstack_dashboard/dashboards/project/amazon_s3/panel.py	2014-09-19 12:15:43.747782966 -0500
-@@ -0,0 +1,13 @@
-+from django.utils.translation import ugettext_lazy as _
-+
-+import horizon
-+
-+from openstack_dashboard.dashboards.project import dashboard
-+
-+
-+class AmazonS3(horizon.Panel):
-+    name = _("Amazon_s3")
-+    slug = 'amazon_s3'
-+
-+
-+dashboard.Project.register(AmazonS3)
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html	1969-12-31 18:00:00.000000000 -0600
-+++ openstack_dashboard/dashboards/project/amazon_s3/templates/amazon_s3/s3.html	2014-09-19 12:15:43.747782966 -0500
-@@ -0,0 +1,13 @@
-+{%extends 'base.html'%}
-+{%load i18n %}
-+{% block title %} Amazon S3 {% endblock %}
-+
-+{%block page_header %}
-+    {%include "horizon/common/_page_header.html" with title=_("Amazon_s3") %}
-+{% endblock page_header %}
-+
-+
-+
-+
-+
-+
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/urls.py openstack_dashboard/dashboards/project/amazon_s3/urls.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/urls.py	1969-12-31 18:00:00.000000000 -0600
-+++ openstack_dashboard/dashboards/project/amazon_s3/urls.py	2014-09-19 12:15:43.747782966 -0500
-@@ -0,0 +1,27 @@
-+# Copyright 2012 United States Government as represented by the
-+# Administrator of the National Aeronautics and Space Administration.
-+# All Rights Reserved.
-+#
-+# Copyright 2012 Nebula, Inc.
-+#
-+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-+#    not use this file except in compliance with the License. You may obtain
-+#    a copy of the License at
-+#
-+#         http://www.apache.org/licenses/LICENSE-2.0
-+#
-+#    Unless required by applicable law or agreed to in writing, software
-+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-+#    License for the specific language governing permissions and limitations
-+#    under the License.
-+
-+
-+from django.conf.urls.defaults import url, patterns
-+
-+from . import views
-+
-+urlpatterns = patterns('openstack_dashboard.dashboards.project.overview.views',
-+    url(r'^$',views.index , name='index'),
-+    url(r'^grantPermission', views.grantPermission, name='grantPermission'),
-+)
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/views.py openstack_dashboard/dashboards/project/amazon_s3/views.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/views.py	1969-12-31 18:00:00.000000000 -0600
-+++ openstack_dashboard/dashboards/project/amazon_s3/views.py	2014-09-19 12:15:43.747782966 -0500
-@@ -0,0 +1,45 @@
-+# vim: tabstop=4 shiftwidth=4 softtabstop=4
-+
-+# Copyright 2012 United States Government as represented by the
-+# Administrator of the National Aeronautics and Space Administration.
-+# All Rights Reserved.
-+#
-+# Copyright 2012 Nebula, Inc.
-+#
-+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-+#    not use this file except in compliance with the License. You may obtain
-+#    a copy of the License at
-+#
-+#         http://www.apache.org/licenses/LICENSE-2.0
-+#
-+#    Unless required by applicable law or agreed to in writing, software
-+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-+#    License for the specific language governing permissions and limitations
-+#    under the License.
-+
-+from django.http import HttpResponse
-+import datetime
-+from django.shortcuts import  render, render_to_response
-+import json, requests
-+from django.conf import settings
-+def index(request):
-+    identifier = request.META.get("REMOTE_USER")
-+    data = json.dumps({"identifier": identifier})
-+    headers = {'content-type':'application/json'}
-+    r=requests.post('http://0.0.0.0:8774/aws/v0/isGranted', data=data, headers= headers)
-+    response= json.loads(r.text) 
-+    return render(request, "project/amazon_s3/s3.html",\
-+        response)
-+        
-+        
-+
-+def grantPermission(request):
-+    secreteAccessKey = request.POST['secreteAccessKey']
-+    accessKeyId = request.POST['accessKeyId']
-+    
-+    data=json.dumps({"accessKeyId":accessKeyId, "secreteAccessKey":secreteAccessKey,\
-+                     "identifier":request.META.get("REMOTE_USER")})
-+    headers={'content-type':'application/json'}
-+    r=requests.post("http://0.0.0.0:8774/aws/v0/", data=data, headers=headers)
-+    return HttpResponse(r.text, content_type="application/json")
-Binary files /home/ubuntu/horizon/openstack_dashboard/dashboards/project/amazon_s3/.views.py.swp and openstack_dashboard/dashboards/project/amazon_s3/.views.py.swp differ
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/dashboard.py openstack_dashboard/dashboards/project/dashboard.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/dashboard.py	2014-09-30 10:36:53.275385669 -0500
-+++ openstack_dashboard/dashboards/project/dashboard.py	2014-09-17 13:44:10.935487684 -0500
-@@ -28,7 +28,8 @@ class BasePanels(horizon.PanelGroup):
-               'images_and_snapshots',
-               'access_and_security',
-               'networks',
--              'routers')
-+              'routers',
-+              'amazon_s3')
- 
- 
- class ObjectStorePanels(horizon.PanelGroup):
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py openstack_dashboard/dashboards/project/instances/urls.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py	2014-09-30 10:36:53.279385618 -0500
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py openstack_dashboard/dashboards/project/instances/urls.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/urls.py	2015-01-15 13:50:37.250358696 -0600
 +++ openstack_dashboard/dashboards/project/instances/urls.py	2014-08-29 11:22:09.836970677 -0500
 @@ -21,6 +21,7 @@
  from django.conf.urls.defaults import patterns, url
@@ -145,8 +17,8 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
      url(r'^(?P<instance_id>[^/]+)/$', DetailView.as_view(), name='detail'),
      url(INSTANCES % 'update', UpdateView.as_view(), name='update'),
      url(INSTANCES % 'console', 'console', name='console'),
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py openstack_dashboard/dashboards/project/instances/workflows.py
---- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py	2014-09-30 10:36:53.279385618 -0500
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py openstack_dashboard/dashboards/project/instances/workflows.py
+--- /home/ubuntu/horizon/openstack_dashboard/dashboards/project/instances/workflows.py	2015-01-15 13:50:37.250358696 -0600
 +++ openstack_dashboard/dashboards/project/instances/workflows.py	2014-08-29 11:22:09.816970915 -0500
 @@ -183,6 +183,10 @@ class SetInstanceDetailsAction(workflows
                                 initial=1,
@@ -159,16 +31,182 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
      class Meta:
          name = _("Details")
          help_text_template = ("project/instances/"
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/test/.secret_key_store openstack_dashboard/test/.secret_key_store
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/local/local_settings.py.example openstack_dashboard/local/local_settings.py.example
+--- /home/ubuntu/horizon/openstack_dashboard/local/local_settings.py.example	2015-01-15 13:50:37.258358594 -0600
++++ openstack_dashboard/local/local_settings.py.example	1969-12-31 18:00:00.000000000 -0600
+@@ -1,162 +0,0 @@
+-import os
+-
+-from django.utils.translation import ugettext_lazy as _
+-
+-from openstack_dashboard import exceptions
+-
+-DEBUG = True
+-TEMPLATE_DEBUG = DEBUG
+-
+-# Set SSL proxy settings:
+-# For Django 1.4+ pass this header from the proxy after terminating the SSL,
+-# and don't forget to strip it from the client's request.
+-# For more information see:
+-# https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
+-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+-
+-# Default OpenStack Dashboard configuration.
+-HORIZON_CONFIG = {
+-    'dashboards': ('project', 'admin', 'settings',),
+-    'default_dashboard': 'project',
+-    'user_home': 'openstack_dashboard.views.get_user_home',
+-    'ajax_queue_limit': 10,
+-    'help_url': "http://docs.openstack.org",
+-    'exceptions': {'recoverable': exceptions.RECOVERABLE,
+-                   'not_found': exceptions.NOT_FOUND,
+-                   'unauthorized': exceptions.UNAUTHORIZED},
+-}
+-
+-# Specify a regular expression to validate user passwords.
+-# HORIZON_CONFIG["password_validator"] = {
+-#     "regex": '.*',
+-#     "help_text": _("Your password does not meet the requirements.")
+-# }
+-
+-# Disable simplified floating IP address management for deployments with
+-# multiple floating IP pools or complex network requirements.
+-# HORIZON_CONFIG["simple_ip_management"] = False
+-
+-LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
+-
+-# Set custom secret key:
+-# You can either set it to a specific value or you can let horizion generate a
+-# default secret key that is unique on this machine, e.i. regardless of the
+-# amount of Python WSGI workers (if used behind Apache+mod_wsgi): However, there
+-# may be situations where you would want to set this explicitly, e.g. when
+-# multiple dashboard instances are distributed on different machines (usually
+-# behind a load-balancer). Either you have to make sure that a session gets all
+-# requests routed to the same dashboard instance or you set the same SECRET_KEY
+-# for all of them.
+-# from horizon.utils import secret_key
+-# SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH, '.secret_key_store'))
+-
+-# We recommend you use memcached for development; otherwise after every reload
+-# of the django development server, you will have to login again. To use
+-# memcached set CACHE_BACKED to something like 'memcached://127.0.0.1:11211/'
+-CACHE_BACKEND = 'locmem://'
+-
+-# Send email to the console by default
+-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+-# Or send them to /dev/null
+-#EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+-
+-# Configure these for your outgoing email host
+-# EMAIL_HOST = 'smtp.my-company.com'
+-# EMAIL_PORT = 25
+-# EMAIL_HOST_USER = 'djangomail'
+-# EMAIL_HOST_PASSWORD = 'top-secret!'
+-
+-# For multiple regions uncomment this configuration, and add (endpoint, title).
+-# AVAILABLE_REGIONS = [
+-#     ('http://cluster1.example.com:5000/v2.0', 'cluster1'),
+-#     ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
+-# ]
+-
+-OPENSTACK_HOST = "127.0.0.1"
+-OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST
+-OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"
+-
+-# Disable SSL certificate checks (useful for self-signed certificates):
+-# OPENSTACK_SSL_NO_VERIFY = True
+-
+-# The OPENSTACK_KEYSTONE_BACKEND settings can be used to identify the
+-# capabilities of the auth backend for Keystone.
+-# If Keystone has been configured to use LDAP as the auth backend then set
+-# can_edit_user to False and name to 'ldap'.
+-#
+-# TODO(tres): Remove these once Keystone has an API to identify auth backend.
+-OPENSTACK_KEYSTONE_BACKEND = {
+-    'name': 'native',
+-    'can_edit_user': True
+-}
+-
+-OPENSTACK_HYPERVISOR_FEATURES = {
+-    'can_set_mount_point': True
+-}
+-
+-# OPENSTACK_ENDPOINT_TYPE specifies the endpoint type to use for the endpoints
+-# in the Keystone service catalog. Use this setting when Horizon is running
+-# external to the OpenStack environment. The default is 'internalURL'.
+-#OPENSTACK_ENDPOINT_TYPE = "publicURL"
+-
+-# The number of objects (Swift containers/objects or images) to display
+-# on a single page before providing a paging element (a "more" link)
+-# to paginate results.
+-API_RESULT_LIMIT = 1000
+-API_RESULT_PAGE_SIZE = 20
+-
+-# The timezone of the server. This should correspond with the timezone
+-# of your entire OpenStack installation, and hopefully be in UTC.
+-TIME_ZONE = "UTC"
+-
+-LOGGING = {
+-        'version': 1,
+-        # When set to True this will disable all logging except
+-        # for loggers specified in this configuration dictionary. Note that
+-        # if nothing is specified here and disable_existing_loggers is True,
+-        # django.db.backends will still log unless it is disabled explicitly.
+-        'disable_existing_loggers': False,
+-        'handlers': {
+-            'null': {
+-                'level': 'DEBUG',
+-                'class': 'django.utils.log.NullHandler',
+-                },
+-            'console': {
+-                # Set the level to "DEBUG" for verbose output logging.
+-                'level': 'INFO',
+-                'class': 'logging.StreamHandler',
+-                },
+-            },
+-        'loggers': {
+-            # Logging from django.db.backends is VERY verbose, send to null
+-            # by default.
+-            'django.db.backends': {
+-                'handlers': ['null'],
+-                'propagate': False,
+-                },
+-            'horizon': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            },
+-            'openstack_dashboard': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            },
+-            'novaclient': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            },
+-            'keystoneclient': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            },
+-            'glanceclient': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            },
+-            'nose.plugins.manager': {
+-                'handlers': ['console'],
+-                'propagate': False,
+-            }
+-        }
+-}
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/test/.secret_key_store openstack_dashboard/test/.secret_key_store
 --- /home/ubuntu/horizon/openstack_dashboard/test/.secret_key_store	1969-12-31 18:00:00.000000000 -0600
 +++ openstack_dashboard/test/.secret_key_store	2014-08-29 16:16:40.464326601 -0500
 @@ -0,0 +1 @@
 +t16Z2IjAGMtmhlZA9miWXi8EEMjhG1T9u3ONRufL02nL3ZtreO5btzfutWxwVgyK
 \ No newline at end of file
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/urls.py openstack_dashboard/urls.py
---- /home/ubuntu/horizon/openstack_dashboard/urls.py	2014-09-30 10:36:53.311385211 -0500
-+++ openstack_dashboard/urls.py	2014-09-02 16:56:34.349847155 -0500
-@@ -21,19 +21,39 @@
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/urls.py openstack_dashboard/urls.py
+--- /home/ubuntu/horizon/openstack_dashboard/urls.py	2015-01-15 13:50:37.274358390 -0600
++++ openstack_dashboard/urls.py	2015-01-15 10:36:43.328883462 -0600
+@@ -21,19 +21,40 @@
  """
  URL patterns for the OpenStack Dashboard.
  """
@@ -194,6 +232,7 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
 +    url(r'^$', 'tukey.content.views.page', name='home'),
 +    url(r'^console/', 'django_openid_auth.views.login_begin'),
 +    url(r'^federated/', include('django_openid_auth.urls', namespace='openid')),
++    url(r'^oauth/',include('tukey.oauth.urls',namespace='oauth')),
 +#start
 +#    url(r'^files/', include('tukey.files.urls', namespace='files')),
 +#    url(r'^tukey_admin/', include('tukey.tukey_admin.urls', namespace='tukey_admin')),
@@ -211,7 +250,7 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
  )
  
  # Development static app and project media serving using the staticfiles app.
-@@ -44,7 +64,16 @@ urlpatterns += staticfiles_urlpatterns()
+@@ -44,7 +65,16 @@ urlpatterns += staticfiles_urlpatterns()
  # path. Production media should NOT be served by Django.
  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  
@@ -229,8 +268,8 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
 +        url(r'', include('tukey.content.urls', namespace='content'))
 +    )
 +
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/views.py openstack_dashboard/views.py
---- /home/ubuntu/horizon/openstack_dashboard/views.py	2014-09-30 10:36:53.311385211 -0500
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/views.py openstack_dashboard/views.py
+--- /home/ubuntu/horizon/openstack_dashboard/views.py	2015-01-15 13:50:37.274358390 -0600
 +++ openstack_dashboard/views.py	2014-09-02 16:29:10.834731662 -0500
 @@ -19,7 +19,8 @@ from django.views.decorators import vary
  
@@ -242,8 +281,8 @@ diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/ope
  
  
  def get_user_home(user):
-diff -rupN '--exclude=*.pyc' '--exclude=local_setting*' /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi openstack_dashboard/wsgi/django.wsgi
---- /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi	2014-09-30 10:36:20.947797107 -0500
+diff -rupN --exclude '*.pyc' --exclude local_settings.py /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi openstack_dashboard/wsgi/django.wsgi
+--- /home/ubuntu/horizon/openstack_dashboard/wsgi/django.wsgi	2015-01-15 13:50:37.274358390 -0600
 +++ openstack_dashboard/wsgi/django.wsgi	2014-09-17 16:32:42.134801019 -0500
 @@ -8,6 +8,9 @@ from django.conf import settings
  sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
