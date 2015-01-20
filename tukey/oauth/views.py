@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from tukey.models import UnregisteredUser
 import urllib,json,requests
-
+from openstack_auth.exceptions import KeystoneAuthException
 backend=OauthBackend()
 
 
@@ -34,9 +34,10 @@ def oauth2callback(request):
     '''
     if request.session.get('oauth_state','')==request.GET['state']:
         token=backend.getToken(request.GET.get('code',''))
-        email=backend.decode(token['id_token'])
-        if email=='phillis.tt@gmail.com':
-            email='sa501428@gmail.com'
+        if token.has_key('id_token'):
+            email=backend.decode(token['id_token'])
+        else:
+            return render(request,'403.html',{},status=403)
         try:
             user=authenticate(password=settings.TUKEY_PASSWORD,username='openid %s' % email,\
                 auth_url=settings.OPENSTACK_KEYSTONE_URL,request=request)
@@ -53,6 +54,6 @@ def oauth2callback(request):
             return osdc_apply(request, user)
 
     else:
-        raise Http404
+        return render(request,'403.html',{},status=403)
 
 

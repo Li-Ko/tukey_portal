@@ -30,7 +30,11 @@
     <p></p>
     <p>
         {% trans "or sign in using " %}
-        <span id="google-link"></span>
+        {% if next %}
+        <a href="/oauth?next={{next}}">Google </a>
+        {% else %}
+        <a href="/oauth?next=/project">Google </a>
+        {% endif %}
         {% trans "or" %}
         <span id="yahoo-link"></span>
     </p>
@@ -42,6 +46,8 @@
            {% trans "You are still signed in to your ID provider.  To sign out of your ID provider close all browser windows." %}
     </div>
    {% endif %}
+
+
 
     <form id="google-form" name="fopenid" action="{{ action }}" method="post">
         {% csrf_token %}
@@ -78,8 +84,8 @@
      $(document).ready(function() {
          $(".openid-submit").hide();
          $("#yahoo-link").html('<a href="javascript:void(0)">Yahoo!</a>');
-         $("#google-link").html('<a href="javascript:void(0)">Google</a>');
-         $("#google-link").live("click", function(){$("#google-form").submit();});
+         //$("#google-link").html('<a href="javascript:void(0)">Google</a>');
+         //$("#google-link").live("click", function(){$("#google-form").submit();});
          $("#yahoo-link").live("click", function(){$("#yahoo-form").submit();});        
         
          function disableDefault() {
