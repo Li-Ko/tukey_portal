@@ -16,6 +16,10 @@ SYSTEM_CHOICES = (
    # ('matsu', 'Matsu Hadoop Testbed'),
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
     )
+ACCESS_CHOICES = (
+    ('compute-storage-allocation','Compute and Storage resource allocation - Bionimbus PDCv2'),
+    ('ICGC-Download','ICGC Download Only - Bionimbus PDCv1.1'),
+    )
 
 CPU_CHOICES = (
         ('lte16', '16 cores or less'),
@@ -70,6 +74,7 @@ class OSDCForm(forms.Form):
     agreeform=forms.BooleanField()
 
     referral_source = forms.CharField(widget=forms.TextInput(attrs={'class' : 'span4'}))
+    require_access = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,choices=ACCESS_CHOICES)
     #captcha = ReCaptchaField()
 
     # TODO: Conditional validation for more_cpus and more_storage fields
