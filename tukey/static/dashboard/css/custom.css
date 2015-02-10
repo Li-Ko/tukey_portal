@@ -2,6 +2,7 @@
     background:#F4F4F4;
     padding:0em 0em;
     margin-top:10em;
+    margin-bottom:11em;
 }
 #gnos .title{
     border-bottom:1px solid #fff;
@@ -9,6 +10,36 @@
     margin:0em 2em;
     padding:1.2em 1em 0.5em 1em;
 }
+.hidden{
+    display:none;
+}
+#nav-projects:hover ul{
+    display:block;
+}
+.nav-collapse.collapse {
+    overflow:visible;
+}
+.navbar .nav > li{
+    position:relative;
+}
+#nav-projects ul {
+    position:absolute;
+    top:100%;
+    width:100%;
+    margin:0px;
+    box-shadow:0 0 5px #ccc;
+}
+#nav-projects ul li {
+    list-style-type: none;
+    padding:10px 10px 12px 10px;
+    text-align:center;
+
+}
+#nav-projects ul li a:hover{
+    color:#78929B;
+    text-decoration:none;
+}
+
 #gnos .logout{
     float:right;
     padding:0px 10px;
@@ -16,6 +47,7 @@
     background:none;
     border:0px;
 }
+
 #gnos i{
     font-size:1.5em;
     color:#555;
@@ -36,6 +68,18 @@
 }
 #gnos .error{
     color:#000;
+    line-height:20px;
+}
+#gnos .error a{
+    background:none;
+    color:#0197b0;
+    border:none;
+    padding:0px;
+}
+#gnos .error a:hover{
+    text-decoration:none;
+    color:#047B8F;
+
 }
 #gnos a{
     color:black;
