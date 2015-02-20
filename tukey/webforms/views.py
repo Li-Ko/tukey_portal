@@ -28,12 +28,13 @@ def build_message(form):
     msg_list.append('\nidentifier:\n')
     msg_list.append(form.cleaned_data['eppn'])
     msg_list.append('\n\nAccess Requested:\n')
+    data_only = False
     for item in form.cleaned_data['require_access']:
         if item =='compute-storage-allocation':
             msg_list.append('Compute and Storage resource allocation - Bionimbus PDCv2\n')
         elif item=='ICGC-Download':
             msg_list.append('ICGC Download Only - Bionimbus PDCv1.1\n')
-
+            data_only = True
     msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
 
@@ -60,17 +61,18 @@ def build_message(form):
     msg_list.append(form.cleaned_data['projectlead'])
     msg_list.append('\n\nProject Lead E-mail:\n')
     msg_list.append(form.cleaned_data['projectlead_email'])
-    msg_list.append('\n\nEstimated CPUs:\n')
-    msg_list.append(form.cleaned_data['cpus'])
+    if not data_only:
+        msg_list.append('\n\nEstimated CPUs:\n')
+        msg_list.append(form.cleaned_data['cpus'])
 
-    if form.cleaned_data['more_cpus'] != "":
-        msg_list.append("(Specific requirements: " + form.cleaned_data['more_cpus'] + ")")
+        if form.cleaned_data['more_cpus'] != "":
+            msg_list.append("(Specific requirements: " + form.cleaned_data['more_cpus'] + ")")
 
-    msg_list.append('\n\nEstimated storage:\n')
-    msg_list.append(form.cleaned_data['storage'])
+        msg_list.append('\n\nEstimated storage:\n')
+        msg_list.append(form.cleaned_data['storage'])
 
-    if form.cleaned_data['more_storage'] != "":
-        msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
+        if form.cleaned_data['more_storage'] != "":
+            msg_list.append("(Specific requirements: " + form.cleaned_data['more_storage'] + ")")
 
     msg_list.append('\n\nInformation about how data intensive the project is:\n')
     msg_list.append(form.cleaned_data['datadescr'])

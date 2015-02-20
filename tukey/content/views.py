@@ -37,7 +37,7 @@ def gnos_key(request):
             filename=os.path.basename(the_file)
             response=HttpResponse(FileWrapper(open(the_file)),content_type="application/x-pem-file")
             response['Content-Length'] = os.path.getsize(the_file)
-            response['Content-Disposition'] = "attachment; filename=%s" % user+"_"+filename
+            response['Content-Disposition'] = "attachment; filename=%s" % user+"_bionimbus_pcawg_tcga.pem"
             return response
     return HttpResponse(status=204)
 

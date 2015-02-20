@@ -254,6 +254,8 @@ If you are seeking "download only" access to the IGCG data, please review this <
     $("#nav-apply").attr('class', 'active');
     $("#id_require_access_1").change(function() {
       true_toggle(".extra_pubkey", this.checked);
+      true_toggle(".cpus",!this.checked);
+      true_toggle(".storage",!this.checked);
     }).change();
 
     function displayMoreCPUs() {
