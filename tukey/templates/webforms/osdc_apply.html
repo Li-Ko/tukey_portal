@@ -228,7 +228,7 @@ If you are seeking "download only" access to the IGCG data, please review this <
 
     <div class="control-group">
       <div class="controls">
-	<button type="submit" class="btn btn-warning">Submit Application</button>
+	<a href='#' id="submit-button" class="btn btn-warning">Submit Application</a>
       </div>
     </div>
   </fieldset>
@@ -240,8 +240,21 @@ If you are seeking "download only" access to the IGCG data, please review this <
 
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-  $(document).ready(function() {
+function submitForm(){
+    console.log("submitform");
+    if ($("#id_require_access_1")[0].checked && $("#id_pubkey").prop("files").length<1){
 
+        $(".extra_pubkey").addClass("error");
+        console.log("error");
+        return
+    }
+    else{
+        $("form").submit();
+    }
+
+}
+  $(document).ready(function() {
+    $("#submit-button").click(submitForm);
     function true_toggle(selector, condition){
       if (condition) {
         $(selector).show();
@@ -282,5 +295,6 @@ If you are seeking "download only" access to the IGCG data, please review this <
     displayMoreStorage();
 
 });
+
 </script>
 {% endblock %}
