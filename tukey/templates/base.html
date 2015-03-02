@@ -78,6 +78,9 @@
         if (contains == true) {
           $("#nav-console").attr("class", "active");
         }
+        if ($(window).height()>$('body').height()){
+        $(".modal-footer").css({"position":"fixed","bottom":"0px"});
+        }
       });
     </script>
     {% endblock %}

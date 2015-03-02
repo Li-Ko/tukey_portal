@@ -21,10 +21,7 @@ def page(request, slug=''):
 
 def gnos(request):
     user=request.META.get(settings.SHIB_HEADERS[0]).split("!")[-1]
-    if user=='':
-        return redirect('https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&TARGET=https://bionimbus-pdc.opensciencedatacloud.org/gnos')
-    else:
-        return render(request,'content/gnos.html',{'user':user,'authenticated':is_authenticated(user)})
+    return render(request,'content/gnos.html',{'user':user,'authenticated':is_authenticated(user)})
 
 
 
@@ -42,6 +39,8 @@ def gnos_key(request):
     return HttpResponse(status=204)
 
 def is_authenticated(user):
+    if user =='':
+        return False
     for filename in settings.GNOS_CHECK_LIST:
         authenticated=False
         with open(filename,'rb') as csvfile:

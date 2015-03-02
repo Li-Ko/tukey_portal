@@ -2,20 +2,34 @@
 
 {% block header %}
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<div id='gnos'>
-<div class='title'>
- <a class='logout' href="{% url logout %}?next=/Shibboleth.sso/Logout%3Freturn%3Dhttps%3A%2F%2Fbionimbus-pdc.opensciencedatacloud.org"><i class="fa fa-sign-out"></i></a>
- <p><i class="fa fa-user"></i> {{user}}</p>
- </div>
- {% if authenticated %}
- <div>
- <a class='buttom' href="/gnos-key">Download Bionimbus TCGA GNOS key</a> <br> <p style='margin-top:1.5em;font-style:italic;color:#555;'>This key only works for gnos server gtrepo-osdc-tcga.annailabs.com</p>
- </div>
- {% else %}
- <div class='error'>You are not authorized to get the PCAWG key. If you think it's an error, please contact us at <a href='mailto:support@opensciencedatacloud.org'>support@opensciencedatacloud.org</a></div>
- {% endif %}
-</div>
+<header class='jumbotron subhead'>
+ <h2>TCGA Data Access for ICGC PCAWG</h2>
+</header>
 
+<div id='gnos'>
+{% if user %}
+    <div class='title'>
+     <a class='logout' href="{% url logout %}?next=/Shibboleth.sso/Logout%3Freturn%3Dhttps%3A%2F%2Fbionimbus-pdc.opensciencedatacloud.org"><i class="fa fa-sign-out"></i></a>
+     <p><i class="fa fa-user"></i> {{user}}</p>
+     </div>
+     {% if authenticated %}
+     <div style='padding-bottom:4em'>
+     <a class='button green' href="/gnos-key">Download Bionimbus TCGA PCAWG GNOS Key</a> <br> <p style='margin-top:1.5em;font-style:italic;color:#555;'>This key only works for the gnos server hosted at gtrepo-osdc-tcga.annailabs.com, and expires after 3 months.</p>
+     </div>
+     {% else %}
+     <div class='error'>You are not authorized to get the PCAWG key. If you think it's an error, please contact us at <a href='mailto:support@opensciencedatacloud.org'>support@opensciencedatacloud.org</a></div>
+     {% endif %}
+{% else %}
+     <div style='padding:3em; text-align: left;'>
+     <p  style='font-size:1.0em'>
+    The Bionimbus Protected Data Cloud (PDC) hosts data processed from TCGA as part of the ICGC PanCancer Analysis of Whole Genomes (PCAWG). By downloading this data you are agreeing to both the ICGC code of practice and the TCGA data use agreements.</p><br>
+    <p style='font-size:1.0em'>In order to obtain a download key, you must have an eRA Commons account and dbGaP access to TCGA. For more in-depth instructions on getting the right access credentials, please review the following <a href='https://bionimbus-pdc.opensciencedatacloud.org/static/BionimbusAccessFAQ.pdf' target='_blank'>FAQ</a>.</p>
+    <br>
+    <br>
+     <a class='button green' href='https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&TARGET=https://bionimbus-pdc.opensciencedatacloud.org/gnos'>Login to Download Key</a>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 {% block js %}
 {% include "horizon/_scripts.html" %}
