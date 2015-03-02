@@ -18,7 +18,7 @@ SYSTEM_CHOICES = (
     )
 ACCESS_CHOICES = (
     ('compute-storage-allocation','Compute and Storage resource allocation - Bionimbus PDCv2'),
-    ('ICGC-Download','ICGC Download Only - Bionimbus PDCv1.1'),
+    ('internal-access','Internal Access'),
     )
 
 CPU_CHOICES = (

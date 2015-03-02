@@ -32,8 +32,8 @@ def build_message(form):
     for item in form.cleaned_data['require_access']:
         if item =='compute-storage-allocation':
             msg_list.append('Compute and Storage resource allocation - Bionimbus PDCv2\n')
-        elif item=='ICGC-Download':
-            msg_list.append('ICGC Download Only - Bionimbus PDCv1.1\n')
+        elif item=='internal-access':
+            msg_list.append('Internal Access\n')
             data_only = True
     msg_list.append('\nOrganization/University:\n')
     msg_list.append(form.cleaned_data['organization'])
