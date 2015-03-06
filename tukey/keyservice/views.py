@@ -4,7 +4,8 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from tukey.keyservice.models import Key, Repository
 from tukey.keyservice.forms import ARKForm, RepositoryForm, KeyForm
 import re
-
+from signpostclient import SignpostClient
+import settings
 #For now going to assume the prefix are letters and the id is digits... can change later?
 #In a lot of ways this is a hack -- needs to play better with the datasets in general.
 
@@ -25,6 +26,10 @@ def keyservice(request):
     return render_to_response('keyservice/keyservice_index.html', {'form' : form }, context_instance=RequestContext(request))
 
 
+def get_signpost():
+    return SignpostClient(settings.SIGNPOST_URL,version='v0')
+
+client = get_signpost()
 def keyservice_lookup(request, key):
     match = re.search(r'^ark:/(\d+)/', key)
     print('match' + str(match))
@@ -33,30 +38,15 @@ def keyservice_lookup(request, key):
         if naan == "31807":
             subkey = key[match.end(1)+1:]
             print('subkey: ' + str(subkey))
-            submatch = re.search(r'([a-zA-Z]+)([0-9\-]+)', subkey)
-            print('submatch: ' + str(submatch))
-            if submatch:
-                prefix = submatch.group(1)
-                key_id = submatch.group(2)
-                print('prefix: ' + prefix)
-                print('key_id: ' + key_id)
-
-                # right now they all have to have unique IDs -- the prefix just tells us where to go
-
-                try:
-                    r = Repository.objects.get(pk=prefix)
-                    #special case for bionimbus right now
-                    if prefix == 'bn':
-                        url = r.url + key_id
-                    else:
-                        k = Key.objects.get(local_key=subkey, repository=prefix)
-                        url = r.url + k.local_key
-
-                    return HttpResponseRedirect(url)
-
-                except (Key.DoesNotExist, Repository.DoesNotExist):
+            try:
+                doc = client.get(subkey)
+                if len(doc.urls)>0:
+                    return HttpResponseRedirect(doc.urls[0])
+                else:
                     return render_to_response('keyservice/does_not_exist.html', {'key' : key}, context_instance=RequestContext(request))
-
+            except:
+                return render_to_response('keyservice/does_not_exist.html', {'key' : key}, context_instance=RequestContext(request))
+                    
                 
             #return HttpResponse("We are the naan and the key is: " + key + " prefix is: " + prefix + " id is: " + key_id + " from db: " + url)
         else:
