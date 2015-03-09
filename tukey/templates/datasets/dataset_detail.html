@@ -34,6 +34,14 @@
 </div>
 
 <div class="span12 data-label"><strong>Size: </strong> {{dataset.size}}</div>
+<div class='span12 data-label'><strong>Identifiers:</strong>
+<ul>
+{% for key,value in dataset.identifiers.iteritems %}
+<li>{{key}} : {{value}}</li>
+{% endfor %}
+</ul>
+</div>
+
 
 <div class="span12 data-label"><strong>Last Updated: </strong>{% timezone "UTC" %} {{dataset.modified}} {% endtimezone %}UTC </div>
 

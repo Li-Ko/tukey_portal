@@ -26,20 +26,20 @@ def keyservice(request):
     return render_to_response('keyservice/keyservice_index.html', {'form' : form }, context_instance=RequestContext(request))
 
 
-def get_signpost():
-    return SignpostClient(settings.SIGNPOST_URL,version='v0')
+client = SignpostClient(settings.SIGNPOST_URL,version='v0')
 
-client = get_signpost()
 def keyservice_lookup(request, key):
-    match = re.search(r'^ark:/(\d+)/', key)
+    match = re.search(r'^(\w+):/(\d+)/', key)
+    
     print('match' + str(match))
     if match:
-        naan = match.group(1)
+        identify_method = match.group(1)
+        naan = match.group(2)
         if naan == "31807":
-            subkey = key[match.end(1)+1:]
+            subkey = key[match.end(2)+1:]
             print('subkey: ' + str(subkey))
             try:
-                doc = client.get(subkey)
+                doc = client.search(identify_method+":"+subkey)
                 if len(doc.urls)>0:
                     return HttpResponseRedirect(doc.urls[0])
                 else:
