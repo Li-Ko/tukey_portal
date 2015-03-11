@@ -15,7 +15,18 @@ SYSTEM_CHOICES = (
     ('occ-y', 'Hadoop Cluster'),
    # ('matsu', 'Matsu Hadoop Testbed'),
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
-    )
+)
+RESEARCH_CHOICES = (
+        ('physical-sciences','Physical Sciences (physics, chemistry, astronomy)'),
+        ('earch-and-environmental-sciences','Earth and Environmental Sciences'),
+        ('biological-sciences','Biological Sciences'),
+        ('social-sciences','Social Sciences'),
+        ('urban-sciences','Urban Sciences'),
+        ('computer-science-and-mathematics','Computer Science and Mathematics'),
+        ('medical-and-health-related','Medical and Health related'),
+        ('digital-humanities','Digital Humanities'),
+        ('other','Other'),
+)
 ACCESS_CHOICES = (
     ('compute-storage-allocation','Compute and Storage resource allocation - Bionimbus PDCv2'),
     ('internal-access','Internal Access'),
@@ -50,6 +61,7 @@ class OSDCForm(forms.Form):
     eppn = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'type': 'hidden'}))
     method = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'type': 'hidden'}))
     organization = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
+    researchs = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,choices=RESEARCH_CHOICES)
     systems = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple, choices=SYSTEM_CHOICES,
         initial=["OSDC-Sullivan"])
     webpage = forms.CharField(max_length=200,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))

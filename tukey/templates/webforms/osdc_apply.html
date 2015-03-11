@@ -92,6 +92,17 @@ For more in-depth instructions on getting the right access credentials, please r
       </div>
     </div>
 
+    <div class="control-group {% if form.researchs.errors %}error{% endif %}">
+      <label class="control-label" for="id_researchs">
+        Which of the following categories best describes the nature of the research question you intend to explore using an OSDC resource allocation?*
+        </label>
+      <div class="controls">
+        {{ form.researchs }}
+        <span class="help-inline">{{form.researchs.errors}}</span>
+      </div>
+    </div>
+
+
     <div class="control-group {% if form.webpage.errors %}error{% endif %}">
       <label class="control-label" for="id_webpage">Web Page</label>
       <div class="controls">
