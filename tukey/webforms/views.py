@@ -31,7 +31,27 @@ def build_message(form):
     msg_list.append(form.cleaned_data['organization'])
     msg_list.append('\n\nStatus:\n')
     msg_list.append(form.cleaned_data['status'])
-
+    msg_list.append('\n\nResearch fields:\n')
+    for item in form.cleaned_data['researchs']:
+	if item == 'physical-sciences':
+	    msg_list.append('Physical Sciences (physics, chemistry, astronomy)\n')
+	elif item == 'earch-and-environmental-sciences':
+	    msg_list.append('earch-and-environmental-sciences\n')
+	elif item == 'biological-sciences':
+	    msg_list.append('Biological Sciences\n')
+	elif item == 'social-sciences':
+	    msg_list.append('Social Sciences\n')
+	elif item == 'urban-sciences':
+	    msg_list.append('Urban Sciences\n')
+	elif item == 'computer-science-and-mathematics':
+	    msg_list.append('Computer Science and Mathematics\n')
+	elif item == 'medical-and-health-related':
+	    msg_list.append('Medical and Health related\n')
+	elif item == 'digital-humanities':
+	    msg_list.append('Digital Humanities\n')
+	elif item == 'other':
+	    msg_list.append('Other\n')
+	      
     if form.cleaned_data['webpage'] != '':
         msg_list.append('\n\nWeb page:\n')
         msg_list.append(form.cleaned_data['webpage'])

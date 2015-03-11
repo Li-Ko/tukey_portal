@@ -17,6 +17,18 @@ SYSTEM_CHOICES = (
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
     )
 
+RESEARCH_CHOICES = (
+	('physical-sciences','Physical Sciences (physics, chemistry, astronomy)'),
+	('earch-and-environmental-sciences','Earth and Environmental Sciences'),
+	('biological-sciences','Biological Sciences'),
+	('social-sciences','Social Sciences'),
+	('urban-sciences','Urban Sciences'),
+	('computer-science-and-mathematics','Computer Science and Mathematics'),
+	('medical-and-health-related','Medical and Health related'),
+	('digital-humanities','Digital Humanities'),
+	('other','Other'),
+)
+
 CPU_CHOICES = (
 	('lte16', '16 cores or less'),
 	('16plus', 'More than 16 cores'),
@@ -45,6 +57,7 @@ class OSDCForm(forms.Form):
     organization = forms.CharField(max_length=200,widget=forms.TextInput(attrs={'class' : 'span4'}))
     systems = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple, choices=SYSTEM_CHOICES,
         initial=["OSDC-Sullivan"])
+    researchs = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,choices=RESEARCH_CHOICES)
     webpage = forms.CharField(max_length=200,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     phonenumber = forms.CharField(max_length=100,required=False,widget=forms.TextInput(attrs={'class' : 'span4'}))
     address = forms.CharField(required=False,widget=forms.Textarea(attrs={'class' : 'span4', 'rows' : '4'}))
