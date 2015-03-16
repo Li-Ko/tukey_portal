@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block meta_title %}OSDC Dataset Application{% endblock %}
+{% block css %}
+<link href='{{ STATIC_URL }}dashboard/css/keyservice.css' type='text/css' rel='stylesheet' /> 
+{% endblock %}
+{% block content %}
+<div class='maincontent'>
+<header class="jumbotron subhead">
+  <h1>Request to upload metadata</h1>
+</header>
+
+<div class="span12">
+<form action="/keyservice/request/" method="post" class='keyservice-form'>
+{% csrf_token %}
+{{ form }}
+<button type="submit" class="btn btn-warning">Submit Application </button>
+
+</div>
+{% endblock %}

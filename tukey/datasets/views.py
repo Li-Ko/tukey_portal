@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from .models import DataSet, Key, KeyValue
@@ -17,7 +17,7 @@ osdc_prefix = 'osdc'
 #does not support time zones -- for now leave it up to the submission scripts to put in UTC.
 time_format='%Y-%m-%d %H:%M:%S'
 
-valid_keys = ['source', 'source_url', 'description', 'short_description', 'category', 'size', 'modified', 'license', 'osdc_location', 'osdc_folder', 'osdc_hs_location', 'osdc_hs_folder']
+valid_keys = ['source', 'source_url', 'description', 'short_description', 'keyword', 'size', 'modified', 'license', 'osdc_location', 'osdc_folder', 'osdc_hs_location', 'osdc_hs_folder']
 
 pg_driver = PsqlGraphDriver(METADATA_DB['HOST'],METADATA_DB['USER'],
                 METADATA_DB['PASSWORD'],METADATA_DB['NAME'])
@@ -61,15 +61,15 @@ def update_keyvalues(keyvalues_id_value):
             k.save()
 
 
-def datasets_list_index(request, category_filter=None):
+def datasets_list_index(request, keyword_filter=None):
     datasets = []
     with pg_driver.session_scope():
         query = pg_driver.nodes()
 
-    if category_filter is not None:
-        category = query.labels('category').props({'value':category_filter}).first()
+    if keyword_filter is not None:
+        keyword = query.labels('keyword').props({'value':keyword_filter}).first()
         nodes = []
-        for edge in category.edges_in:
+        for edge in keyword.edges_in:
             nodes.append(edge.src)
     else:
         nodes = query.labels('dataset').order_by(Node.properties['title'].astext).all()
@@ -77,12 +77,12 @@ def datasets_list_index(request, category_filter=None):
     for node in nodes:
         doc = signpost.get(node.node_id)
         result=node.properties
-        result['category']=[]
+        result['keyword']=[]
         result['identifiers']=doc.identifiers
         for edge in node.edges_out:
-            result['category'].append(edge.dst['value'])
+            result['keyword'].append(edge.dst['value'])
         datasets.append(result)
-    return render_to_response('datasets/datasets_list_index.html', {'category_filter':category_filter,'datasets' : (datasets)}, context_instance=RequestContext(request))
+    return render_to_response('datasets/datasets_list_index.html', {'keyword_filter':keyword_filter,'datasets' : (datasets)}, context_instance=RequestContext(request))
 
 def dataset_detail(request, dataset_id):
     with pg_driver.session_scope():
@@ -93,7 +93,9 @@ def dataset_detail(request, dataset_id):
             dataset_dict = dataset.properties
             doc = signpost.get(dataset.node_id)
             dataset_dict['identifiers'] = doc.identifiers
-            dataset_dict['category']=[]
+            dataset_dict['keyword']=[]
             for edge in dataset.edges_out:
-                dataset_dict['category'].append(edge.dst['value']) 
-      return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
+                dataset_dict['keyword'].append(edge.dst['value']) 
+            return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
+        else:
+            raise Http404("Dataset does not exist")

@@ -27,8 +27,8 @@
 {% load tz %}
 
 
-{% if category_filter %}
-<h3>Viewing data sets in category: {{ category_filter }} (<a href="{% url datasets:datasets_list_index %}" >View All</a>)</h3>
+{% if keyword_filter %}
+<h3>Viewing data sets in keyword: {{ keyword_filter }} (<a href="{% url datasets:datasets_list_index %}" >View All</a>)</h3>
 {% endif %}
 
 {% if datasets %}
@@ -39,16 +39,16 @@
       <div class='span12 data-entry'>Identifiers:
         <ul>
         {% for key,value in dataset.identifiers.iteritems %}
-        <li>{{key}} : {{value}}</li>
+        <li>{{key}}:{{value}}</li>
         {% endfor %}
         </ul>
       </div>
-      <div class="span12 data-entry">Categories: 
-	   {% for category in dataset.category %}
-        <a href="{% url datasets:datasets_category category %}" >{{ category }}</a>{% if forloop.last %}{% else %}, {% endif %}
+      <div class="span12 data-entry">Keywords: 
+	   {% for keyword in dataset.keyword %}
+        <a href="{% url datasets:datasets_keyword keyword %}" >{{ keyword }}</a>{% if forloop.last %}{% else %}, {% endif %}
 	   {% endfor %}
       </div>
-      <div class="span12 data-faint">Last Modified: {% timezone "UTC" %} {{ dataset.modified }} {% endtimezone %}UTC </div>
+      <div class="span12 data-faint">Last Modified: {% timezone "UTC" %} {{ dataset.date_updated }} {% endtimezone %}UTC </div>
     {% endfor %}
 {% else %}
     <p>No datasets are available.</p>

@@ -15,21 +15,23 @@
 {% load tz %}
 
 
-<div class="span12 data-label"><strong>Source: </strong>
 {% if dataset.source %}
+<div class="span12 data-label"><strong>Source: </strong>
 <a href="{{ dataset.source_url }}">
 {{ dataset.source }}
 </a>
+</div>
 {% elif dataset.source_url %}
+<div class="span12 data-label"><strong>Source: </strong>
 <a href="{{ dataset.source_url }}">
 {{ dataset.source_url }}
 </a>
-{% endif %}
 </div>
+{% endif %}
 
-<div class="span12 data-label"><strong>Categories: </strong>
-  {% for category in dataset.category %}
-  <a href="/publicdata/category/{{ category }}">{{ category }}</a>{% if forloop.last %}{% else %}, {% endif %}
+<div class="span12 data-label"><strong>Keywords: </strong>
+  {% for keyword in dataset.keyword %}
+  <a href="/publicdata/keyword/{{ keyword }}">{{ keyword }}</a>{% if forloop.last %}{% else %}, {% endif %}
   {% endfor %}
 </div>
 
@@ -37,13 +39,13 @@
 <div class='span12 data-label'><strong>Identifiers:</strong>
 <ul>
 {% for key,value in dataset.identifiers.iteritems %}
-<li>{{key}} : {{value}}</li>
+<li>{{key}}:{{value}}</li>
 {% endfor %}
 </ul>
 </div>
 
 
-<div class="span12 data-label"><strong>Last Updated: </strong>{% timezone "UTC" %} {{dataset.modified}} {% endtimezone %}UTC </div>
+<div class="span12 data-label"><strong>Last Updated: </strong>{% timezone "UTC" %} {{dataset.date_updated}} {% endtimezone %}UTC </div>
 
 
 <div class="span12 data-header"><h3>Download Instructions</h3></div>
@@ -58,41 +60,35 @@ All public data sets are available on both commodity internet connections and hi
 UDR is a wrapper around rsync that enables rsync to use the high performance <a href="http://udt.sourceforge.net/">UDT</a> network protocol, which can greatly improve download speeds, especially over high speed networks. Once installed, the only change is placing the udr command before the same rsync command you typically use to download the data. UDR is open source and under active development, the most recent version is available on <a href="https://github.com/LabAdvComp/UDR">github</a>. <b>At the moment, UDR is not enabled on the transfer node. The functionality should return shortly. Use rsync in the meantime.</b>
 </p>
 
-{% if dataset.osdc_location %}
 <p>
 <h4>List the contents of {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} </code></li>
-<li>Using udr: <code>udr rsync globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} </code></li>
+<li>Using rsync: <code>rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
+<li>Using udr: <code>udr rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
 </ul>
 
 <h4>Download/synchronize {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}} /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
 </ul>
 
 <h4>Download an individual file from {{dataset.title}}:</h4>
 <ul>
-<li>Using rsync: <code>rsync -avzuP globus.opensciencedatacloud.org::public/{{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP globus.opensciencedatacloud.org::public/{dataset.osdc_folder}}remotefile /path/to/local_copy</code></li>
+<li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
+<li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
 </ul>
 </p>
-{% else %}
-<p>
-Further download instructions for {{dataset.title}} will be posted here shortly.
-</p>
-{% endif %}
 </div>
 <div class="span12 data-header"><h3>OSDC Instructions</h3></div>
 <div class="span12">
 <p>
 Virtual machines on the OSDC have direct access to all of the public data sets. If you do not have a OSDC account, you can apply for one <a href="http://www.opensciencedatacloud.org/apply/">here</a>. 
 <p>
-<h4>Adler or Sullivan:</h4>
+<h4>Sullivan:</h4>
 </p>
 <p>
- The script ‘/cloudconf/mount-glusterfs $USERNAME’ will mount /glusterfs. Your password is stored on the login node at either ~/smbpassword.txt or ~/glusterfs-password. The public data is located in /glusterfs/osdc_public_data.
+The public data is located in /glusterfs/osdc_public_data.
 </p>
 <p>
 <h4>OCC-Y: </h4>
@@ -102,9 +98,11 @@ The public data sets are mounted on the starlight node under <code>/mnt/pubdata<
 </p>
 </div>
 <div class="span12 data-header"><h3>License/Attribution Requirements</h3></div>
+{% if dataset.license %}
 <div class="span12">
 {{dataset.license|safe}}
 </div>
+{% endif %}
 </div>
 {% endblock %}
 
