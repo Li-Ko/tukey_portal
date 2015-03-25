@@ -7,7 +7,6 @@ class UpdateDataSetForm(forms.Form):
     def __init__(self, *args, **kwargs):
         #should check that this exists
         keyvalues = kwargs.pop('keyvalues')
-        print('keyvalues: ' + str(keyvalues))
         super(UpdateDataSetForm, self).__init__(*args, **kwargs)
 
         for keyvalue in keyvalues:

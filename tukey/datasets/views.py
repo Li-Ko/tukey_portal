@@ -133,5 +133,4 @@ def dataset_detail(request, dataset_id):
             else:
                 dataset_dict[key_name] = ''
 
-    print('dataset_dict: ' + str(dataset_dict))
     return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))

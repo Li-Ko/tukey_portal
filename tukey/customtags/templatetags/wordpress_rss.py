@@ -68,7 +68,6 @@ def do_rss_latest(parser, token):
         )
 
     category, num_items, var_name = m.groups()
-    print("should be trying: %s %s %s" % (category, num_items, var_name))
 
     try:
         number_of_items = int(num_items)
@@ -77,7 +76,6 @@ def do_rss_latest(parser, token):
             "%r's second argument must be a number" % tag_name
         )
 
-    print("about to GetRSSLategest")
     return GetRSSLatest(category, number_of_items, var_name)
 
 class GetRSSLatest(template.Node):
@@ -85,14 +83,10 @@ class GetRSSLatest(template.Node):
         self.category = template.Variable(category)
         self.number_of_items = number_of_items
         self.var_name = var_name
-        print("after init: %s %s %s" % (self.category, self.number_of_items, self.var_name))
 
     def render(self, context):
-        print("RENDERING!")
         try:
-            print("self.category: " + str(self.category))
             actual_category = self.category.resolve(context)
-            print("actual_cateogy: " + str(actual_category))
         except template.VariableDoesNotExist:
             return ''
         context[self.var_name] = []
@@ -112,13 +106,11 @@ class GetRSSLatest(template.Node):
             
         feed_url = base_url + '/feed/'
 
-        print("feed_url: %s" % feed_url)
 
         if actual_category is not None:
             feed_url += '/category/'
             feed_url += str(actual_category)
         
-        print("feed_url: %s" % feed_url)
         d = feedparser.parse(feed_url)
 
         for item in d.entries[:self.number_of_items]:
@@ -149,7 +141,6 @@ class GetRSSLatest(template.Node):
                     content = ' '.join(content[:N_CONTENT_LINES])
                     content = plaintext2html(content)
                     url = item.title_detail                    
-                    print "URL: ", url
                     if isinstance(url, basestring) and url != "":
                         if "http" not in url:
                             url = base_url + url
