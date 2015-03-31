@@ -14,20 +14,21 @@ from openstack_auth.user import set_session_from_user
 LOG = logging.getLogger(__name__)
 
 def get_user(request):
+
     try:
         user_id = request.session[auth.SESSION_KEY]
         backend_path = request.session[auth.BACKEND_SESSION_KEY]
         backend = auth.load_backend(backend_path)
         backend.request = request
         user = backend.get_user(user_id) or AnonymousUser()
-        LOG.debug("user %s", user)
 
         request.session.set_expiry(settings.SESSION_TIMEOUT)
 
-        LOG.debug("setting expiry to :%s", settings.SESSION_TIMEOUT)
 
     except KeyError:
         shib_header = None
+
+
         for possible_header in settings.SHIB_HEADERS:
             if possible_header in request.META and request.META.get(
                 possible_header):
@@ -35,10 +36,8 @@ def get_user(request):
                 break
 
         if shib_header is not None:
-
             LOG.debug("Shibboleth header is set")
             LOG.debug("username %s", request.META.get(shib_header))
-
             keystone = KeystoneBackend()
             try:
                 user = keystone.authenticate(password=settings.TUKEY_PASSWORD,
