@@ -1,11 +1,14 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from .models import DataSet, Key, KeyValue
 from .forms import UpdateDataSetForm, AddDataSetForm
 from datetime import datetime, timedelta
-import uuid
+import uuid,json
+from settings import METADATA_DB, SIGNPOST_URL 
+from psqlgraph import PsqlGraphDriver,Node
+from signpostclient import SignpostClient
 
 #This needs work -- a lot of assumptions, lack of error checking and general ugliness
 
@@ -14,7 +17,12 @@ osdc_prefix = 'osdc'
 #does not support time zones -- for now leave it up to the submission scripts to put in UTC.
 time_format='%Y-%m-%d %H:%M:%S'
 
-valid_keys = ['source', 'source_url', 'description', 'short_description', 'category', 'size', 'modified', 'license', 'osdc_location', 'osdc_folder', 'osdc_hs_location', 'osdc_hs_folder']
+valid_keys = ['source', 'source_url', 'description', 'short_description', 'keyword', 'size', 'modified', 'license', 'osdc_location', 'osdc_folder', 'osdc_hs_location', 'osdc_hs_folder']
+
+pg_driver = PsqlGraphDriver(METADATA_DB['HOST'],METADATA_DB['USER'],
+                METADATA_DB['PASSWORD'],METADATA_DB['NAME'])
+
+signpost = SignpostClient(SIGNPOST_URL,version='v0')
 
 def init_keys():
     for key in valid_keys:
@@ -53,84 +61,41 @@ def update_keyvalues(keyvalues_id_value):
             k.save()
 
 
-def datasets_list_index(request, category_filter=None):
-    titles = dict()
-    short_descripts = dict()
-    sizes = dict()
-    categories = dict()
-    modified_times = dict()
-
+def datasets_list_index(request, keyword_filter=None):
     datasets = []
+    with pg_driver.session_scope():
+        query = pg_driver.nodes()
 
-    #this is terrible, executing a query for each key/value, needs to be fixed
-    if category_filter is not None:
-        kvs = KeyValue.objects.filter(key='category', value=category_filter)
-        for kv in kvs:
-            datasets.append(kv.dataset)
-            titles[kv.dataset.slug] = kv.dataset.title
-            try:
-                short_descripts[kv.dataset.slug] = KeyValue.objects.get(dataset=kv.dataset, key='short_description').value
-            except KeyValue.DoesNotExist:
-                short_descripts[kv.dataset.slug] = ''
-
-            try:
-                sizes[kv.dataset.slug] = KeyValue.objects.get(dataset=kv.dataset, key='size').value
-            except KeyValue.DoesNotExist:
-                sizes[kv.dataset.slug] = ''
-
-            for category in KeyValue.objects.filter(dataset=kv.dataset, key='category'):
-                if kv.dataset.slug not in categories:
-                    categories[kv.dataset.slug] = []
-                categories[kv.dataset.slug].append(category.value)
-
-            try:
-                modified_times[kv.dataset.slug] = datetime.strptime(KeyValue.objects.get(dataset=kv.dataset, key='modified').value, time_format)
-            except KeyValue.DoesNotExist:
-                modified_times[kv.dataset.slug] = ''
+    if keyword_filter is not None:
+        keyword = query.labels('keyword').props({'value':keyword_filter}).first()
+        nodes = []
+        for edge in keyword.edges_in:
+            nodes.append(edge.src)
     else:
-        datasets = DataSet.objects.all().order_by("title")
-
-        #better way to do this? -- assuming one value for everything except categories
-        #for title in KeyValue.objects.filter(key='title'):
-        #    titles[title.dataset.ark_key] = title.value
-        for dataset in datasets:
-            titles[dataset.slug] = dataset.title
-
-        for descript in KeyValue.objects.filter(key='short_description'):
-            short_descripts[descript.dataset.slug] = descript.value
-
-        for size in KeyValue.objects.filter(key='size'):
-            sizes[size.dataset.slug] = size.value
-
-        for category in KeyValue.objects.filter(key='category'):
-            if category.dataset.slug not in categories:
-                categories[category.dataset.slug] = []
-            categories[category.dataset.slug].append(category.value)
-    
-        for time in KeyValue.objects.filter(key='modified'):
-            modified_times[time.dataset.slug] = datetime.strptime(time.value, time_format)
-    
-    return render_to_response('datasets/datasets_list_index.html', {'datasets' : datasets, 'titles' : titles, 'categories' : categories, 'short_descripts' : short_descripts, 'sizes' : sizes, 'modified_times' : modified_times, 'category_filter' : category_filter}, context_instance=RequestContext(request))
+        nodes = query.labels('dataset').order_by(Node.properties['title'].astext).all()
+       
+    for node in nodes:
+        doc = signpost.get(node.node_id)
+        result=node.properties
+        result['keyword']=[]
+        result['identifiers']=doc.identifiers
+        for edge in node.edges_out:
+            result['keyword'].append(edge.dst['value'])
+        datasets.append(result)
+    return render_to_response('datasets/datasets_list_index.html', {'keyword_filter':keyword_filter,'datasets' : (datasets)}, context_instance=RequestContext(request))
 
 def dataset_detail(request, dataset_id):
-    d = get_object_or_404(DataSet, pk=dataset_id)
-    dataset_dict = dict()
-    dataset_dict['title'] = d.title
-    #dataset_dict['title'] = KeyValue.objects.get(dataset=d, key='title').value
-    #only special case is category
-    for key in Key.objects.all():
-        key_name = key.key_name
-        value_list = KeyValue.objects.filter(dataset=d, key=key_name).values_list('value',flat=True).order_by('value')
-        if key_name == 'category':
-            dataset_dict[key_name] = value_list
+    with pg_driver.session_scope():
+        dataset = pg_driver.nodes().labels('dataset').props({'slug':dataset_id}).first()
+        
+        dataset_dict = {}
+        if dataset:
+            dataset_dict = dataset.properties
+            doc = signpost.get(dataset.node_id)
+            dataset_dict['identifiers'] = doc.identifiers
+            dataset_dict['keyword']=[]
+            for edge in dataset.edges_out:
+                dataset_dict['keyword'].append(edge.dst['value']) 
+            return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
         else:
-            #probably more than 1 is an error/warning, just returning the first found
-            if len(value_list) > 0:
-                if key_name == 'modified':
-                    dataset_dict[key_name] = datetime.strptime(value_list[0], time_format)
-                else:
-                    dataset_dict[key_name] = value_list[0]
-            else:
-                dataset_dict[key_name] = ''
-
-    return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
+            raise Http404("Dataset does not exist")
