@@ -97,11 +97,11 @@ def keyservice_request(request):
             sender_user = 'noreply@opensciencedatacloud.org'
             recipients_user = [sender_admin]
 
-            #email_admin = EmailMessage(subject, message_admin, sender_admin, recipients_admin)
+            email_admin = EmailMessage(subject, message_admin, sender_admin, recipients_admin)
             email_user = EmailMessage(subject, message_user, sender_user, recipients_user)
             email_user.attach('metadata.json',json.dumps(form.cleaned_data))
             try:
-                #email_admin.send()
+                email_admin.send()
                 email_user.send()
                 return render(request,'webforms/apply_thanks.html')
 
