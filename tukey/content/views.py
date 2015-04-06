@@ -38,6 +38,8 @@ def gnos_key(request):
             return response
     return HttpResponse(status=204)
 
+
+
 def is_authenticated(user):
     if user =='':
         return False
