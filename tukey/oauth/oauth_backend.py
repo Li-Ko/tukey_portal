@@ -10,7 +10,7 @@ class OauthBackend:
         self.urls=self.getUrls()
     
     def getUrls(self):
-        r=requests.post(settings.OAUTH['discovery_document'])
+        r=requests.get(settings.OAUTH['discovery_document'])
         return r.json()      
     
 
