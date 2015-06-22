@@ -49,7 +49,8 @@ def is_authenticated(user):
             lines=csvfile.readlines()
             for line in lines:
                 row=re.split(",\s*",line)
-                if len(row)>0 and row[1] not in ['email','login']  and row[1].upper()==user.upper():
+                if len(row)>0 and row[1] not in ['email','login'] and \
+                    row[1].upper()==user.upper():
                     return True
     return False
 
