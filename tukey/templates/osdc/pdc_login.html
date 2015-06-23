@@ -15,7 +15,7 @@
   recorded and subject to audit. Use of this system is expressed consent to such
   monitoring and recording. Any unauthorized access or use of this Automated
   Information System is prohibited and could be subject to criminal and civil
-  penalties. 
+  penalties.
 </p>
 <p>
   Users are prohibited from using the system in a non approved manner. All
@@ -24,7 +24,12 @@
 </p>
 
      <div>
-	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth">
+    {% if next %}
+
+	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&target={{next}}">
+    {% else %}
+	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&target=/console">
+    {% endif %}
           {% trans "Sign in" %}
        </a>
      {% if request.GET.shib %}
@@ -33,9 +38,9 @@
      {% endif %}
      </div>
 
-  <!--
   <fieldset>
     {% if next %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ next }}" />{% endif %}
+  <!--
     {% include "horizon/common/_form_fields.html" %}
   </fieldset>
   -->
