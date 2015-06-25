@@ -21,14 +21,19 @@ def page(request, slug=''):
 
 def gnos(request):
     user=request.META.get(settings.SHIB_HEADERS[0]).split("!")[-1]
-    return render(request,'content/gnos.html',{'user':user,'authenticated':is_authenticated(user)})
+    # secondary user id
+    users = (user, request.META.get('name-id'))
+    print users
+
+    return render(request,'content/gnos.html',{'user':user,'authenticated':is_authenticated(*users)})
 
 
 
 def gnos_key(request):
     user=request.META.get(settings.SHIB_HEADERS[0]).split("!")[-1]
+    users = (user, request.META.get('name-id'))
     if user!='':
-        if is_authenticated(user):
+        if is_authenticated(*users):
             os.system("/var/www/tukey/sync.sh keygen "+user)
             the_file='/gtrepo/'+user+'/gtorrent.pem'
             filename=os.path.basename(the_file)
@@ -40,7 +45,7 @@ def gnos_key(request):
 
 
 
-def is_authenticated(user):
+def is_authenticated(user, secondary=''):
     if user =='':
         return False
     for filename in settings.GNOS_CHECK_LIST:
@@ -50,7 +55,7 @@ def is_authenticated(user):
             for line in lines:
                 row=re.split(",\s*",line)
                 if len(row)>0 and row[1] not in ['email','login'] and \
-                    row[1].upper()==user.upper():
+                    row[1].upper() in [user.upper(), secondary.upper()]:
                     return True
     return False
 

@@ -26,9 +26,9 @@
      <div>
     {% if next %}
 
-	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&target={{next}}">
+	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&RelayState={{next}}">
     {% else %}
-	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&target=/console">
+	<a class="btn" href="https://itrusteauth.nih.gov/affwebservices/public/saml2sso?SPID=https://bionimbus-pdc.opensciencedatacloud.org/shibboleth&RelayState=/console">
     {% endif %}
           {% trans "Sign in" %}
        </a>
