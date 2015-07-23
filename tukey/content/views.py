@@ -23,8 +23,6 @@ def gnos(request):
     user=request.META.get(settings.SHIB_HEADERS[0]).split("!")[-1]
     # secondary user id
     users = (user, request.META.get('name-id'))
-    print users
-    print is_authenticated(*users)
     return render(request,'content/gnos.html',{'user':user,'authenticated':is_authenticated(*users)!=''})
 
 

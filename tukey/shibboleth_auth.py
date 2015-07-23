@@ -1,5 +1,6 @@
 import logging
-
+import requests
+import json
 from .models import UnregisteredUser
 from django.conf import settings
 from django.contrib import auth
@@ -12,6 +13,7 @@ from openstack_auth.exceptions import KeystoneAuthException
 from openstack_auth.user import set_session_from_user
 
 LOG = logging.getLogger(__name__)
+
 
 def get_user(request):
     try:
@@ -30,7 +32,7 @@ def get_user(request):
         shib_header = None
         for possible_header in settings.SHIB_HEADERS:
             if possible_header in request.META and request.META.get(
-                possible_header):
+                    possible_header):
                 shib_header = possible_header
                 break
 
@@ -41,17 +43,31 @@ def get_user(request):
 
             keystone = KeystoneBackend()
             try:
-                user = keystone.authenticate(password=settings.TUKEY_PASSWORD,
-                    username="shibboleth %s" % request.META.get(shib_header),
+                username = "shibboleth %s" % request.META.get(shib_header)
+                user = keystone.authenticate(
+                    password=settings.TUKEY_PASSWORD,
+                    username=username,
                     auth_url=settings.OPENSTACK_KEYSTONE_URL,
                     request=request)
+                password = None
+                try:
+                    creds = requests.get(
+                        settings.CREDS_URL,
+                        data=json.dumps(
+                            {'username': username,
+                             'password': settings.TUKEY_PASSWORD}))
+                    password = creds.json()['password']
+                except:
+                    LOG.error("Can't get user password for user %s" % username)
                 user.backend = 'openstack_auth.backend.KeystoneBackend'
                 user.identifier = request.META.get(shib_header)
                 login(request, user)
+                if password:
+                    request.session['credential'] = password
             except (keystone_exceptions.Unauthorized, KeystoneAuthException):
-                user = UnregisteredUser('Shibboleth',
+                user = UnregisteredUser(
+                    'Shibboleth',
                     request.META.get(shib_header))
-
 
         else:
             user = AnonymousUser()
@@ -61,7 +77,8 @@ def get_user(request):
 def login(request, user):
     if user is None:
         user = request.user
-    # TODO: It would be nice to support different login methods, like signed cookies.
+    # TODO: It would be nice to support different
+    # login methods, like signed cookies.
     if auth.SESSION_KEY in request.session:
         if request.session[auth.SESSION_KEY] != user.id:
             # To avoid reusing another user's session, create a new, empty
@@ -98,10 +115,8 @@ def patch_openstack_middleware_get_user():
     from tukey.openid_auth import login_complete as new_login_complete
     openid_views.login_complete = new_login_complete
 
-
     from openstack_dashboard.usage import base
     base.GlobalUsage.show_terminated = True
 
     from create_patches import patch
     patch()
-

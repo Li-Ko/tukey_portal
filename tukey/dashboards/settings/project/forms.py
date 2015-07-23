@@ -66,7 +66,8 @@ class DownloadOpenRCForm(forms.SelfHandlingForm):
             context = {'user': request.user,
                        'auth_url': keystone_url,
                        'tenant_id': tenant_id,
-                       'tenant_name': tenant_name}
+                       'tenant_name': tenant_name,
+                       'password': request.session.get('credential')}
 
             response = shortcuts.render(request,
                                         'settings/project/openrc.sh.template',
