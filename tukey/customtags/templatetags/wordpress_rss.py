@@ -101,7 +101,7 @@ class GetRSSLatest(template.Node):
             base_url = getattr(
                 settings,
                 'WORDPRESS_RSS_BASE_URL', 
-                'http://opencloudconsortium.org'
+                'http://occ-data.org'
                 )
             
         feed_url = base_url + '/feed/'
