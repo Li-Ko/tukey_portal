@@ -5,7 +5,7 @@
   <p>
   The Open Science Data Cloud provides the scientific community with resources for storing, sharing, and analyzing terabyte and petabyte-scale scientific datasets. The OSDC is a data science ecosystem in which researchers can house and share their own scientific data, access complementary public datasets, build and share customized virtual machines with whatever tools necessary to analyze their data, and perform the analysis to answer their research questions. It is a one-stop shop for making scientific research faster and easier. 
 
-The OSDC is operated through the Center for Data Intensive Science (CDIS) at University of Chicago in collaboration with the Open Cloud Consortium, which is a 501(c)(3) not-for-profit corporation.
+The OSDC is operated through the Center for Data Intensive Science (CDIS) at University of Chicago in collaboration with the Open Commons Consortium, which is a 501(c)(3) not-for-profit corporation.
   </p>
   </div>
 
@@ -31,13 +31,13 @@ The OSDC is operated through the Center for Data Intensive Science (CDIS) at Uni
     <p>The OSDC ecosystem has different resources to serve the diverse needs of the research community.   One fundamental way to think about the resources offered in the OSDC is to group them by purpose.</p>
     <ul>
     <li>
-   <b> Public Data Commons</b> - The OSDC has 1PB of <a href="https://www.opensciencedatacloud.org/publicdata/" target="_blank" >public data</a> in a wide variety of disciplines.   These datasets are freely available and can be downloaded over the internet or high performance networks for analysis locally.   All recipients of OSDC resource allocations can also compute directly over the data in the Public Data Commons directly, without having to download them locally.</li>
+   <b> Public Data Commons</b> - The OSDC has 1PB of <a href="https://www.opensciencedatacloud.org/publicdata/" target="_blank" >public data</a> in a wide variety of disciplines.   These datasets are freely available and can be downloaded over the internet or high performance networks for analysis locally.   All grantees of OSDC resource allocations can also compute directly over the data in the Public Data Commons directly, without having to download them locally.</li>
     <li>
-<b>General Compute Resources</b> - The OSDC currently offers one general purpose compute cloud: Sullivan.   This is for researchers without datasets that need to be analyzed in a protected environment (like human medical data or patient records).    Researchers awarded allocations on Sullivan have access to their own private directory for storage and compute cores for analysis.   Projects and labs awarded multiple allocations can request shared directories to facilitate group work.  The OSDC also offers a limited number of Floating IPs available on request to researchers on our public cloud.</li>
+<b>General Compute Resources</b> - The OSDC currently offers two general purpose compute clouds: Sullivan and Griffin.   These are for researchers without datasets that need to be analyzed in a protected environment (like human medical data or patient records).    Researchers granted allocations on Sullivan and Griffin have access to their own private directory for storage and compute cores for analysis.   Projects and labs awarded multiple allocations can request shared directories to facilitate group work.  The OSDC also offers a limited number of Floating IPs available on request to researchers on our public clouds.</li>
     <li>
 <b>Protected Compute Resources</b> - The OSDC currently offers two protected cloud computing resources for analyzing sensitive datasets (like human medical data or patient records), Atwood and the Bionimbus PDC, operated at a <a href="http://en.wikipedia.org/wiki/Federal_Information_Security_Management_Act_of_2002" target="_blank">FISMA</a> moderate security level.  There are additional legal forms required for access to these resources. The Bionimbus PDC is for researchers that have been granted access to the TCGA dataset and is currently used primarily for analysis of that data.   Because it relies on eRA Commons for identification, it has a <a href="https://bionimbus-pdc.opensciencedatacloud.org/" target="_blank">separate application process</a>. The Bionimbus PDC uses Ceph and Cinder storage and relies on group tenants instead of individual core and storage quotas.  </li>
     <li>
-<b>Hadoop Resources</b> -  The OSDC offers two Hadoop resources for <a target="_blank" href="http://opencloudconsortium.org/members/">OCC members</a> and selected projects:  OCC-Y and Skidmore.   Unlike our Public and Protected resources which utilize the <a target="_blank" href="https://www.opensciencedatacloud.org/support/console.html">Tukey Webconsole</a>,  users granted allocations on Hadoop resources can only interact at the command line. </li> 
+<b>Hadoop Resources</b> -  The OSDC offers two Hadoop resources for <a target="_blank" href="http://occ-data.org/members/">OCC members</a> and selected projects:  OCC-Y and Skidmore.   Unlike our Public and Protected resources which utilize the <a target="_blank" href="https://www.opensciencedatacloud.org/support/console.html">Tukey Webconsole</a>,  users granted allocations on Hadoop resources can only interact at the command line. </li> 
 
 
   </div>
@@ -75,9 +75,9 @@ The OSDC is operated through the Center for Data Intensive Science (CDIS) at Uni
   <p class=xl78>cloud software</p>
   <p class=xl78>compute nodes</p>
   <p class=xl78>Compute Cores</p>
-  <p class=xl79>Compute RAM (GB)</p>
-  <p class=xl79>RAW Storage (TB)</p>
-  <p class=xl79>Usable Storage (TB)</p>
+  <p class=xl79>Compute RAM (GiB)</p>
+  <p class=xl79>RAW Storage (TiB)</p>
+  <p class=xl79>Usable Storage (TiB)</p>
  </div>
  <div >
   <p  class=xl65 >Sullivan</p>
@@ -91,27 +91,38 @@ The OSDC is operated through the Center for Data Intensive Science (CDIS) at Uni
   <p class=xl66 >435</p>
  </div>
  <div >
+  <p  class=xl65 >Griffin</p>
+  <p class=xl66 widp=180>Compute
+  - General Projects + Selected Groups</p>
+  <p class=xl65 >OpenStack w/ Ceph Object Storage and Ephemeral Storage in VMs</p>
+  <p class=xl65 >60</p>
+  <p class=xl65 >1024</p>
+  <p class=xl67 >4096</p>
+  <p class=xl67 >896 (Ephemeral)</p>
+  <p class=xl66 >NA</p>
+ </div>
+ <div >
   <p  class=xl65 >Atwood</p>
   <p class=xl66 widp=180 >Protected Compute Cloud</p>
-  <p class=xl65 >OpenStack w/ GlusterFS</p>
+  <p class=xl65 >OpenStack w/ GlusterFS and access to PDC Object store</p>
   <p class=xl65 >23</p>
   <p class=xl65 >312</p>
   <p class=xl65 >736</p>
-  <p class=xl65 >476</p>
-  <p class=xl66 >181</p>
+  <p class=xl65 >585</p>
+  <p class=xl66 >282</p>
  </div>
  <div height=30 style='height:30.0pt'>
   <p height=30 class=xl69 style='height:30.0pt;border-top:none'>Bionimbus-PDC</p>
-  <p class=xl70 widp=180 style='border-top:none;border-left:none;widp:180pt'>Protected Compute Cloud for TCGA Data</p>
+  <p class=xl70 widp=180 style='border-top:none;border-left:none;widp:180pt'>Protected Compute Cloud</p>
   <p class=xl69 style='border-top:none;border-left:none'>OpenStack w/ Ceph and Swift</p>
   <p class=xl69 align=right style='border-top:none;border-left:none'>100</p>
-  <p class=xl69 align=right style='border-top:none;border-left:none'>1208</p>
+  <p class=xl69 align=right style='border-top:none;border-left:none'>2856</p>
   <p class=xl71 align=right widp=56 style='border-top:none;border-left:none;
   widp:56pt'>9856</p>
   <p class=xl71 align=right widp=56 style='border-top:none;border-left:none;
   widp:56pt'>5736</p>
   <p class=xl70 align=right widp=52 style='border-top:none;border-left:none;
-  widp:52pt'>276</p>
+  widp:52pt'>226</p>
  </div>
 
  <div height=15 style='height:15.0pt'>
@@ -182,6 +193,12 @@ The OSDC is operated through the Center for Data Intensive Science (CDIS) at Uni
   projects</p>
  </div>
  <div >
+ <div >
+  <p  class=row1 >Griffin</p>
+  <p class=row1 >16 Cores / 1 TB</p>
+  <p class=row2 >General access to selected
+  projects</p>
+ </div>
   <p  class=row1 >Atwood</p>
   <p class=row1 widp=168 style='border-top:none;border-left:none;widp:168pt'>16
   Cores / 1 TB</p>
