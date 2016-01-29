@@ -60,7 +60,7 @@ $("#nav-overview").attr('class', 'active')
         <form name="fopenid" action="{{ action }}" method="post">
             {% csrf_token %}
             <fieldset>
-                <input name="openid_identifier" type="hidden" value="https://yahoo.com" />
+                <input name="openid_identifier" type="hidden" value="https://me.yahoo.com" />
                 <input name="bsignin" type="image" src="../../static/dashboard/img/yahoo.png" value="{% trans "Sign in" %}">
          {% if next %}
                 <input type="hidden" name="next" value="{{ next }}" />
