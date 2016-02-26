@@ -1,4 +1,6 @@
 from django.conf import settings
+from openstack_dashboard.usage import quotas
+import json
 from django.utils.text import normalize_newlines
 from django.utils.translation import ugettext as _
 
@@ -218,6 +220,27 @@ def populate_flavor_choices(self, request, context):
                           _('Unable to retrieve instance flavors.'))
     return sorted(flavor_list)
 
+def get_help_text(self):
+    extra = {}
+    try:
+        extra['usages'] = quotas.tenant_quota_usages(self.request)
+        extra['usages_json'] = json.dumps(extra['usages'])
+        if 'cloud' in self.request.GET:
+            cloud = self.request.GET['cloud']
+            flavors = json.dumps(
+                [f._info for f in api.nova.flavor_list(self.request)
+                 if get_cloud(f) == cloud])
+
+        else:
+            flavors = json.dumps([f._info for f in
+                                   api.nova.flavor_list(self.request)])
+
+        extra['flavors'] = flavors
+    except:
+        exceptions.handle(self.request,
+                          _("Unable to retrieve quota information."))
+    return super(SetInstanceDetailsAction, self).get_help_text(extra)
+
 
 def populate_headnode_flavor_choices(self, request, context):
     ''' Make sure that medium is first '''
@@ -230,6 +253,7 @@ def populate_headnode_flavor_choices(self, request, context):
 SetInstanceDetails.action_class.populate_image_id_choices = populate_image_id_choices
 SetInstanceDetails.action_class.populate_instance_snapshot_id_choices = populate_instance_snapshot_id_choices
 SetInstanceDetails.action_class.populate_flavor_choices = populate_flavor_choices
+SetInstanceDetails.action_class.get_help_text = get_help_text 
 SetInstanceDetails.action_class.populate_headnode_flavor_choices = populate_headnode_flavor_choices
 SetInstanceDetails.action_class.populate_headnode_image_id_choices = populate_headnode_image_id_choices
 
