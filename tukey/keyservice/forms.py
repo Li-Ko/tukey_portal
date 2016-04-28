@@ -1,4 +1,5 @@
 from django import forms
+from captcha.fields import ReCaptchaField
 import datetime
 from django.forms import ModelForm
 from tukey.keyservice.models import Repository, Key
@@ -58,3 +59,4 @@ class MetadataForm(forms.Form):
     url = forms.CharField(label='URL (to existing data location)',required=False,
         widget=forms.TextInput(attrs={'class':'span4'}))
 
+    captcha = ReCaptchaField()
