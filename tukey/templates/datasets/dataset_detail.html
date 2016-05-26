@@ -47,8 +47,9 @@
 
 <div class="span12 data-label"><strong>Last Updated: </strong>{% timezone "UTC" %} {{dataset.date_updated}} {% endtimezone %}UTC </div>
 
+<!-- need to wrap this section in code that evaluates dataset.availability_mechanism, since gluster diff from obj -->  
 
-<div class="span12 data-header"><h3>Download Instructions</h3></div>
+<div class="span12 data-header"><h3>Access Instructions</h3></div>
 <div class="span12">
 <p>
 All public data sets are available on both commodity internet connections and high speed <a href="http://www.startap.net/starlight/">StarLight</a>/<a href="http://www.internet2.edu/">Internet2</a> connections. We recommend using <a href="http://rsync.samba.org/">rsync</a> or <a href="http://github.com/LabAdvComp/UDR">UDR</a> to download the data.
@@ -85,16 +86,10 @@ UDR is a wrapper around rsync that enables rsync to use the high performance <a 
 <p>
 Virtual machines on the OSDC have direct access to all of the public data sets. If you do not have a OSDC account, you can apply for one <a href="http://www.opensciencedatacloud.org/apply/">here</a>. 
 <p>
-<h4>Sullivan:</h4>
+<h4>OSDC Allocation Recipients:</h4>
 </p>
 <p>
-The public data is located in /glusterfs/osdc_public_data.
-</p>
-<p>
-<h4>OCC-Y: </h4>
-</p>
-<p>
-The public data sets are mounted on the starlight node under <code>/mnt/pubdata</code>.
+For OSDC allocation recipients trying to access public data from either a PDC or Public resource, data is located in either /glusterfs/osdc_public_data or in the griffin-objstore.opensciencedatacloud.org.   We recommend reviewing the Access Instructions above for particulars.  
 </p>
 </div>
 <div class="span12 data-header"><h3>License/Attribution Requirements</h3></div>
