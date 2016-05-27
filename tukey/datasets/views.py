@@ -63,26 +63,38 @@ def update_keyvalues(keyvalues_id_value):
 
 def datasets_list_index(request, keyword_filter=None):
     datasets = []
+    commons_type = request.GET.get('commons_type', 'General')
     with pg_driver.session_scope():
+        commons = (
+            pg_driver.node_lookup(label='commons_type').props({'value': commons_type})
+            .first())
         query = pg_driver.nodes()
+        if commons:
+            query = query.with_edge_to_node('member_of', commons)
 
-    if keyword_filter is not None:
-        keyword = query.labels('keyword').props({'value':keyword_filter}).first()
-        nodes = []
-        for edge in keyword.edges_in:
-            nodes.append(edge.src)
-    else:
-        nodes = query.labels('dataset').order_by(Node.properties['title'].astext).all()
-       
-    for node in nodes:
-        doc = signpost.get(node.node_id)
-        result=node.properties
-        result['keyword']=[]
-        result['identifiers']=doc.identifiers
-        for edge in node.edges_out:
-            result['keyword'].append(edge.dst['value'])
-        datasets.append(result)
-    return render_to_response('datasets/datasets_list_index.html', {'keyword_filter':keyword_filter,'datasets' : (datasets)}, context_instance=RequestContext(request))
+
+        if keyword_filter is not None:
+            keyword = pg_driver.nodes().labels('keyword').props({'value':keyword_filter}).first()
+            nodes = []
+            for edge in keyword.edges_in:
+                nodes.append(edge.src)
+        else:
+            nodes = query.labels('dataset').order_by(Node.properties['title'].astext).all()
+           
+        for node in nodes:
+            doc = signpost.get(node.node_id)
+            result=node.properties
+            result['keyword']=[]
+            result['identifiers']=doc.identifiers
+            for edge in node.edges_out:
+                if edge.dst.label == 'keyword':
+                    result['keyword'].append(edge.dst['value'])
+            datasets.append(result)
+            if commons_type == 'Environmental':
+                template = 'datasets/envdatasets_list_index.html'
+            else:
+                template = 'datasets/datasets_list_index.html'
+    return render_to_response(template, {'keyword_filter':keyword_filter,'datasets' : (datasets)}, context_instance=RequestContext(request))
 
 def dataset_detail(request, dataset_id):
     with pg_driver.session_scope():
@@ -95,7 +107,8 @@ def dataset_detail(request, dataset_id):
             dataset_dict['identifiers'] = doc.identifiers
             dataset_dict['keyword']=[]
             for edge in dataset.edges_out:
-                dataset_dict['keyword'].append(edge.dst['value']) 
+                if edge.dst.label == 'keyword':
+                    dataset_dict['keyword'].append(edge.dst['value']) 
             return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
         else:
             raise Http404("Dataset does not exist")
