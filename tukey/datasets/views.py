@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render_to_response, redirect
+from dateutil.parser import parse
 from django.http import HttpResponse,Http404
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
@@ -6,14 +7,16 @@ from .models import DataSet, Key, KeyValue
 from .forms import UpdateDataSetForm, AddDataSetForm
 from datetime import datetime, timedelta
 import uuid,json
-from settings import METADATA_DB, SIGNPOST_URL 
+from settings import METADATA_DB, SIGNPOST_URL, NEXRAD_CONN 
 from psqlgraph import PsqlGraphDriver,Node
 from signpostclient import SignpostClient
-
+from nexrad_models import (
+    SQLAlchemyIndexDriver, NOAAMetadata,
+    IndexRecordHash, AliasRecordHash)
 #This needs work -- a lot of assumptions, lack of error checking and general ugliness
 
 osdc_prefix = 'osdc'
-
+nexrad_driver = SQLAlchemyIndexDriver(NEXRAD_CONN)
 #does not support time zones -- for now leave it up to the submission scripts to put in UTC.
 time_format='%Y-%m-%d %H:%M:%S'
 
@@ -112,3 +115,28 @@ def dataset_detail(request, dataset_id):
             return render_to_response('datasets/dataset_detail.html', {'dataset': dataset_dict}, context_instance=RequestContext(request))
         else:
             raise Http404("Dataset does not exist")
+
+
+def search_nexrad(request):
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    location = request.GET.get('location')
+    if not from_date or not to_date:
+        return HttpResponse(json.dumps({'error': 'please specify the date'}),
+                            content_type="application/json")
+    from_date = parse(from_date).date()
+    to_date = parse(to_date).date()
+
+    if not location:
+        return HttpResponse(json.dumps({'error': 'invalid station code'}),
+                            content_type="application/json")
+    with nexrad_driver.session as s:
+        r = (
+            s.query(AliasRecordHash.name)
+            .join(IndexRecordHash, IndexRecordHash.hash_value == AliasRecordHash.hash_value)
+            .join(NOAAMetadata, NOAAMetadata.did == IndexRecordHash.did)
+            .filter(NOAAMetadata.date>=from_date)
+            .filter(NOAAMetadata.date<=to_date)
+            .filter(NOAAMetadata.location==location).all())
+        return HttpResponse(json.dumps({'dids': [i[0] for i in r]}),
+                            content_type="application/json")

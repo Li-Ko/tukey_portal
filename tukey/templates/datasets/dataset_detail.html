@@ -48,39 +48,40 @@
 <div class="span12 data-label"><strong>Last Updated: </strong>{% timezone "UTC" %} {{dataset.date_updated}} {% endtimezone %}UTC </div>
 
 <!-- need to wrap this section in code that evaluates dataset.availability_mechanism, since gluster diff from obj -->  
+{% if dataset.availability_mechanism == 'udr, rsync' %}
+    <div class="span12 data-header"><h3>Access Instructions</h3></div>
+    <div class="span12">
+    <p>
+    All public data sets are available on both commodity internet connections and high speed <a href="http://www.startap.net/starlight/">StarLight</a>/<a href="http://www.internet2.edu/">Internet2</a> connections. We recommend using <a href="http://rsync.samba.org/">rsync</a> or <a href="http://github.com/LabAdvComp/UDR">UDR</a> to download the data.
 
-<div class="span12 data-header"><h3>Access Instructions</h3></div>
-<div class="span12">
-<p>
-All public data sets are available on both commodity internet connections and high speed <a href="http://www.startap.net/starlight/">StarLight</a>/<a href="http://www.internet2.edu/">Internet2</a> connections. We recommend using <a href="http://rsync.samba.org/">rsync</a> or <a href="http://github.com/LabAdvComp/UDR">UDR</a> to download the data.
+    <!--The username/password for the download account is guest/guest. -->
 
-<!--The username/password for the download account is guest/guest. -->
+    <h4>Downloading with <a href="http://github.com/LabAdvComp/UDR">UDR</a> (UDT enabled rsync)</h4>
+    <p>
+    UDR is a wrapper around rsync that enables rsync to use the high performance <a href="http://udt.sourceforge.net/">UDT</a> network protocol, which can greatly improve download speeds, especially over high speed networks. Once installed, the only change is placing the udr command before the same rsync command you typically use to download the data. UDR is open source and under active development, the most recent version is available on <a href="https://github.com/LabAdvComp/UDR">github</a>. <b>At the moment, UDR is not enabled on the transfer node. The functionality should return shortly. Use rsync in the meantime.</b>
+    </p>
 
-<h4>Downloading with <a href="http://github.com/LabAdvComp/UDR">UDR</a> (UDT enabled rsync)</h4>
-<p>
-UDR is a wrapper around rsync that enables rsync to use the high performance <a href="http://udt.sourceforge.net/">UDT</a> network protocol, which can greatly improve download speeds, especially over high speed networks. Once installed, the only change is placing the udr command before the same rsync command you typically use to download the data. UDR is open source and under active development, the most recent version is available on <a href="https://github.com/LabAdvComp/UDR">github</a>. <b>At the moment, UDR is not enabled on the transfer node. The functionality should return shortly. Use rsync in the meantime.</b>
-</p>
+    <p>
+    <h4>List the contents of {{dataset.title}}:</h4>
+    <ul>
+    <li>Using rsync: <code>rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
+    <li>Using udr: <code>udr rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
+    </ul>
 
-<p>
-<h4>List the contents of {{dataset.title}}:</h4>
-<ul>
-<li>Using rsync: <code>rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
-<li>Using udr: <code>udr rsync publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ </code></li>
-</ul>
+    <h4>Download/synchronize {{dataset.title}}:</h4>
+    <ul>
+    <li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
+    <li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
+    </ul>
 
-<h4>Download/synchronize {{dataset.title}}:</h4>
-<ul>
-<li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/ /path/to/local_copy</code></li>
-</ul>
-
-<h4>Download an individual file from {{dataset.title}}:</h4>
-<ul>
-<li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
-<li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
-</ul>
-</p>
-</div>
+    <h4>Download an individual file from {{dataset.title}}:</h4>
+    <ul>
+    <li>Using rsync: <code>rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
+    <li>Using udr: <code>udr rsync -avzuP publicdata.opensciencedatacloud.org::ark:{{dataset.identifiers.ark}}/remotefile /path/to/local_copy</code></li>
+    </ul>
+    </p>
+    </div>
+{% endif %}
 <div class="span12 data-header"><h3>OSDC Instructions</h3></div>
 <div class="span12">
 <p>
@@ -98,12 +99,315 @@ For OSDC allocation recipients trying to access public data from either a PDC or
 {{dataset.license|safe}}
 </div>
 {% endif %}
+
+{% if dataset.slug == 'noaa-nexrad-l2' %}
+<div id='search-service' class="span12 data-header"><h3>Nexrad Level II Search Service</h3></div>
+<div class='span12'>
+<p>
+Using this service, you can search space and time for NEXRAD level II data of interest. This search service will return persistent digital identifiers for accessing data from given NEXRAD Radar Stations and given dates in time.
+</p>
+<p>
+These digital identifiers can then be used to locate the data of interest via the OSDC Signpost ID service 'alias' endpoint. The digital identifiers map to hashes of the identified data objects, which then map to known locations (urls) of the identified data. For an example of how to use the Signpost ID service for finding NEXRAD data, see <a href="https://www.opensciencedatacloud.org/support/publicdata.html#signpost-id-service">here.</a>
+</p>
+<p>
+Referring to digital identifiers and the Signpost ID service instead of hard coding locations of data ensures that any code that interfaces with data in the commons will run smoothly if the data need to be moved. The goal in practice is a system in which a commons serving the research community can relocate data files to another commons and no researcher needs to change their code.
+</p>
+<p>
+To use the search tool, provide a start date and end date of you interest in format 'mm/dd/yyyy', the maximum range it supports for query is 7 days. A full list of stations/station codes can be found <a href="https://tools.wmflabs.org/osm4wiki/cgi-bin/wiki/wiki-osm.pl?project=en&article=NEXRAD"> here</a>.
+</p>
+<section>
+<form id='search-form'>
+<span>From:  </span>
+<input type="date", min="1991-06-05" max="2015-12-31" name="from-date" id="from-date">
+<span>To: </span>
+<input type="date", min="1991-06-05" max="2015-12-31" name="to-date" id="to-date">
+<input type="text" placeholder="station code" id="location" list='locations'>
+<datalist id='locations'>
+  <option value="PAIH">
+  <option value="KFSD">
+  <option value="KRGX">
+  <option value="PHWA">
+  <option value="KBUF">
+  <option value="KINX">
+  <option value="KTLX">
+  <option value="KLRX">
+  <option value="KCYS">
+  <option value="KIWA">
+  <option value="PHKM">
+  <option value="KLIX">
+  <option value="KMAX">
+  <option value="KNQA">
+  <option value="KLCH">
+  <option value="KMLB">
+  <option value="KDLH">
+  <option value="KFTG">
+  <option value="KUNR">
+  <option value="KHPX">
+  <option value="KGGW">
+  <option value="KHGX">
+  <option value="KVTX">
+  <option value="DAN1">
+  <option value="LPLA">
+  <option value="KTLH">
+  <option value="KDTX">
+  <option value="KHDX">
+  <option value="KDAX">
+  <option value="KEYX">
+  <option value="KJAX">
+  <option value="KAPX">
+  <option value="KGRK">
+  <option value="KOHX">
+  <option value="KBMX">
+  <option value="KMVX">
+  <option value="KDMX">
+  <option value="KPOE">
+  <option value="KAMA">
+  <option value="KFSX">
+  <option value="KESX">
+  <option value="KABR">
+  <option value="KGJX">
+  <option value="PAHG">
+  <option value="KFWS">
+  <option value="KGSP">
+  <option value="KPUX">
+  <option value="PAPD">
+  <option value="KLBB">
+  <option value="KSOX">
+  <option value="PHKI">
+  <option value="KMPX">
+  <option value="KSJT">
+  <option value="KBIS">
+  <option value="KYUX">
+  <option value="KBGM">
+  <option value="KJKL">
+  <option value="KDFX">
+  <option value="KPBZ">
+  <option value="KRMX">
+  <option value="KOUN">
+  <option value="KJGX">
+  <option value="KMXX">
+  <option value="KPAH">
+  <option value="KBBX">
+  <option value="KGRR">
+  <option value="KCBW">
+  <option value="KDDC">
+  <option value="KDOG">
+  <option value="KLOT">
+  <option value="PAEC">
+  <option value="KICT">
+  <option value="KVBX">
+  <option value="KCRI">
+  <option value="KHNX">
+  <option value="KUEX">
+  <option value="KJAN">
+  <option value="KMAF">
+  <option value="KTBW">
+  <option value="KLZK">
+  <option value="KGYX">
+  <option value="KTFX">
+  <option value="KRIW">
+  <option value="RKJK">
+  <option value="KNKX">
+  <option value="KDIX">
+  <option value="KTYX">
+  <option value="KABQ">
+  <option value="KLNX">
+  <option value="KEMX">
+  <option value="KATX">
+  <option value="PAKC">
+  <option value="KMRX">
+  <option value="KCLX">
+  <option value="KEVX">
+  <option value="KSHV">
+  <option value="KCCX">
+  <option value="KMUX">
+  <option value="KEWX">
+  <option value="KDGX">
+  <option value="KAKQ">
+  <option value="KRAX">
+  <option value="KEAX">
+  <option value="KDVN">
+  <option value="KVNX">
+  <option value="KTWX">
+  <option value="KCAE">
+  <option value="DOP1">
+  <option value="KSRX">
+  <option value="PABC">
+  <option value="KMBX">
+  <option value="KLWX">
+  <option value="KMSX">
+  <option value="KBHX">
+  <option value="KVAX">
+  <option value="KDOX">
+  <option value="KLSX">
+  <option value="KICX">
+  <option value="KMTX">
+  <option value="KILX">
+  <option value="KFCX">
+  <option value="KOAX">
+  <option value="FOP1">
+  <option value="KOTX">
+  <option value="KGWX">
+  <option value="NOP3">
+  <option value="KCBX">
+  <option value="KLVX">
+  <option value="KEOX">
+  <option value="KSFX">
+  <option value="KBOX">
+  <option value="KDYX">
+  <option value="KFDX">
+  <option value="KABX">
+  <option value="PHMO">
+  <option value="KLGX">
+  <option value="PGUA">
+  <option value="KBLX">
+  <option value="KEPZ">
+  <option value="KMKX">
+  <option value="KUDX">
+  <option value="KHTX">
+  <option value="PACG">
+  <option value="KIWX">
+  <option value="KENX">
+  <option value="KMQT">
+  <option value="KLTX">
+  <option value="KMOB">
+  <option value="RODN">
+  <option value="ROP3">
+  <option value="KIND">
+  <option value="KRLX">
+  <option value="KPDT">
+  <option value="KOKX">
+  <option value="TJUA">
+  <option value="RKSG">
+  <option value="KCLE">
+  <option value="KCRP">
+  <option value="NOP4">
+  <option value="KFDR">
+  <option value="KVWX">
+  <option value="KAMX">
+  <option value="KMHX">
+  <option value="KCXX">
+  <option value="KARX">
+  <option value="KILM">
+  <option value="KFFC">
+  <option value="ROP4">
+  <option value="KBRO">
+  <option value="KILN">
+  <option value="KGRB">
+  <option value="KRTX">
+  <option value="KBYX">
+  <option value="KGLD">
+  <option value="KSGF">
+</datalist>
+<a href="#search-service" class="button"  id="submit-search">Get Result</a>
+<i id='spinner' class="hide fa fa-spinner fa-spin" style="font-size:24px"></i>
+<span class='error' id='search-error'></span>
+</form>
+<ul id='dids'>
+
+
+</ul>
+</section>
+</div>
+{% endif %}
 </div>
 {% endblock %}
 
 {% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-$("#nav-publicdata").addClass('active')
+
+$(document).ready(function(){
+     $("#nav-publicdata").addClass('active');
+     $("#submit-search").click(function(){
+          $("#dids").text("")
+          $("#search-error").text("")
+          var from_date = $("#from-date").val();
+          if (from_date == ""){
+              $("#search-error").text("Please specify a start date")
+              return
+          }
+          var to_date = $("#to-date").val();
+          if (to_date == ""){
+              $("#search-error").text("Please specify a end date")
+              return
+          }
+          from_date = new Date(from_date);
+          to_date = new Date(to_date);
+          if (isNaN(from_date.getTime())){
+              $("#search-error").text("Invalid start  date")
+              return
+          }
+          if (isNaN(to_date.getTime())){
+              $("#search-error").text("Invalid end date")
+              return
+          }
+          var date_range = to_date - from_date 
+          if (date_range < 0){
+
+              $("#search-error").text("End date must be greater than start date")
+              return
+          }
+          if (date_range/1000/3600/24 > 7) {
+              $("#search-error").text("Date range can't be greater than 7 days")
+              return
+          }
+          var location = $("#location").val();
+          $("#spinner").removeClass("hide");
+          $.ajax({
+              'url': '/publicdata/search-nexrad',
+              'data': {'from_date': from_date.toDateString(), 'to_date': to_date.toDateString(), 'location': location},
+              'success': function(e){
+                  $("#spinner").addClass("hide");
+                  if ('error' in e){
+                  $("#search-error").text(e['error'])};
+                  if ('dids' in e){
+                      result = e['dids'];
+                      if (result.length == 0) {
+                          $("#search-error").text("No records found")
+                      }
+                      else {
+                          var blob=new Blob([result.join('\n')], {type: 'plain/text'})
+                          var link=document.createElement('a');
+                          link.href=window.URL.createObjectURL(blob);
+                          link.download="search_result.txt"
+                          link.click()
+                      }    
+                  }
+               },
+              'error': function(e){
+                  console.log(e)
+                  $("#spinner").addClass("hide");
+               }})
+     })
+     
+
+
+})
 </script> 
+<style>
+#search-form input{
+  margin: 0px;
+  height: 25px;
+}
+#search-form .button {
+  border: 1px solid #0197b0;
+  margin-left: 15px;
+  padding: 2px 5px;
+  display: inline-block;
+  height: 25px;
+  border-radius: 3px;
+}
+#search-form .error{
+  color: #D54E3A;
+  margin-left: 15px;
+  font-style: italic;
+}
+#search-form .hide{
+  display: none;
+}
+#search-form #spinner {
+  margin-left: 15px;
+}
+</style>
 {% endblock %}
