@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block meta_title %}Root Data Commons{% endblock %}
+{% block meta_title %}Environmental Data Commons{% endblock %}
 
 {% load util_tags %}
 
 {% block content %}
 <div class="maincontent">
 <header class="jumbotron subhead">
-  <h1>Root Data Commons</h1>
+  <h1>Environmental Data Commons</h1>
   <div class="lead">
-    Repository for general public data sets of scientific interest, hosted on the OSDC. 
+    Repository for environmental public data sets of scientific interest, hosted on the OSDC.  
     </div>
 <div class="data-lead">
 <div>
-   The Root Data Commons features a variety of social science, biology, genomics, and general purpose data of interest to the research community. 
-   The OSDC has ~1PB of <a href="https://www.opensciencedatacloud.org/publicdata/">public data</a>
+   The Environmental Data Commons features a variety of earth science data of interest to the research community. These include datasets from NASA and NOAA facilitated through <a href="http://occ-data.org">Open Commons Consortium</a> relationships.  
+   The OSDC has ~1PB of <a href="https://www.opensciencedatacloud.org/">public data</a>
    in a wide variety of disciplines.&nbsp;&nbsp; These data sets are freely 
    available and can be downloaded over the internet or high performance 
    networks for analysis locally.&nbsp;&nbsp; Information on how to download can be found at the links below for each individual dataset.&nbsp;&nbsp; All recipients of OSDC resource 
@@ -59,7 +59,7 @@
 {% block js %}
 {% include "horizon/_scripts.html" %}
 <script type="text/javascript">
-$("#nav-publicdata").addClass('active')
+$("#nav-envdata").addClass('active')
 </script> 
 </div>
 {% endblock %}
