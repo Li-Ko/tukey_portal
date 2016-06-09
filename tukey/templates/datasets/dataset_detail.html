@@ -113,7 +113,7 @@ These digital identifiers can then be used to locate the data of interest via th
 Referring to digital identifiers and the Signpost ID service instead of hard coding locations of data ensures that any code that interfaces with data in the commons will run smoothly if the data need to be moved. The goal in practice is a system in which a commons serving the research community can relocate data files to another commons and no researcher needs to change their code.
 </p>
 <p>
-To use the search tool, provide a start date and end date of you interest in format 'mm/dd/yyyy', the maximum range it supports for query is 7 days. A full list of stations/station codes can be found <a href="https://tools.wmflabs.org/osm4wiki/cgi-bin/wiki/wiki-osm.pl?project=en&article=NEXRAD"> here</a>.
+To use the search tool, provide a start date and end date of interest in format 'mm/dd/yyyy', the maximum range it supports for query is 7 days. A full list of stations/station codes can be found <a href='https://tools.wmflabs.org/osm4wiki/cgi-bin/wiki/wiki-osm.pl?project=en&article=NEXRAD'>here</a>.
 </p>
 <section>
 <form id='search-form'>
@@ -315,11 +315,13 @@ To use the search tool, provide a start date and end date of you interest in for
 
 {% block js %}
 {% include "horizon/_scripts.html" %}
+<script type='text/javascript' src="{{STATIC_URL}}dashboard/js/FileSaver.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function(){
      $("#nav-publicdata").addClass('active');
      $("#submit-search").click(function(){
+          console.log('clicked');
           $("#dids").text("")
           $("#search-error").text("")
           var from_date = $("#from-date").val();
@@ -358,20 +360,20 @@ $(document).ready(function(){
               'url': '/publicdata/search-nexrad',
               'data': {'from_date': from_date.toDateString(), 'to_date': to_date.toDateString(), 'location': location},
               'success': function(e){
+                  console.log(e);
                   $("#spinner").addClass("hide");
                   if ('error' in e){
                   $("#search-error").text(e['error'])};
                   if ('dids' in e){
+                      console.log(e);
                       result = e['dids'];
                       if (result.length == 0) {
                           $("#search-error").text("No records found")
                       }
                       else {
-                          var blob=new Blob([result.join('\n')], {type: 'plain/text'})
-                          var link=document.createElement('a');
-                          link.href=window.URL.createObjectURL(blob);
-                          link.download="search_result.txt"
-                          link.click()
+                          var content = result.join('\n')
+                          var blob=new Blob([result.join('\n')], {type: "text/plain;charset=utf-8"})
+                          saveAs(blob, "search_result.txt");
                       }    
                   }
                },
