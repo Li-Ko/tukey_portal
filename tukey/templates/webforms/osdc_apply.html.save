@@ -17,7 +17,7 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
   If you are interested in our Protected
   Data Cloud for The Cancer Genome Atlas please see the <a href="https://bionimbus-pdc.opensciencedatacloud.org/">Bionimbus PDC page</a>.
   Any questions about the application process can be directed to
-  <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>. Thank you.
+  <a href="mailto:accounts@occ-data.org">accounts@opencloudconsortium.org</a>. Thank you.
 </p>
 </div>
 <div class="span12">
@@ -87,11 +87,11 @@ We also support OpenID (Gmail and Yahoo) logins, but only if you're unable to pr
       <label class="control-label" for="id_system">Extra Forms for OCC-Y</label>
       <div class="controls">
         <span class="text-block">
-    The OCC-Y Cluster is owned and operated by the OCC, and the equipment is donated by Yahoo! Inc. If you are applying for an account on the OCC-Y Cluster, please complete the following three application forms and email them to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>:
+    The OCC-Y Cluster is owned and operated by the OCC, and the equipment is donated by Yahoo! Inc. If you are applying for an account on the OCC-Y Cluster, please complete the following three application forms and email them to <a href="mailto:accounts@occ-data.org">accounts@opencloudconsortium.org</a>:
     <ul>
-      <li>1) <a href="http://opencloudconsortium.org/files/2011/09/account-request.pdf">Account Request</a></li>
-      <li>2) <a href="http://opencloudconsortium.org/files/2011/09/research-project-description.pdf">Research Project Description</a></li>
-      <li>3) <a href="http://opencloudconsortium.org/files/2011/09/occ-y-cluster-terms-of-use.pdf">Terms of Use</a></li>
+      <li>1) <a href="http://occ-data.org/files/2011/09/account-request.pdf">Account Request</a></li>
+      <li>2) <a href="http://occ-data.org/files/2011/09/research-project-description.pdf">Research Project Description</a></li>
+      <li>3) <a href="http://occ-data.org/files/2011/09/occ-y-cluster-terms-of-use.pdf">Terms of Use</a></li>
       </ul>
 
         </span>
