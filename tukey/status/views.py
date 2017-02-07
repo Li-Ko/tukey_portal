@@ -15,6 +15,9 @@ def get_percent(used, total):
 def append_status(data, cloud_status_data, currcloud, label, idprefix, value_name):
     max_val =  data[currcloud][value_name]['max']
     val =  data[currcloud][value_name]['val']
+    if value_name == 'cleversafe':
+        max_val = float(max_val) / 1000000000
+        val = float(val) / 1000000000
     cloud_status_data.append((label, idprefix + '-' + value_name, val, max_val,
         get_percent(val, max_val)))
 
@@ -53,7 +56,9 @@ def status_public(request):
 
     status_attrs = {
          "cloud": [
-         ('Storage Used/Available (GB): ', 'cluster'),
+         ('Storage Used/Available: (GB)', 'cluster'),
+         ('Ceph Used/Available (GB): ', 'ceph'),
+         ('Cleversafe Used/Available (GB): ', 'cleversafe'),
          ('Total Active/Granted Allocations: ', 'users'),
          ('VM Cores Used/Available: ', 'cores'), ('VM RAM Used/Available (GB): ', 'ram')],
          "map_reduce": [
@@ -73,8 +78,11 @@ def status_public(request):
 
             try:
                 for attr_name, attr_id in status_attrs[cloud["type"]]:
-                    append_status(data, status_data[cloud_name],
-                        cloud["dashboard"], attr_name, slugify(cloud_name), attr_id)
+                    if cloud_name == 'Bionimbus PDC' and attr_id == 'cluster':
+                        continue
+                    if attr_id in data[cloud['dashboard']]:
+                        append_status(data, status_data[cloud_name],
+                            cloud["dashboard"], attr_name, slugify(cloud_name), attr_id)
 
                 update_times[cloud_name] = data[cloud["dashboard"]]['users']['stsh']
             except ValueError:
