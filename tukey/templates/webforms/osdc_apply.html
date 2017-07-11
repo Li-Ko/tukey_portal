@@ -117,32 +117,6 @@ Please fill out the form below for access to the Open Science Data Cloud. Once y
       </div>
     </div>
 
-    <div class="control-group extra_occy">
-      <label class="control-label" for="id_system">Extra Forms for OCC-Y</label>
-      <div class="controls">
-        <span class="text-block">
-    The OCC-Y Cluster is owned and operated by the OCC, and the equipment is donated by Yahoo! Inc. If you are applying for an account on the OCC-Y Cluster, please complete the following three application forms and email them to <a href="mailto:accounts@opencloudconsortium.org">accounts@opencloudconsortium.org</a>:
-    <ul>
-      <li>1) <a href="http://opencloudconsortium.org/images/OCCYaccount-request.pdf" target="_blank">Account Request</a></li>
-      <li>2) <a href="http://opencloudconsortium.org/images/research-project-description.pdf" target="_blank">Research Project Description</a></li>
-      <li>3) <a href="http://opencloudconsortium.org/images/occ-y-cluster-terms-of-use.pdf" target="_blank">Terms of Use</a></li>
-      </ul>
-
-        </span>
-      </div>
-    </div>
-
-    <div class="control-group extra_pubkey {% if form.pubkey.errors %}error{% endif %}">
-      <label class="control-label" for="id_pubkey">SSH public key*</label>
-      <div class="controls">
-        <span class="text-block">
-          Access to the OCC-Y cluster is only provided by SSH public/private key pairs. Please provide your public key for access. <a href="https://help.github.com/articles/generating-ssh-keys">Here is how to generate your pubkey</a>.
-        </span>
-        {{ form.pubkey }}
-        <span class="help-inline">{{form.pubkey.errors}}</span>
-      </div>
-    </div>
-
     <div class="control-group {% if form.projectname.errors %}error{% endif %}">
       <label class="control-label" for="id_projectname">Title for Your Research*</label>
       <div class="controls">

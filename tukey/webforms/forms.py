@@ -12,7 +12,7 @@ SYSTEM_CHOICES = (
    ('OSDC-Atwood', 'Protected Compute Cloud'),
    # ('bionimbus_web', 'Bionimbus Web Portal'),
    # ('OSDC-Skidmore', 'OSDC-Skidmore (newest Hadoop cluster)'),
-    ('occ-y', 'Hadoop Cluster'),
+   # ('occ-y', 'Hadoop Cluster'),
    # ('matsu', 'Matsu Hadoop Testbed'),
    # ('bionimbus_uchicago', 'UChicago Bionimbus Cloud (private cloud for genomics projects at UChicago)'),
     )
