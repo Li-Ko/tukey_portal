@@ -320,7 +320,8 @@ To use the search tool, provide a start date and end date of interest in format 
 
 $(document).ready(function(){
      $("#nav-publicdata").addClass('active');
-     $("#submit-search").click(function(){
+
+     function query(endpoint){
           console.log('clicked');
           $("#dids").text("")
           $("#search-error").text("")
@@ -357,16 +358,16 @@ $(document).ready(function(){
           var location = $("#location").val();
           $("#spinner").removeClass("hide");
           $.ajax({
-              'url': '/publicdata/search-nexrad',
+              'url': 'https://metadata.occ-data.org/nexrad/' + endpoint,
               'data': {'from_date': from_date.toDateString(), 'to_date': to_date.toDateString(), 'location': location},
               'success': function(e){
                   console.log(e);
                   $("#spinner").addClass("hide");
                   if ('error' in e){
                   $("#search-error").text(e['error'])};
-                  if ('dids' in e){
+                  if (endpoint in e){
                       console.log(e);
-                      result = e['dids'];
+                      result = e[endpoint];
                       if (result.length == 0) {
                           $("#search-error").text("No records found")
                       }
@@ -381,7 +382,11 @@ $(document).ready(function(){
                   console.log(e)
                   $("#spinner").addClass("hide");
                }})
-     })
+     }
+     function query_alias(){
+         query('urls');
+     }
+     $("#submit-search").click(query_alias)
      
 
 
