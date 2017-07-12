@@ -82,6 +82,7 @@
     </p>
     </div>
 {% endif %}
+{% if 'osdc_location' in dataset %}
 <div class="span12 data-header"><h3>OSDC Instructions</h3></div>
 <div class="span12">
 <p>
@@ -93,6 +94,7 @@ Virtual machines on the OSDC have direct access to all of the public data sets. 
 For OSDC allocation recipients trying to access public data from either a PDC or Public resource, data is located in either /glusterfs/osdc_public_data or in the griffin-objstore.opensciencedatacloud.org.   We recommend reviewing the Access Instructions above for particulars.  
 </p>
 </div>
+{% endif %}
 <div class="span12 data-header"><h3>License/Attribution Requirements</h3></div>
 {% if dataset.license %}
 <div class="span12">
