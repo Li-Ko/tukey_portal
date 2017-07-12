@@ -68,10 +68,20 @@ class MetadataImporter(object):
                 print 'create new keyword %s' % keyword
             nodes.append(node)
         return nodes
+
+    def import_commons(self):
+        nodes = []
+        commons = self.metadata['commons']
+        node = self.driver.nodes().labels('commons_type').props({'value':commons}).first()
+        if not node:
+            raise Exception("commons {} doesn't exist".format(commons))
+        return node 
+
         
     def import_metadata(self):
         with self.driver.session_scope():
             if not self.validate_metadata():
+                print 'invalid data'
                 return
             
             doc = self.signpost.create()
@@ -83,12 +93,16 @@ class MetadataImporter(object):
             properties = self.metadata.copy()
             del properties['url']
             del properties['keywords']
+            del properties['commons']
             
             node = Node(node_id=doc.did,label='dataset',properties=properties)
             self.driver.node_merge(node=node)
             keyword_nodes = self.import_keywords()
             for keyword in keyword_nodes:
                 self.driver.edge_insert(Edge(node.node_id,keyword.node_id,'member_of'))
+            commons_node = self.import_commons()
+            
+            self.driver.edge_insert(Edge(node.node_id,commons_node.node_id,'member_of'))
             print 'metadata %s created' % doc.did
    
     def delete_metadata(self,did):
